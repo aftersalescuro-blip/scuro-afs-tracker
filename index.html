@@ -1648,7 +1648,7 @@ tbody tr:hover td{background:var(--s2)}
         <div id="gsheet-not-auth" class="fwarn">Belum login Google — ke tab Hubungkan dulu.</div>
         <div class="fg" style="margin-top:10px"><label>Data yang di-sync</label>
           <div style="display:flex;flex-direction:column;gap:5px;margin-top:4px">
-            <div class="check-row"><input type="checkbox" id="gs-tickets" checked><label for="gs-tickets">Tiket</label></div>
+            <div class="check-row"><input type="checkbox" id="gs-tickets" checked><label for="gs-tickets">Tiket (All + SC + Visit IH + Visit Rek + Bali)</label></div>
             <div class="check-row"><input type="checkbox" id="gs-maint"><label for="gs-maint">Maintenance</label></div>
             <div class="check-row"><input type="checkbox" id="gs-qc"><label for="gs-qc">QC Stok</label></div>
             <div class="check-row"><input type="checkbox" id="gs-sp"><label for="gs-sp">SP Terpakai</label></div>
@@ -4622,9 +4622,17 @@ async function doSyncGSheets() {
     };
 
     if (el('gs-tickets')?.checked) {
-      upd('Sync tiket...', (++step)/total);
-      const rows = S.tickets.map(t=>[t.ticket_id,t.received_date,t.tgl_drop_visit,t.customer,t.phone,t.brand,t.unit_type,t.serial_number,t.warranty_status,t.trouble,t.action,t.teknisi,t.status,t.sla_actual,t.biaya_service,t.biaya_transport,t.biaya_sp,t.invoice||'']);
-      await doSheet('All Tiket', rows);
+      upd('Sync All Tiket...', (++step)/total);
+      var tRows = function(arr){ return arr.map(function(t){return [t.ticket_id,t.received_date,t.tgl_drop_visit,t.customer,t.phone,t.brand,t.unit_type,t.serial_number,t.warranty_status,t.trouble,t.action,t.teknisi,t.status,t.sla_actual,t.biaya_service,t.biaya_transport,t.biaya_sp,t.invoice||''];}); };
+      await doSheet('All Tiket', tRows(S.tickets));
+      upd('Sync Service Center...', (++step)/total);
+      await doSheet('Service Center', tRows(S.tickets.filter(function(t){return t.action==='Service Center'||(t.ticket_id||'').indexOf('SC/')===0;})));
+      upd('Sync Visit In-House...', (++step)/total);
+      await doSheet('Visit In-House', tRows(S.tickets.filter(function(t){return t.action==='Visit Teknisi In House'||(t.ticket_id||'').indexOf('VTI/')===0;})));
+      upd('Sync Visit Rekanan...', (++step)/total);
+      await doSheet('Visit Rekanan', tRows(S.tickets.filter(function(t){return t.action==='Visit Teknisi Rekanan'||(t.ticket_id||'').indexOf('VTR/')===0;})));
+      upd('Sync Scuro Bali...', (++step)/total);
+      await doSheet('Scuro Bali', tRows(S.tickets.filter(function(t){return t.action==='Scuro Bali'||t.action==='Scuro Bali Visit'||(t.ticket_id||'').indexOf('SBV/')===0;})));
     }
     if (el('gs-maint')?.checked) {
       upd('Sync maintenance...', (++step)/total);
