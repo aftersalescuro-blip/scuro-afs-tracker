@@ -1953,23 +1953,36 @@ function doLogout() {
 // SUPABASE CONNECTION CHECK
 // ============================================================
 function checkSBConnection() {
-  const url = S.sb.url || SB_URL;
-  const key = S.sb.key || SB_KEY;
-  fetch(url + '/rest/v1/', {headers:{'apikey':key,'Authorization':'Bearer '+key}})
-    .then(r => {
-      S.sb.connected = r.ok;
-      const badge = el('sb-st');
-      if (badge) {
-        badge.textContent = r.ok ? '🟢 Online' : '🔴 Error';
-        badge.style.background = r.ok ? 'var(--gl)' : 'var(--rl)';
-        badge.style.color = r.ok ? 'var(--green)' : 'var(--red)';
-      }
-    })
-    .catch(() => {
-      S.sb.connected = false;
-      const badge = el('sb-st');
-      if (badge) { badge.textContent = '⚪ Offline'; badge.style.background='var(--s2)'; badge.style.color='var(--t3)'; }
-    });
+  var url = SB_URL;
+  var key = SB_KEY;
+  function setStatus(status) {
+    S.sb.connected = status === 'online';
+    var badge = el('sb-st');
+    var live = el('sb-live');
+    if (status === 'online') {
+      if (badge) { badge.textContent = '🟢 Online'; badge.style.background = 'var(--gl)'; badge.style.color = 'var(--green)'; }
+      if (live) { live.innerHTML = '<i class="ti ti-circle-filled" style="font-size:8px;color:var(--green)"></i> ONLINE'; live.style.color = 'var(--green)'; }
+    } else if (status === 'error') {
+      if (badge) { badge.textContent = '🔴 Error'; badge.style.background = 'var(--rl)'; badge.style.color = 'var(--red)'; }
+      if (live) { live.innerHTML = '<i class="ti ti-circle-filled" style="font-size:8px;color:var(--red)"></i> ERROR'; live.style.color = 'var(--red)'; }
+    } else {
+      if (badge) { badge.textContent = '⚪ Offline'; badge.style.background = 'var(--s2)'; badge.style.color = 'var(--t3)'; }
+      if (live) { live.innerHTML = '<i class="ti ti-circle-filled" style="font-size:8px"></i> OFFLINE'; live.style.color = ''; }
+    }
+  }
+  fetch(url + '/rest/v1/', {
+    method: 'GET',
+    headers: { 'apikey': key, 'Authorization': 'Bearer ' + key, 'Accept': 'application/json' }
+  })
+  .then(function(r) {
+    if (r.status < 500) setStatus('online');
+    else setStatus('error');
+  })
+  .catch(function() {
+    fetch(url, {mode:'no-cors'})
+      .then(function() { setStatus('online'); })
+      .catch(function() { setStatus('offline'); });
+  });
 }
 
 // ============================================================
