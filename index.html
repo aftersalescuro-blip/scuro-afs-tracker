@@ -770,18 +770,14 @@ tbody tr:hover td{background:var(--s2)}
   <div class="card" style="margin-top:8px;padding:0;overflow:hidden">
     <div class="tw"><table>
       <thead><tr>
-        <th>Kode SKU</th>
+        <th>Kode</th>
         <th>Nama Sparepart</th>
         <th>Brand</th>
         <th>Kategori</th>
-        <th>Tipe Komponen</th>
-        <th>Harga Jual</th>
+        <th>Harga</th>
         <th>Last Update</th>
-        <th>Updated By</th>
-        <th>Foto Harga</th>
+        <th>Foto</th>
         <th>Stok</th>
-        <th>Stok Min</th>
-        <th>Warranty</th>
         <th style="text-align:center">Aksi</th>
       </tr></thead>
       <tbody id="sp-tb"></tbody>
@@ -1733,7 +1729,12 @@ tbody tr:hover td{background:var(--s2)}
       <div class="fg"><label>Catatan Warranty</label><textarea class="fta" id="sp-e-notes" style="min-height:50px"></textarea></div>
       <div class="divider"></div>
       <div class="section-hdr">Update Harga</div>
-      <div class="fg"><label>Link Foto Bukti Harga (GDrive)</label><input class="fi" id="sp-e-foto-harga" type="url" placeholder="https://drive.google.com/..."></div>
+      <div class="frow">
+        <div class="fg"><label>Tanggal Update Harga</label><input class="fi" id="sp-e-harga-tgl" type="date" value="">
+          <div style="font-size:10.5px;color:var(--t3);margin-top:2px">Default hari ini. Bisa backdate untuk data lama.</div>
+        </div>
+        <div class="fg"><label>Link Foto Bukti (GDrive)</label><input class="fi" id="sp-e-foto-harga" type="url" placeholder="https://drive.google.com/..."></div>
+      </div>
       <div id="sp-e-history" style="margin-top:8px"></div>
     </div>
     <div class="mf">
@@ -3472,39 +3473,53 @@ function renderInst() {
 // SP DATABASE
 // ============================================================
 function renderSPDB() {
-  const q = (gv('sp-srch')||'').toLowerCase();
-  const brand = gv('sp-f-brand')||'';
-  const cat = gv('sp-f-cat')||'';
-  const comp = SP_COMP_TYPE||'all';
-  let f = S.sp_db.filter(s => {
-    if (q && ![(s.nama||'').toLowerCase(),(s.kode||'').toLowerCase()].some(v=>v.includes(q))) return false;
-    if (brand && s.brand !== brand) return false;
-    if (cat && s.category !== cat) return false;
-    if (comp !== 'all' && s.comp_type !== comp) return false;
-    return true;
-  });
-  const setM=(id,v)=>{ const e=el(id); if(e) e.textContent=v; };
-  setM('sp-cnt', f.length);
-  setM('sp-low', f.filter(s=>(s.stok||0)<=(s.stok_min||3)&&(s.stok||0)>0).length);
-  setM('sp-out', f.filter(s=>(s.stok||0)===0).length);
-  const tb = el('sp-tb');
+  var db = S.sp_db || [];
+  var q = (gv('sp-srch')||'').toLowerCase();
+  var bFilter = gv('sp-f-brand')||'';
+  var cFilter = gv('sp-f-cat')||'';
+  var tFilter = gv('sp-f-type')||'';
+  var hFilter = gv('sp-f-harga')||'';
+
+  var f = db;
+  if (q && q.length >= 2) {
+    f = f.filter(function(s) {
+      return [s.kode,s.nama,s.brand,s.category].some(function(v){ return (v||'').toLowerCase().indexOf(q)>=0; });
+    });
+  }
+  if (bFilter) f = f.filter(function(s){ return s.brand===bFilter; });
+  if (cFilter) f = f.filter(function(s){ return s.category===cFilter; });
+  if (tFilter) f = f.filter(function(s){ return s.comp_type===tFilter; });
+  if (hFilter === 'ada') f = f.filter(function(s){ return (s.harga||0)>0; });
+  else if (hFilter === 'kosong') f = f.filter(function(s){ return !s.harga||s.harga===0; });
+
+  var tb = el('sp-tb');
   if (!tb) return;
-  tb.innerHTML = f.length===0
-    ? `<tr><td colspan="9"><div class="es"><p>Tidak ada sparepart ditemukan</p></div></td></tr>`
-    : f.map(s=>`<tr>
-        <td><code style="font-size:11px">${s.kode}</code></td>
-        <td style="font-weight:500">${s.nama}</td>
-        <td>${s.brand||'—'}</td>
-        <td>${s.category||'—'}</td>
-        <td>${s.comp_type||'—'}</td>
-        <td style="font-family:var(--m);font-weight:600">${fCur(s.harga||0)}</td>
-        <td style="font-size:10.5px">${s.harga_updated_at?fD(s.harga_updated_at):'—'}</td>
-        <td style="font-size:10.5px">${s.harga_updated_by||'—'}</td>
-        <td>${s.harga_foto_link?'<a href="'+s.harga_foto_link+'" target="_blank" style="color:var(--blue);font-size:11px">📷 Lihat</a>':'—'}</td>
-        <td><span style="font-family:var(--m);font-weight:600;color:${(s.stok||0)===0?'var(--red)':(s.stok||0)<=(s.stok_min||3)?'var(--amber)':'var(--green)'}">${s.stok||0}</span></td>
-        <td>${s.satuan||'pcs'}</td>
-        <td><button class="btn btns btn-xs" onclick="editSP('${s.kode}')"><i class="ti ti-edit" style="font-size:11px"></i></button></td>
-      </tr>`).join('');
+  var show = f.slice(0, 200);
+  tb.innerHTML = show.length === 0
+    ? '<tr><td colspan="9"><div class="es"><i class="ti ti-database"></i><p>Tidak ada sparepart ditemukan</p></div></td></tr>'
+    : show.map(function(s) {
+        var stokColor = (s.stok||0)===0 ? 'var(--red)' : (s.stok||0)<=3 ? 'var(--amber)' : 'var(--green)';
+        var fotoLink = s.harga_foto_link
+          ? '<a href="'+s.harga_foto_link+'" target="_blank" style="color:var(--blue)" title="Lihat foto bukti harga">📷</a>'
+          : '<span style="color:var(--t3)">—</span>';
+        return '<tr>'
+          + '<td><code style="font-size:10.5px">' + (s.kode||'—') + '</code></td>'
+          + '<td style="font-weight:500">' + (s.nama||'—') + '</td>'
+          + '<td>' + (s.brand||'—') + '</td>'
+          + '<td>' + (s.category||'—') + '</td>'
+          + '<td style="font-family:var(--m);font-weight:600">' + formatHargaFull(s.harga||0) + '</td>'
+          + '<td style="font-size:10.5px">' + (s.harga_updated_at ? fD(s.harga_updated_at) : '—') + '</td>'
+          + '<td style="text-align:center">' + fotoLink + '</td>'
+          + '<td style="text-align:center"><span style="font-family:var(--m);font-weight:600;color:' + stokColor + '">' + (s.stok||0) + '</span></td>'
+          + '<td style="text-align:center"><button class="btn btns btn-xs" onclick="editSP(\'' + s.kode + '\')"><i class="ti ti-edit" style="font-size:11px"></i></button></td>'
+          + '</tr>';
+      }).join('')
+      + (f.length > 200 ? '<tr><td colspan="9" style="text-align:center;color:var(--t3);font-size:11px">Menampilkan 200 dari ' + f.length + '</td></tr>' : '');
+}
+
+function formatHargaFull(n) {
+  if (!n || n === 0) return '<span style="color:var(--t3)">Rp 0</span>';
+  return 'Rp ' + Number(n).toLocaleString('id-ID');
 }
 
 function setSPCompType(val) { SP_COMP_TYPE=val; renderSPDB(); }
@@ -3520,6 +3535,7 @@ function editSP(kode) {
   gvset('sp-e-min', sp.stok_min||3); gvset('sp-e-kondisi', sp.kondisi||'Baik');
   gvset('sp-e-notes', sp.warranty_notes||'');
   gvset('sp-e-foto-harga', sp.harga_foto_link||'');
+  gvset('sp-e-harga-tgl', sp.harga_updated_at||'');
   // Render price history
   var hist = el('sp-e-history');
   if (hist) {
@@ -3579,7 +3595,7 @@ function saveSPEdit() {
           foto_link: fotoHarga,
           updated_by: CU ? CU.name : ''
         });
-        fields.harga_updated_at = TODAY;
+        fields.harga_updated_at = gv('sp-e-harga-tgl') || TODAY;
         fields.harga_foto_link = fotoHarga;
         fields.harga_updated_by = CU ? CU.name : '';
       }
@@ -3588,7 +3604,7 @@ function saveSPEdit() {
     notify(nama + ' diupdate','green');
   } else {
     if (!fields.kode) fields.kode = 'SP-' + Date.now().toString(36).toUpperCase();
-    fields.harga_updated_at = TODAY;
+    fields.harga_updated_at = gv('sp-e-harga-tgl') || TODAY;
     fields.harga_foto_link = fotoHarga;
         fields.harga_updated_by = CU ? CU.name : '';
     fields.harga_history = newHarga > 0 ? [{tgl:TODAY,harga_lama:0,harga_baru:newHarga,foto_link:fotoHarga,updated_by:CU?CU.name:''}] : [];
