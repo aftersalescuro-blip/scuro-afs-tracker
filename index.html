@@ -1728,6 +1728,10 @@ tbody tr:hover td{background:var(--s2)}
         </div>
       </div>
       <div class="fg"><label>Catatan Warranty</label><textarea class="fta" id="sp-e-notes" style="min-height:50px"></textarea></div>
+      <div class="divider"></div>
+      <div class="section-hdr">Update Harga</div>
+      <div class="fg"><label>Link Foto Bukti Harga (GDrive)</label><input class="fi" id="sp-e-foto-harga" type="url" placeholder="https://drive.google.com/..."></div>
+      <div id="sp-e-history" style="margin-top:8px"></div>
     </div>
     <div class="mf">
       <button class="btn btns" onclick="closeOv('ov-sp')">Batal</button>
@@ -3491,6 +3495,7 @@ function renderSPDB() {
         <td>${s.category||'—'}</td>
         <td>${s.comp_type||'—'}</td>
         <td style="font-family:var(--m);font-weight:600">${fCur(s.harga||0)}</td>
+        <td style="font-size:10.5px">${s.harga_updated_at?fD(s.harga_updated_at)+(s.harga_history&&s.harga_history.length?' <span style="color:var(--blue)">('+s.harga_history.length+'x)</span>':''):'—'}</td>
         <td><span style="font-family:var(--m);font-weight:600;color:${(s.stok||0)===0?'var(--red)':(s.stok||0)<=(s.stok_min||3)?'var(--amber)':'var(--green)'}">${s.stok||0}</span></td>
         <td>${s.satuan||'pcs'}</td>
         <td><button class="btn btns btn-xs" onclick="editSP('${s.kode}')"><i class="ti ti-edit" style="font-size:11px"></i></button></td>
@@ -3509,6 +3514,26 @@ function editSP(kode) {
   gvset('sp-e-harga', sp.harga||0); gvset('sp-e-stok', sp.stok||0);
   gvset('sp-e-min', sp.stok_min||3); gvset('sp-e-kondisi', sp.kondisi||'Baik');
   gvset('sp-e-notes', sp.warranty_notes||'');
+  gvset('sp-e-foto-harga', sp.harga_foto_link||'');
+  // Render price history
+  var hist = el('sp-e-history');
+  if (hist) {
+    var h = sp.harga_history || [];
+    if (h.length === 0) {
+      hist.innerHTML = '<div style="font-size:11px;color:var(--t3);font-style:italic">Belum ada riwayat perubahan harga</div>';
+    } else {
+      hist.innerHTML = '<div style="font-size:11px;font-weight:600;margin-bottom:6px">Riwayat Harga (' + h.length + ')</div>'
+        + h.slice().reverse().map(function(r) {
+          var arrow = r.harga_baru > r.harga_lama ? '📈' : (r.harga_baru < r.harga_lama ? '📉' : '➡');
+          return '<div style="display:flex;gap:8px;align-items:center;padding:6px 8px;background:var(--s2);border-radius:var(--rs);margin-bottom:4px;font-size:11px">'
+            + '<div style="flex-shrink:0;color:var(--t3)">' + fD(r.tgl) + '</div>'
+            + '<div>' + arrow + ' <s style="color:var(--t3)">' + fCur(r.harga_lama) + '</s> → <strong>' + fCur(r.harga_baru) + '</strong></div>'
+            + (r.foto_link ? '<a href="'+r.foto_link+'" target="_blank" style="color:var(--blue);flex-shrink:0;font-size:10px">📷 Bukti</a>' : '')
+            + '<div style="color:var(--t3);flex-shrink:0">' + (r.updated_by||'') + '</div>'
+            + '</div>';
+        }).join('');
+    }
+  }
   openOv('ov-sp');
 }
 
@@ -3525,20 +3550,41 @@ function addNewSP() {
 function saveSPEdit() {
   var nama = gv('sp-e-nama');
   if (!nama) { notify('Isi Nama SP','red'); return; }
+  var newHarga = parseFloat(gv('sp-e-harga'))||0;
+  var fotoHarga = gv('sp-e-foto-harga')||'';
   var fields = {
     kode: gv('sp-e-kode'), nama: nama,
     brand: gv('sp-e-brand'), category: gv('sp-e-cat'),
     comp_type: gv('sp-e-comp'), satuan: gv('sp-e-satuan'),
-    harga: parseFloat(gv('sp-e-harga'))||0, stok: parseInt(gv('sp-e-stok'))||0,
+    harga: newHarga, stok: parseInt(gv('sp-e-stok'))||0,
     stok_min: parseInt(gv('sp-e-min'))||3, kondisi: gv('sp-e-kondisi'),
     warranty_notes: gv('sp-e-notes')
   };
   if (_spEditKode) {
     var sp = S.sp_db.find(function(s){return s.kode===_spEditKode;});
-    if (sp) Object.assign(sp, fields);
+    if (sp) {
+      // Track price history if price changed
+      var oldHarga = sp.harga || 0;
+      if (oldHarga !== newHarga) {
+        if (!sp.harga_history) sp.harga_history = [];
+        sp.harga_history.push({
+          tgl: TODAY,
+          harga_lama: oldHarga,
+          harga_baru: newHarga,
+          foto_link: fotoHarga,
+          updated_by: CU ? CU.name : ''
+        });
+        fields.harga_updated_at = TODAY;
+        fields.harga_foto_link = fotoHarga;
+      }
+      Object.assign(sp, fields);
+    }
     notify(nama + ' diupdate','green');
   } else {
     if (!fields.kode) fields.kode = 'SP-' + Date.now().toString(36).toUpperCase();
+    fields.harga_updated_at = TODAY;
+    fields.harga_foto_link = fotoHarga;
+    fields.harga_history = newHarga > 0 ? [{tgl:TODAY,harga_lama:0,harga_baru:newHarga,foto_link:fotoHarga,updated_by:CU?CU.name:''}] : [];
     S.sp_db.push(fields);
     notify(nama + ' ditambahkan','green');
   }
