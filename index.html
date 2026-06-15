@@ -776,6 +776,9 @@ tbody tr:hover td{background:var(--s2)}
         <th>Kategori</th>
         <th>Tipe Komponen</th>
         <th>Harga Jual</th>
+        <th>Last Update</th>
+        <th>Updated By</th>
+        <th>Foto Harga</th>
         <th>Stok</th>
         <th>Stok Min</th>
         <th>Warranty</th>
@@ -3495,7 +3498,9 @@ function renderSPDB() {
         <td>${s.category||'—'}</td>
         <td>${s.comp_type||'—'}</td>
         <td style="font-family:var(--m);font-weight:600">${fCur(s.harga||0)}</td>
-        <td style="font-size:10.5px">${s.harga_updated_at?fD(s.harga_updated_at)+(s.harga_history&&s.harga_history.length?' <span style="color:var(--blue)">('+s.harga_history.length+'x)</span>':''):'—'}</td>
+        <td style="font-size:10.5px">${s.harga_updated_at?fD(s.harga_updated_at):'—'}</td>
+        <td style="font-size:10.5px">${s.harga_updated_by||'—'}</td>
+        <td>${s.harga_foto_link?'<a href="'+s.harga_foto_link+'" target="_blank" style="color:var(--blue);font-size:11px">📷 Lihat</a>':'—'}</td>
         <td><span style="font-family:var(--m);font-weight:600;color:${(s.stok||0)===0?'var(--red)':(s.stok||0)<=(s.stok_min||3)?'var(--amber)':'var(--green)'}">${s.stok||0}</span></td>
         <td>${s.satuan||'pcs'}</td>
         <td><button class="btn btns btn-xs" onclick="editSP('${s.kode}')"><i class="ti ti-edit" style="font-size:11px"></i></button></td>
@@ -3576,6 +3581,7 @@ function saveSPEdit() {
         });
         fields.harga_updated_at = TODAY;
         fields.harga_foto_link = fotoHarga;
+        fields.harga_updated_by = CU ? CU.name : '';
       }
       Object.assign(sp, fields);
     }
@@ -3584,6 +3590,7 @@ function saveSPEdit() {
     if (!fields.kode) fields.kode = 'SP-' + Date.now().toString(36).toUpperCase();
     fields.harga_updated_at = TODAY;
     fields.harga_foto_link = fotoHarga;
+        fields.harga_updated_by = CU ? CU.name : '';
     fields.harga_history = newHarga > 0 ? [{tgl:TODAY,harga_lama:0,harga_baru:newHarga,foto_link:fotoHarga,updated_by:CU?CU.name:''}] : [];
     S.sp_db.push(fields);
     notify(nama + ' ditambahkan','green');
