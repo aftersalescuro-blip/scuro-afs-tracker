@@ -200,7 +200,7 @@ body{font-family:var(--f);background:var(--bg);color:var(--text);font-size:13px;
   transition:transform .15s,box-shadow .15s;
 }
 .fab:active{transform:scale(.95);box-shadow:0 2px 8px rgba(59,109,17,.3)}
-@media(max-width:680px){.fab{display:flex!important}}
+/* fab handled in main mobile block */
 
 /* Hamburger button */
 .hamburger{
@@ -213,11 +213,7 @@ body{font-family:var(--f);background:var(--bg);color:var(--text);font-size:13px;
 .hamburger i{font-size:18px}
 
 /* Touch-friendly inputs on mobile */
-@media(max-width:680px){
-  .fi,.fs,.fta{font-size:16px!important} /* prevent iOS zoom */
-  .btn{min-height:38px}
-  .btn-sm{min-height:32px}
-}
+/* iOS zoom handled in main mobile block */
 
 /* METRIC */
 .mc{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl2);padding:13px 15px;box-shadow:var(--sh)}
@@ -427,31 +423,80 @@ tbody tr:hover td{background:var(--s2)}
   .more-drawer,.more-drawer-overlay,.more-overlay,.bottom-nav,.fab,.sb-overlay{display:none!important}
 }
 
-/* === MOBILE RESPONSIVE === */
+/* === MOBILE RESPONSIVE (COMPREHENSIVE) === */
 @media(max-width:680px){
-  .g2,.g3,.g4{grid-template-columns:1fr!important}
-  .frow{flex-direction:column}
-  .card{padding:10px}
+  /* TOPBAR: proper mobile layout */
+  .topbar{padding:8px 12px;flex-wrap:wrap;gap:6px}
+  .topbar .pg-t{font-size:15px;order:1}
+  .topbar .hamburger{order:0}
+  .topbar .ptog{order:3;width:100%;justify-content:center;margin:0}
+  .topbar .tb-actions{order:2;margin-left:auto;display:flex;gap:6px;align-items:center}
+  .period-nav{order:4;width:100%;justify-content:center}
+  .btn-tiket-baru{font-size:12px;padding:6px 12px}
+
+  /* METRIC CARDS: 2x2 grid */
+  .g4{grid-template-columns:1fr 1fr!important;gap:8px!important}
+  .g2,.g3{grid-template-columns:1fr!important}
+  .mc{padding:10px;min-height:auto}
+  .mc .mv{font-size:20px}
+  .mc .ml{font-size:10.5px}
+
+  /* CARDS & CONTENT */
+  .card{padding:10px;margin-bottom:8px}
+  .ca{padding:10px 12px 80px}
+  .section-hdr{font-size:11.5px}
+
+  /* TABS: horizontal scroll */
   .stabs{overflow-x:auto;flex-wrap:nowrap;gap:0;-webkit-overflow-scrolling:touch;padding-bottom:4px}
   .stab{white-space:nowrap;font-size:11.5px;padding:7px 12px;flex-shrink:0}
-  .modal{max-width:100vw!important;max-height:100vh!important;border-radius:0!important;margin:0}
-  .ov{padding:0;align-items:stretch}
-  .mh{padding:12px 14px 10px}
-  .mb{padding:12px 14px}
-  .mf{padding:10px 14px}
-  table{font-size:11.5px}
-  th,td{padding:6px 8px}
-  .mc{padding:8px 10px}
-  .mc .mv{font-size:20px}
-  .topbar{padding:8px 12px}
-  .ca{padding:10px 12px}
+
+  /* FORMS: stack vertically */
+  .frow{flex-direction:column}
   .sfr{flex-direction:column;gap:8px}
   .sbox{width:100%}
-  .pg-t{font-size:16px}
-  .section-hdr{font-size:11.5px}
+  .fi,.fs,.fta{font-size:16px!important} /* prevent iOS zoom */
+  .btn{min-height:38px}
+  .btn-sm{min-height:32px}
+
+  /* MODALS: fullscreen */
+  .modal{max-width:100vw!important;max-height:100vh!important;border-radius:14px 14px 0 0!important;margin:0}
+  .ov{padding:0;align-items:flex-end}
+  .mh{padding:12px 14px 10px}
+  .mb{padding:12px 14px;max-height:70vh;overflow-y:auto}
+  .mf{padding:10px 14px}
+
+  /* TABLES: compact + scroll */
+  .tw{margin:0 -10px}
+  table{font-size:11px}
+  th,td{padding:5px 7px;white-space:nowrap}
+  th:first-child,td:first-child{position:sticky;left:0;background:var(--surface);z-index:1}
+
+  /* FLOW DIAGRAMS */
   .flow-step{padding:7px 10px;gap:8px}
   .flow-n{width:20px;height:20px;font-size:10px}
   .finf{font-size:11px;padding:8px 10px}
+
+  /* FAB */
+  .fab{display:flex!important;bottom:70px;right:14px;width:48px;height:48px}
+
+  /* BOTTOM NAV */
+  .bottom-nav{display:flex!important;position:fixed;bottom:0;left:0;right:0;z-index:180;background:var(--surface);border-top:1px solid var(--border);padding:4px 0 env(safe-area-inset-bottom, 4px)}
+  .bn-items{display:flex;justify-content:space-around;width:100%}
+  .bn-item{background:none;border:none;display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 8px;font-size:9.5px;color:var(--t3);cursor:pointer}
+  .bn-item.active{color:var(--green)}
+  .bn-item i{font-size:18px}
+
+  /* MORE DRAWER */
+  .more-drawer{display:block}
+
+  /* HIDE on mobile */
+  .pg-sub{display:none}
+}
+
+/* DESKTOP: hide mobile-only elements */
+@media(min-width:681px){
+  .more-drawer,.more-drawer-overlay,.more-overlay,.bottom-nav,.fab,.sb-overlay,.hamburger-mobile{display:none!important}
+  .md-section,.md-item,.md-handle{display:none!important}
 }
 .ac-drop{position:absolute;top:100%;left:0;right:0;background:var(--surface);border:1px solid var(--border);border-radius:var(--rs);box-shadow:0 4px 12px rgba(0,0,0,.1);z-index:50;max-height:200px;overflow-y:auto}
 .ac-item{padding:8px 12px;cursor:pointer;border-bottom:1px solid var(--border)}.ac-item:hover{background:var(--s2)}
@@ -2453,12 +2498,7 @@ function renderDashAlerts() {}
 const DASH_TABS = ['overview','svc'];
 let _dashTab = 'overview';
 
-function setDashTab(t, btn) {
-  _dashTab = t;
-  document.querySelectorAll('.dtab').forEach(b => b.classList.remove('active'));
-  if (btn) btn.classList.add('active');
-  renderDash();
-}
+/* setDashTab moved to main block */
 
 function renderDash() {
   const all = S.tickets;
@@ -2490,13 +2530,7 @@ function renderDash() {
   renderTrendDash();
 }
 
-function renderTrendDash() {
-  const months = ['Jan','Feb','Mar','Apr','Mei','Jun'];
-  const ham = S.tickets.filter(t => t.brand === 'Hambach' && t.trouble);
-  const maq = S.tickets.filter(t => t.brand === 'Maquinos' && t.trouble);
-  renderMiniTrend('tr-ham', ham);
-  renderMiniTrend('tr-maq', maq);
-}
+/* renderTrendDash moved to main block */
 
 function renderMiniTrend(elId, tickets) {
   const container = el(elId);
@@ -2760,31 +2794,80 @@ function renderWS1() {
   .more-drawer,.more-drawer-overlay,.more-overlay,.bottom-nav,.fab,.sb-overlay{display:none!important}
 }
 
-/* === MOBILE RESPONSIVE === */
+/* === MOBILE RESPONSIVE (COMPREHENSIVE) === */
 @media(max-width:680px){
-  .g2,.g3,.g4{grid-template-columns:1fr!important}
-  .frow{flex-direction:column}
-  .card{padding:10px}
+  /* TOPBAR: proper mobile layout */
+  .topbar{padding:8px 12px;flex-wrap:wrap;gap:6px}
+  .topbar .pg-t{font-size:15px;order:1}
+  .topbar .hamburger{order:0}
+  .topbar .ptog{order:3;width:100%;justify-content:center;margin:0}
+  .topbar .tb-actions{order:2;margin-left:auto;display:flex;gap:6px;align-items:center}
+  .period-nav{order:4;width:100%;justify-content:center}
+  .btn-tiket-baru{font-size:12px;padding:6px 12px}
+
+  /* METRIC CARDS: 2x2 grid */
+  .g4{grid-template-columns:1fr 1fr!important;gap:8px!important}
+  .g2,.g3{grid-template-columns:1fr!important}
+  .mc{padding:10px;min-height:auto}
+  .mc .mv{font-size:20px}
+  .mc .ml{font-size:10.5px}
+
+  /* CARDS & CONTENT */
+  .card{padding:10px;margin-bottom:8px}
+  .ca{padding:10px 12px 80px}
+  .section-hdr{font-size:11.5px}
+
+  /* TABS: horizontal scroll */
   .stabs{overflow-x:auto;flex-wrap:nowrap;gap:0;-webkit-overflow-scrolling:touch;padding-bottom:4px}
   .stab{white-space:nowrap;font-size:11.5px;padding:7px 12px;flex-shrink:0}
-  .modal{max-width:100vw!important;max-height:100vh!important;border-radius:0!important;margin:0}
-  .ov{padding:0;align-items:stretch}
-  .mh{padding:12px 14px 10px}
-  .mb{padding:12px 14px}
-  .mf{padding:10px 14px}
-  table{font-size:11.5px}
-  th,td{padding:6px 8px}
-  .mc{padding:8px 10px}
-  .mc .mv{font-size:20px}
-  .topbar{padding:8px 12px}
-  .ca{padding:10px 12px}
+
+  /* FORMS: stack vertically */
+  .frow{flex-direction:column}
   .sfr{flex-direction:column;gap:8px}
   .sbox{width:100%}
-  .pg-t{font-size:16px}
-  .section-hdr{font-size:11.5px}
+  .fi,.fs,.fta{font-size:16px!important} /* prevent iOS zoom */
+  .btn{min-height:38px}
+  .btn-sm{min-height:32px}
+
+  /* MODALS: fullscreen */
+  .modal{max-width:100vw!important;max-height:100vh!important;border-radius:14px 14px 0 0!important;margin:0}
+  .ov{padding:0;align-items:flex-end}
+  .mh{padding:12px 14px 10px}
+  .mb{padding:12px 14px;max-height:70vh;overflow-y:auto}
+  .mf{padding:10px 14px}
+
+  /* TABLES: compact + scroll */
+  .tw{margin:0 -10px}
+  table{font-size:11px}
+  th,td{padding:5px 7px;white-space:nowrap}
+  th:first-child,td:first-child{position:sticky;left:0;background:var(--surface);z-index:1}
+
+  /* FLOW DIAGRAMS */
   .flow-step{padding:7px 10px;gap:8px}
   .flow-n{width:20px;height:20px;font-size:10px}
   .finf{font-size:11px;padding:8px 10px}
+
+  /* FAB */
+  .fab{display:flex!important;bottom:70px;right:14px;width:48px;height:48px}
+
+  /* BOTTOM NAV */
+  .bottom-nav{display:flex!important;position:fixed;bottom:0;left:0;right:0;z-index:180;background:var(--surface);border-top:1px solid var(--border);padding:4px 0 env(safe-area-inset-bottom, 4px)}
+  .bn-items{display:flex;justify-content:space-around;width:100%}
+  .bn-item{background:none;border:none;display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 8px;font-size:9.5px;color:var(--t3);cursor:pointer}
+  .bn-item.active{color:var(--green)}
+  .bn-item i{font-size:18px}
+
+  /* MORE DRAWER */
+  .more-drawer{display:block}
+
+  /* HIDE on mobile */
+  .pg-sub{display:none}
+}
+
+/* DESKTOP: hide mobile-only elements */
+@media(min-width:681px){
+  .more-drawer,.more-drawer-overlay,.more-overlay,.bottom-nav,.fab,.sb-overlay,.hamburger-mobile{display:none!important}
+  .md-section,.md-item,.md-handle{display:none!important}
 }
 .ac-drop{position:absolute;top:100%;left:0;right:0;background:var(--surface);border:1px solid var(--border);border-radius:var(--rs);box-shadow:0 4px 12px rgba(0,0,0,.1);z-index:50;max-height:200px;overflow-y:auto}
 .ac-item{padding:8px 12px;cursor:pointer;border-bottom:1px solid var(--border)}.ac-item:hover{background:var(--s2)}
@@ -5734,6 +5817,176 @@ function autoDistributeTicket(t) {
     });
     sv('installations');
   }
+}
+</script>
+
+<script>
+// ============================================================
+// EDIT WIZARDS for remaining tabs
+// ============================================================
+
+// --- MAINTENANCE EDIT ---
+var _mntEditIdx = -1;
+function editMaintenance(idx) {
+  var m = (S.maintenance||[])[idx]; if(!m) return;
+  _mntEditIdx = idx;
+  var fields = {id:m.id,serial_number:m.serial_number,customer:m.customer,brand:m.brand,
+    unit_type:m.unit_type,program_type:m.program_type,status:m.status,
+    m1_date:m.m1_date,m1_teknisi:m.m1_teknisi,m1_done:m.m1_done,
+    m2_date:m.m2_date,m2_teknisi:m.m2_teknisi,m2_done:m.m2_done,
+    m3_date:m.m3_date,m3_teknisi:m.m3_teknisi,m3_done:m.m3_done};
+  var h = '<div class="mt2" style="margin-bottom:12px">Edit Maintenance — '+m.id+'</div>';
+  h += '<div class="frow"><div class="fg"><label>Customer</label><input class="fi" id="mnt-e-cust" value="'+(m.customer||'')+'"></div>';
+  h += '<div class="fg"><label>SN</label><input class="fi" id="mnt-e-sn" value="'+(m.serial_number||'')+'"></div></div>';
+  h += '<div class="frow"><div class="fg"><label>Brand</label><input class="fi" id="mnt-e-brand" value="'+(m.brand||'')+'"></div>';
+  h += '<div class="fg"><label>Program</label><select class="fs" id="mnt-e-prog"><option>Standard</option><option>Premium</option></select></div></div>';
+  h += '<div class="frow"><div class="fg"><label>Status</label><select class="fs" id="mnt-e-status"><option>Active</option><option>Completed</option><option>Cancelled</option></select></div>';
+  h += '<div class="fg"><label>M1 Date</label><input class="fi" id="mnt-e-m1" type="date" value="'+(m.m1_date||'')+'"></div></div>';
+  h += '<div style="text-align:right;margin-top:12px"><button class="btn btns" onclick="closeQuickEdit()">Batal</button> ';
+  h += '<button class="btn btnp" onclick="saveMntEdit()"><i class="ti ti-check"></i> Simpan</button></div>';
+  showQuickEdit(h);
+  gvset('mnt-e-prog', m.program_type||'Standard');
+  gvset('mnt-e-status', m.status||'Active');
+}
+function saveMntEdit() {
+  var m = S.maintenance[_mntEditIdx]; if(!m) return;
+  m.customer = gv('mnt-e-cust'); m.serial_number = gv('mnt-e-sn');
+  m.brand = gv('mnt-e-brand'); m.program_type = gv('mnt-e-prog');
+  m.status = gv('mnt-e-status'); m.m1_date = gv('mnt-e-m1');
+  sv('maintenance'); closeQuickEdit(); renderPage('maintenance');
+  notify('Maintenance diupdate','green');
+}
+
+// --- INSTALASI EDIT ---
+var _insEditIdx = -1;
+function editInstalasi(idx) {
+  var ins = (S.installations||[])[idx]; if(!ins) return;
+  _insEditIdx = idx;
+  var h = '<div class="mt2" style="margin-bottom:12px">Edit Instalasi — '+ins.id+'</div>';
+  h += '<div class="frow"><div class="fg"><label>Customer</label><input class="fi" id="ins-e-cust" value="'+(ins.customer||'')+'"></div>';
+  h += '<div class="fg"><label>SN</label><input class="fi" id="ins-e-sn" value="'+(ins.serial_number||'')+'"></div></div>';
+  h += '<div class="frow"><div class="fg"><label>Tgl Request</label><input class="fi" id="ins-e-req" type="date" value="'+(ins.request_date||'')+'"></div>';
+  h += '<div class="fg"><label>Tgl Schedule</label><input class="fi" id="ins-e-sch" type="date" value="'+(ins.schedule_date||'')+'"></div></div>';
+  h += '<div class="fg"><label>Status</label><select class="fs" id="ins-e-status"><option>On Confirm</option><option>Scheduled</option><option>Done</option><option>Cancelled</option></select></div>';
+  h += '<div style="text-align:right;margin-top:12px"><button class="btn btns" onclick="closeQuickEdit()">Batal</button> ';
+  h += '<button class="btn btnp" onclick="saveInsEdit()"><i class="ti ti-check"></i> Simpan</button></div>';
+  showQuickEdit(h);
+  gvset('ins-e-status', ins.status||'On Confirm');
+}
+function saveInsEdit() {
+  var ins = S.installations[_insEditIdx]; if(!ins) return;
+  ins.customer = gv('ins-e-cust'); ins.serial_number = gv('ins-e-sn');
+  ins.request_date = gv('ins-e-req'); ins.schedule_date = gv('ins-e-sch');
+  ins.status = gv('ins-e-status');
+  sv('installations'); closeQuickEdit(); renderPage('instalasi');
+  notify('Instalasi diupdate','green');
+}
+
+// --- ORDER SP EDIT ---
+var _ordEditIdx = -1;
+function editOrder(idx) {
+  var o = (S.orders||[])[idx]; if(!o) return;
+  _ordEditIdx = idx;
+  var h = '<div class="mt2" style="margin-bottom:12px">Edit Order — '+o.id+'</div>';
+  h += '<div class="frow"><div class="fg"><label>SP</label><input class="fi" id="ord-e-sp" value="'+(o.sp||'')+'"></div>';
+  h += '<div class="fg"><label>Qty</label><input class="fi" id="ord-e-qty" type="number" value="'+(o.qty||1)+'"></div></div>';
+  h += '<div class="frow"><div class="fg"><label>Total (Rp)</label><input class="fi" id="ord-e-total" type="number" value="'+(o.total||0)+'"></div>';
+  h += '<div class="fg"><label>Vendor</label><input class="fi" id="ord-e-vendor" value="'+(o.vendor||'')+'"></div></div>';
+  h += '<div class="fg"><label>Status</label><select class="fs" id="ord-e-status"><option>Pending SQ</option><option>SQ Sent</option><option>Approved</option><option>Ordered</option><option>Received</option><option>Cancelled</option></select></div>';
+  h += '<div style="text-align:right;margin-top:12px"><button class="btn btns" onclick="closeQuickEdit()">Batal</button> ';
+  h += '<button class="btn btnp" onclick="saveOrdEdit()"><i class="ti ti-check"></i> Simpan</button></div>';
+  showQuickEdit(h);
+  gvset('ord-e-status', o.status||'Pending SQ');
+}
+function saveOrdEdit() {
+  var o = S.orders[_ordEditIdx]; if(!o) return;
+  o.sp = gv('ord-e-sp'); o.qty = parseInt(gv('ord-e-qty'))||1;
+  o.total = parseFloat(gv('ord-e-total'))||0; o.vendor = gv('ord-e-vendor');
+  o.status = gv('ord-e-status');
+  sv('orders'); closeQuickEdit(); renderPage('sp-order');
+  notify('Order diupdate','green');
+}
+
+// --- QUICK EDIT OVERLAY (reusable inline editor) ---
+function showQuickEdit(html) {
+  var ov = el('ov-quickedit');
+  if (!ov) {
+    // Create overlay dynamically
+    var div = document.createElement('div');
+    div.className = 'ov'; div.id = 'ov-quickedit';
+    div.innerHTML = '<div class="modal" style="max-width:500px"><div class="mb" id="qe-content"></div></div>';
+    document.body.appendChild(div);
+    ov = div;
+  }
+  el('qe-content').innerHTML = html;
+  ov.classList.add('open');
+}
+function closeQuickEdit() {
+  var ov = el('ov-quickedit');
+  if (ov) ov.classList.remove('open');
+}
+
+// --- DASHBOARD TREND ---
+function renderTrendDash() {
+  var el_trend = el('dash-trend');
+  if (!el_trend) return;
+  var all = S.tickets || [];
+  // Group by month
+  var months = {};
+  all.forEach(function(t) {
+    var m = (t.received_date||'').substring(0,7);
+    if (!m) return;
+    if (!months[m]) months[m] = {total:0,done:0,sc:0,vti:0,vtr:0};
+    months[m].total++;
+    if (t.status === 'Done') months[m].done++;
+    if ((t.ticket_id||'').indexOf('SC/')===0) months[m].sc++;
+    if ((t.ticket_id||'').indexOf('VTI/')===0) months[m].vti++;
+    if ((t.ticket_id||'').indexOf('VTR/')===0) months[m].vtr++;
+  });
+  var sorted = Object.keys(months).sort();
+  if (sorted.length === 0) {
+    el_trend.innerHTML = '<div class="es"><p>Belum ada data trend</p></div>';
+    return;
+  }
+  el_trend.innerHTML = '<div class="section-hdr">Trend Tiket per Bulan</div>'
+    + '<div class="tw"><table><thead><tr><th>Bulan</th><th>Total</th><th>Done</th><th>SC</th><th>Visit IH</th><th>Visit Rek</th><th>Rate</th></tr></thead><tbody>'
+    + sorted.map(function(m) {
+        var d = months[m];
+        var rate = d.total > 0 ? Math.round(d.done/d.total*100) : 0;
+        return '<tr><td style="font-weight:600">'+m+'</td><td>'+d.total+'</td><td>'+d.done+'</td><td>'+d.sc+'</td><td>'+d.vti+'</td><td>'+d.vtr+'</td>'
+          + '<td><span class="badge '+(rate>=80?'bg':rate>=50?'ba':'br')+'" style="font-size:10px">'+rate+'%</span></td></tr>';
+      }).join('')
+    + '</tbody></table></div>'
+    + '<div class="section-hdr" style="margin-top:12px">Trouble Terbanyak</div>'
+    + '<div style="display:flex;flex-direction:column;gap:4px">'
+    + getTopTroubles(all).map(function(t) {
+        return '<div style="display:flex;justify-content:space-between;padding:6px 8px;background:var(--s2);border-radius:var(--rs)">'
+          + '<span style="font-size:12px">'+t.name+'</span><span class="badge bgr" style="font-size:10px">'+t.count+'</span></div>';
+      }).join('')
+    + '</div>';
+}
+
+function getTopTroubles(tickets) {
+  var map = {};
+  tickets.forEach(function(t) {
+    var tr = (t.trouble||'').substring(0,50);
+    if (tr) { map[tr] = (map[tr]||0) + 1; }
+  });
+  return Object.keys(map).map(function(k){return {name:k,count:map[k]};})
+    .sort(function(a,b){return b.count-a.count;}).slice(0,8);
+}
+
+// Hook trend tab
+var _origSetDashTab = typeof setDashTab === 'function' ? setDashTab : null;
+function setDashTab(tab, btn) {
+  var stabs = document.querySelectorAll('#page-dashboard .stabs .stab');
+  stabs.forEach(function(b){ b.classList.remove('active'); });
+  if (btn) btn.classList.add('active');
+  var ov = el('dash-overview');
+  var tr = el('dash-trend');
+  if (ov) ov.style.display = tab === 'overview' ? 'block' : 'none';
+  if (tr) tr.style.display = tab === 'trend' ? 'block' : 'none';
+  if (tab === 'trend') renderTrendDash();
 }
 </script>
 </body>
