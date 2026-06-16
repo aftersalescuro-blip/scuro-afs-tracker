@@ -929,7 +929,7 @@ tbody tr:hover td{background:var(--s2)}
     <div class="mc alert"><div class="ml">Return Vendor</div><div class="mv" id="he-4">0</div></div>
   </div>
   <div class="card"><div class="ch"><div class="ct">Database Heating Element</div><button class="btn btnp btn-sm" onclick="openHEInput()"><i class="ti ti-plus"></i> Tambah HE</button></div>
-    <div class="tw"><table><thead><tr><th>ID HE</th><th>Tipe</th><th>Kode Produksi</th><th>Status</th><th>Dipakai di SN</th><th>Tgl Masuk</th><th>Tgl Pakai</th><th>Tgl Lepas</th><th>Catatan</th><th></th></tr></thead>
+    <div class="tw"><table><thead><tr><th>ID</th><th>Jenis HE</th><th>Batch</th><th>Status</th><th>SN/Kode</th><th>Qty</th><th>Tanggal</th><th>Lokasi</th><th>Catatan</th><th>Aksi</th><th></th></tr></thead>
     <tbody id="he-tb"><tr><td colspan="10"><div class="es"><i class="ti ti-bolt"></i><p>Belum ada data HE</p></div></td></tr></tbody></table></div>
   </div>
 </div>
@@ -2153,6 +2153,8 @@ function _doLoginSuccess(user, u) {
   el('sb-urole').textContent = CU.role === 'admin' ? 'Admin' : 'Manager';
   el('sb-avatar').textContent = CU.avatar;
   checkSBConnection();
+  // Fetch latest from Supabase (async, non-blocking)
+  if (typeof fetchFromSupabase === 'function') setTimeout(fetchFromSupabase, 2000);
   // DATA PERSISTENCE: merge localStorage (user data) with embedded seed data
   // localStorage wins if it has data (means user already added/edited tickets)
   var lsTickets = null;
@@ -2196,6 +2198,30 @@ function _doLoginSuccess(user, u) {
   }
   sv('tickets'); sv('qc_records'); sv('sp_db');
   loadGSheetConfig();
+
+  // Seed HE records from HE_FLOW_DATA
+  if (typeof HE_FLOW_DATA !== 'undefined' && HE_FLOW_DATA.length > 0) {
+    var lsHE = null;
+    try { var hh = localStorage.getItem('afs_he_records'); if(hh) lsHE = JSON.parse(hh); } catch(e){}
+    if (lsHE && lsHE.length > 0) {
+      S.he_records = lsHE;
+    } else {
+      S.he_records = HE_FLOW_DATA.map(function(h, i) {
+        return { id:'HE/'+String(i+1).padStart(3,'0'), tipe:h.jenis_he||'', kode:h.serial_number||'',
+          brand:'Hambach', qty:h.qty||1, tgl:h.tanggal||'',
+          status:h.tipe_transaksi==='MASUK'?'Stok Baru':'Terpakai',
+          tiket_id:'', sn_unit:h.serial_number||'', teknisi:'',
+          catatan:(h.customer?'Customer: '+h.customer+' | ':'')+(h.tipe_mesin?'Mesin: '+h.tipe_mesin+' | ':'')+(h.keterangan||''),
+          batch_tag:h.batch_tag||'EXISTING', tipe_transaksi:h.tipe_transaksi||'', lokasi:h.lokasi||'' };
+      });
+      sv('he_records');
+    }
+  }
+  // Seed other collections
+  ['denali_claims','ba_records','maintenance','installations','orders','stok_prl','stok_per','inventory_so','sp_tracking'].forEach(function(key) {
+    try { var d=localStorage.getItem('afs_'+key); if(d) S[key]=JSON.parse(d); if(!S[key]) S[key]=[]; } catch(e){ S[key]=[]; }
+  });
+
   renderAll();
   setPL();
   calcAlerts();
@@ -4000,25 +4026,70 @@ function saveHE() {
 }
 
 function renderHE() {
-  const data = S.he_records||[];
-  const setM=(id,v)=>{ const e=el(id); if(e) e.textContent=v; };
-  setM('he-1', data.filter(h=>h.status==='Stok Baru').length);
-  setM('he-2', data.filter(h=>h.status==='Terpakai'||h.status==='Dipasang').length);
-  setM('he-3', data.filter(h=>h.status==='Proses Repair').length);
-  setM('he-4', data.filter(h=>h.status==='Return Vendor').length);
-  const tb = el('he-tb');
+  var data = S.he_records || [];
+  var setM = function(id,v){ var e=el(id); if(e) e.textContent=v; };
+
+  // Metrics
+  var newBatch = data.filter(function(h){ return h.batch_tag==='NEW_BATCH_80'; });
+  var masuk = data.filter(function(h){ return h.tipe_transaksi==='MASUK'||h.status==='Stok Baru'; });
+  var terpakai = data.filter(function(h){ return h.tipe_transaksi==='KELUAR'||h.status==='Terpakai'; });
+  var repair = data.filter(function(h){ return h.status==='Proses Repair'; });
+  var retVendor = data.filter(function(h){ return h.status==='Return Vendor'; });
+
+  setM('he-new', newBatch.length);
+  setM('he-used', terpakai.length);
+  setM('he-repair', repair.length);
+  setM('he-return', retVendor.length);
+
+  var tb = el('he-tb');
   if (!tb) return;
-  tb.innerHTML = data.length===0
-    ? `<tr><td colspan="7"><div class="es"><i class="ti ti-bolt"></i><p>Belum ada data HE</p></div></td></tr>`
-    : data.map(h=>`<tr>
-        <td>${h.tipe||'—'}</td>
-        <td><code style="font-size:11px">${h.kode}</code></td>
-        <td>${h.brand||'—'}</td>
-        <td style="font-family:var(--m)">${h.qty||1}</td>
-        <td>${fD(h.tgl)}</td>
-        <td><span class="badge ${h.status==='Stok Baru'?'bg':h.status==='Return Vendor'?'br':'bgr'}" style="font-size:10.5px">${h.status}</span></td>
-        <td>${h.teknisi||'—'}</td>
-      </tr>`).join('');
+  if (data.length === 0) {
+    tb.innerHTML = '<tr><td colspan="10"><div class="es"><i class="ti ti-bolt"></i><p>Belum ada data HE</p></div></td></tr>';
+    return;
+  }
+  tb.innerHTML = data.slice(0, 200).map(function(h, i) {
+    var isNew = h.batch_tag === 'NEW_BATCH_80';
+    var statusCls = h.tipe_transaksi==='MASUK' ? 'bg' : 'br';
+    return '<tr style="' + (isNew ? 'background:var(--rl)' : '') + '">'
+      + '<td><code style="font-size:10px">' + (h.id||'—') + '</code></td>'
+      + '<td>' + (h.tipe||'—') + '</td>'
+      + '<td><span class="badge ' + (isNew?'br':'bgr') + '" style="font-size:9px">' + (h.batch_tag||'') + '</span></td>'
+      + '<td><span class="badge ' + statusCls + '" style="font-size:10px">' + (h.tipe_transaksi||h.status||'—') + '</span></td>'
+      + '<td>' + (h.sn_unit||h.kode||'—') + '</td>'
+      + '<td style="font-family:var(--m);font-weight:600">' + (h.qty||1) + '</td>'
+      + '<td>' + (h.tgl||'—') + '</td>'
+      + '<td>' + (h.lokasi||'—') + '</td>'
+      + '<td style="font-size:11px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="' + (h.catatan||'') + '">' + (h.catatan||'—') + '</td>'
+      + '<td><button class="btn btns btn-xs" onclick="editHERecord(' + i + ')"><i class="ti ti-edit" style="font-size:11px"></i></button></td>'
+      + '</tr>';
+  }).join('');
+}
+
+function editHERecord(idx) {
+  var h = (S.he_records||[])[idx]; if(!h) return;
+  var html = '<div class="mt2" style="margin-bottom:12px">Edit HE — ' + (h.id||'') + '</div>';
+  html += '<div class="frow"><div class="fg"><label>Tipe HE</label><input class="fi" id="he-e-tipe" value="' + (h.tipe||'') + '"></div>';
+  html += '<div class="fg"><label>Batch</label><select class="fs" id="he-e-batch"><option>EXISTING</option><option>NEW_BATCH_80</option></select></div></div>';
+  html += '<div class="frow"><div class="fg"><label>Status</label><select class="fs" id="he-e-status"><option>Stok Baru</option><option>Terpakai</option><option>Proses Repair</option><option>Return Vendor</option></select></div>';
+  html += '<div class="fg"><label>Qty</label><input class="fi" id="he-e-qty" type="number" value="' + (h.qty||1) + '"></div></div>';
+  html += '<div class="frow"><div class="fg"><label>SN Unit</label><input class="fi" id="he-e-sn" value="' + (h.sn_unit||'') + '"></div>';
+  html += '<div class="fg"><label>Lokasi</label><input class="fi" id="he-e-lok" value="' + (h.lokasi||'') + '"></div></div>';
+  html += '<div class="fg"><label>Catatan</label><textarea class="fta" id="he-e-cat" style="min-height:50px">' + (h.catatan||'') + '</textarea></div>';
+  html += '<div style="text-align:right;margin-top:12px"><button class="btn btns" onclick="closeQuickEdit()">Batal</button> ';
+  html += '<button class="btn btnp" onclick="saveHEEdit(' + idx + ')"><i class="ti ti-check"></i> Simpan</button></div>';
+  showQuickEdit(html);
+  gvset('he-e-batch', h.batch_tag||'EXISTING');
+  gvset('he-e-status', h.status||'Stok Baru');
+}
+
+function saveHEEdit(idx) {
+  var h = S.he_records[idx]; if(!h) return;
+  h.tipe = gv('he-e-tipe'); h.batch_tag = gv('he-e-batch');
+  h.status = gv('he-e-status'); h.qty = parseInt(gv('he-e-qty'))||1;
+  h.sn_unit = gv('he-e-sn'); h.lokasi = gv('he-e-lok');
+  h.catatan = gv('he-e-cat');
+  sv('he_records'); closeQuickEdit(); renderHE();
+  notify('HE record diupdate','green');
 }
 
 // ============================================================
@@ -6025,5 +6096,122 @@ function renderHEFlow() {
       }).join('');
 }
 </script>
+
+<script>
+// ============================================================
+// SUPABASE FETCH ON LOGIN (pull latest data)
+// ============================================================
+function fetchFromSupabase() {
+  if (!navigator.onLine) return;
+  var tables = {
+    tickets: 'tickets',
+    he_records: 'he',
+    denali_claims: 'denali_claims',
+    orders: 'orders'
+  };
+  Object.keys(tables).forEach(function(key) {
+    fetch(SB_URL + '/rest/v1/' + tables[key] + '?limit=1000', {
+      headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'Accept': 'application/json' }
+    })
+    .then(function(r) { return r.ok ? r.json() : null; })
+    .then(function(data) {
+      if (data && data.length > 0) {
+        // Merge: Supabase data takes priority for existing records
+        var local = S[key] || [];
+        var localIds = {};
+        local.forEach(function(r) {
+          var id = r.ticket_id || r.id || '';
+          if (id) localIds[id] = r;
+        });
+        data.forEach(function(r) {
+          var id = r.ticket_id || r.id || '';
+          if (id && localIds[id]) {
+            // Update local with Supabase version (newer)
+            Object.assign(localIds[id], r);
+          } else if (id) {
+            local.push(r);
+          }
+        });
+        S[key] = local;
+        sv(key);
+      }
+    })
+    .catch(function() { /* offline or error - use local data */ });
+  });
+}
+
+// ============================================================
+// BATCH UPSERT TO SUPABASE (async, non-blocking)
+// ============================================================
+function batchPushToSupabase() {
+  if (!navigator.onLine) return;
+  var tables = {
+    tickets: {table:'tickets', idField:'ticket_id'},
+    he_records: {table:'he', idField:'id'},
+    denali_claims: {table:'denali_claims', idField:'id'},
+    orders: {table:'orders', idField:'id'},
+    maintenance: {table:'maintenance', idField:'id'},
+    ba_records: {table:'ba', idField:'id'}
+  };
+  Object.keys(tables).forEach(function(key) {
+    var config = tables[key];
+    var rows = S[key] || [];
+    if (rows.length === 0) return;
+    // Batch in chunks of 100
+    for (var i = 0; i < rows.length; i += 100) {
+      var chunk = rows.slice(i, i + 100);
+      fetch(SB_URL + '/rest/v1/' + config.table, {
+        method: 'POST',
+        headers: {
+          'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY,
+          'Content-Type': 'application/json',
+          'Prefer': 'resolution=merge-duplicates'
+        },
+        body: JSON.stringify(chunk)
+      }).catch(function() { /* silent fail */ });
+    }
+  });
+}
+</script>
 </body>
-</html>
+</html
+  // Seed HE records from HE_FLOW_DATA
+  if (typeof HE_FLOW_DATA !== 'undefined' && HE_FLOW_DATA.length > 0) {
+    var lsHE = null;
+    try { var h = localStorage.getItem('afs_he_records'); if(h) lsHE = JSON.parse(h); } catch(e){}
+    if (lsHE && lsHE.length > 0) {
+      S.he_records = lsHE;
+    } else {
+      S.he_records = HE_FLOW_DATA.map(function(h, i) {
+        return {
+          id: 'HE/' + String(i+1).padStart(3,'0'),
+          tipe: h.jenis_he || '',
+          kode: h.serial_number || '',
+          brand: 'Hambach',
+          qty: h.qty || 1,
+          tgl: h.tanggal || '',
+          status: h.tipe_transaksi === 'MASUK' ? 'Stok Baru' : 'Terpakai',
+          tiket_id: '',
+          sn_unit: h.serial_number || '',
+          teknisi: '',
+          catatan: (h.customer ? 'Customer: ' + h.customer + ' | ' : '') + (h.tipe_mesin ? 'Mesin: ' + h.tipe_mesin + ' | ' : '') + (h.keterangan || ''),
+          batch_tag: h.batch_tag || 'EXISTING',
+          tipe_transaksi: h.tipe_transaksi || '',
+          lokasi: h.lokasi || ''
+        };
+      });
+      sv('he_records');
+    }
+  }
+
+  // Seed other data from localStorage
+  var keys = ['denali_claims','ba_records','maintenance','installations','orders','stok_prl','stok_per','inventory_so','sp_tracking'];
+  keys.forEach(function(key) {
+    try {
+      var d = localStorage.getItem('afs_' + key);
+      if (d) S[key] = JSON.parse(d);
+      if (!S[key]) S[key] = [];
+    } catch(e) { S[key] = []; }
+  });
+
+>
