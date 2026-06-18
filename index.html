@@ -2564,33 +2564,79 @@ let _dashTab = 'overview';
 /* setDashTab moved to main block */
 
 function renderDash() {
-  const all = S.tickets;
-  const t = filterByPeriod(all);
-  const done   = t.filter(x => x.status === 'Done').length;
-  const open   = t.filter(x => !['Done','Cancelled'].includes(x.status)).length;
-  const sc     = t.filter(x => x.action === 'Service Center' || (x.ticket_id||'').startsWith('SC/')).length;
-  const visit  = t.filter(x => ['Visit Teknisi In House','Visit Teknisi Rekanan'].includes(x.action)).length;
-  const bali   = t.filter(x => x.action === 'Scuro Bali' || (x.ticket_id||'').startsWith('SBV/')).length;
-  const wrt    = t.filter(x => x.warranty_status === 'Warranty').length;
-  const nonW   = t.filter(x => x.warranty_status === 'Non-Warranty').length;
+  var all = S.tickets || [];
+  var t = filterByPeriod(all);
+  var done = t.filter(function(x){ return x.status==='Done'||x.status==='Closed'; });
+  var active = t.filter(function(x){ return x.status!=='Done'&&x.status!=='Closed'; });
+  var sc = t.filter(function(x){ return (x.ticket_id||'').indexOf('SC/')===0||x.action==='Service Center'; });
+  var vt = t.filter(function(x){ return (x.ticket_id||'').indexOf('VTI/')===0||(x.ticket_id||'').indexOf('VTR/')===0||x.action==='Visit Teknisi In House'||x.action==='Visit Teknisi Rekanan'; });
+  var bali = t.filter(function(x){ return (x.ticket_id||'').indexOf('SBV/')===0||x.action==='Scuro Bali Visit'; });
+  var mnt = t.filter(function(x){ return (x.ticket_id||'').indexOf('MNT/')===0||x.action==='Maintenance'; });
 
-  const setM = (id, v) => { const e = el(id); if(e) e.textContent = v; };
-  setM('d-total', t.length);
-  setM('d-done', done);
-  setM('d-open', open);
-  setM('d-sc', sc);
-  setM('d-visit', visit);
-  setM('d-bali', bali);
-  setM('d-wrt', wrt);
-  setM('d-nonw', nonW);
+  var setM = function(id, v) { var e = el(id); if(e) e.textContent = v; };
+  
+  // Main metric cards (m-xxx IDs)
+  setM('m-tot', t.length); setM('m-tsub', t.length > 0 ? (done.length + ' selesai') : '—');
+  setM('m-act', active.length); setM('m-asub', active.length > 0 ? 'Sedang berjalan' : '—');
+  setM('m-done', done.length); setM('m-dsub', done.length > 0 ? 'Periode ini' : '—');
+  setM('m-alert', 0); // alerts calculated separately
+  
+  // Activity cards
+  setM('m-sc', sc.length); setM('m-scsub', sc.filter(function(x){return x.status!=='Done';}).length + ' aktif');
+  setM('m-visit', vt.length);
+  setM('m-bali', bali.length);
+  setM('m-mnt', mnt.length);
 
-  // SLA avg
-  const slaVals = t.filter(x=>x.sla_actual).map(x => { const m = String(x.sla_actual).match(/\d+/); return m?parseInt(m[0]):0; }).filter(v=>v>0);
-  const avgSLA = slaVals.length ? (slaVals.reduce((a,b)=>a+b,0)/slaVals.length).toFixed(1) : '—';
-  setM('d-sla', avgSLA);
+  // Also try d-xxx IDs (for updateGlobalRecap compatibility)
+  setM('d-total', t.length); setM('d-active', active.length); setM('d-done', done.length);
+  setM('d-sc', sc.length); setM('d-visit', vt.length); setM('d-bali', bali.length);
 
-  // Mini trend (mini chart)
-  renderTrendDash();
+  // Recent tickets table
+  var tb = el('d-rec');
+  if (tb) {
+    var recent = t.slice(0, 8);
+    tb.innerHTML = recent.length === 0
+      ? ''
+      : recent.map(function(x) {
+          var sCls = x.status==='Done'?'bg':x.status==='In Progress'?'ba':x.status==='Closed'?'br':'bgr';
+          return '<tr><td><code style="font-size:10px">' + (x.ticket_id||'') + '</code></td>'
+            + '<td style="font-weight:500">' + (x.customer||'—') + '</td>'
+            + '<td>' + (x.brand||'') + '</td>'
+            + '<td><span class="badge ' + sCls + '" style="font-size:10px">' + (x.status||'New') + '</span></td></tr>';
+        }).join('');
+  }
+
+  // Trouble trend
+  var troubles = {};
+  t.forEach(function(x) {
+    var tr = (x.trouble||'').substring(0, 40);
+    if (tr) troubles[tr] = (troubles[tr]||0) + 1;
+  });
+  var topTr = Object.keys(troubles).map(function(k){return {n:k,c:troubles[k]};})
+    .sort(function(a,b){return b.c-a.c;}).slice(0, 5);
+  var trEl = el('d-tr');
+  if (trEl) {
+    trEl.innerHTML = topTr.map(function(t) {
+      return '<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);font-size:12px">'
+        + '<span>' + t.n + '</span><span class="badge bgr" style="font-size:10px">' + t.c + '</span></div>';
+    }).join('') || '<div style="font-size:12px;color:var(--t3)">Belum ada data</div>';
+  }
+
+  // Alerts
+  var spCritical = (S.sp_db||[]).filter(function(s){ return (s.stok||0) <= 2; }).length;
+  var overdue = active.filter(function(x) {
+    if (!x.received_date) return false;
+    var days = (new Date(TODAY) - new Date(x.received_date)) / (1000*60*60*24);
+    return days > 7;
+  }).length;
+  setM('m-alert', spCritical + overdue);
+  var alertEl = el('d-alerts');
+  if (alertEl) {
+    var alerts = [];
+    if (spCritical) alerts.push('<div style="padding:6px 8px;background:var(--rl);border-radius:var(--rs);font-size:12px;margin-bottom:4px">⚠ ' + spCritical + ' sparepart stok kritis (≤2)</div>');
+    if (overdue) alerts.push('<div style="padding:6px 8px;background:var(--al);border-radius:var(--rs);font-size:12px;margin-bottom:4px">⏰ ' + overdue + ' tiket > 7 hari belum selesai</div>');
+    alertEl.innerHTML = alerts.join('') || '<div style="font-size:12px;color:var(--green)">✅ Tidak ada alert</div>';
+  }
 }
 
 /* renderTrendDash moved to main block */
