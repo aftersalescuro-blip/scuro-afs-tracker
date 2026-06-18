@@ -1,5 +1,4 @@
-<!DOC
-    <div class="sb-item" onclick="goPage('gdrive')"><i class="ti ti-brand-google-drive"></i> GDrive Repository</div>TYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="UTF-8">
@@ -586,7 +585,9 @@ tbody tr:hover td{background:var(--s2)}
     <div class="ni" data-page="trend"><i class="ti ti-chart-line"></i> Trend</div>
     <div class="ni" data-page="kb"><i class="ti ti-books"></i> Knowledge Base</div>
     <div class="ni" data-page="report"><i class="ti ti-file-analytics"></i> Report</div>
-    <div class="sb-sec">Sistem</div>
+        <div class="sb-sec">Repository</div>
+    <div class="ni" data-page="gdrive"><i class="ti ti-brand-google-drive"></i> GDrive Repository</div>
+<div class="sb-sec">Sistem</div>
     <div class="ni" data-page="settings"><i class="ti ti-settings"></i> Pengaturan</div>
     <div class="sb-user" onclick="doLogout()">
       <div class="sb-avatar" id="sb-avatar">T</div>
@@ -2062,10 +2063,18 @@ function fCur(n) {
 }
 
 function fD(d) {
-  if (!d) return '—';
-  const [y,m,day] = String(d).split('-');
-  const mo = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'][parseInt(m)-1];
-  return `${parseInt(day)} ${mo} ${y}`;
+  if (!d || d === 'undefined' || d === 'null' || d === 'NaN' || d === '') return '—';
+  var s = String(d).trim();
+  if (s === '-' || s === '—') return '—';
+  // Handle DD/MM/YYYY format
+  if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(s)) return s;
+  // Handle YYYY-MM-DD
+  try {
+    var dt = new Date(s);
+    if (isNaN(dt.getTime())) return s.substring(0,10) || '—';
+    var months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+    return dt.getDate() + ' ' + months[dt.getMonth()] + ' ' + dt.getFullYear();
+  } catch(e) { return s.substring(0,10) || '—'; }
 }
 
 function fS(d) {
@@ -3655,8 +3664,9 @@ function renderSPDB() {
 }
 
 function formatHargaFull(n) {
-  if (!n || n === 0) return '<span style="color:var(--t3)">Rp 0</span>';
-  return 'Rp ' + Number(n).toLocaleString('id-ID');
+  if (!n || n === 0 || n === '' || isNaN(n)) return '<span style="color:var(--t3)">—</span>';
+  try { return 'Rp ' + Number(n).toLocaleString('id-ID'); }
+  catch(e) { return 'Rp ' + n; }
 }
 
 function setSPCompType(val) { SP_COMP_TYPE=val; renderSPDB(); }
@@ -4754,13 +4764,61 @@ function setKebTab(tab, btn) {
 }
 
 function renderKebijakan() {
-  const c = el('keb-content');
+  var c = el('keb-content');
   if (!c) return;
-  const tab = KEB_TAB || 'flow';
-  const map = {flow:_kebFlow,biaya:_kebBiaya,instalasi:_kebInstalasi,
+  var tab = KEB_TAB || 'flow';
+  var map = {flow:_kebFlow,biaya:_kebBiaya,instalasi:_kebInstalasi,
     maintenance:_kebMaintenance,transport:_kebTransport,bbb:_kebBBB,sop:_kebSOP,custom:_kebCustom};
-  const fn = map[tab];
-  if (fn) c.innerHTML = fn();
+  var fn = map[tab];
+  if (!fn) return;
+  // Check if admin has saved custom edits for this tab
+  var savedKey = 'afs_sop_' + tab;
+  var saved = localStorage.getItem(savedKey);
+  if (saved && tab !== 'custom') {
+    // Show saved version with edit/reset buttons
+    c.innerHTML = '<div style="display:flex;gap:6px;margin-bottom:10px;justify-content:flex-end">'
+      + '<button class="btn btns btn-sm" onclick="editSOP(\'' + tab + '\')"><i class="ti ti-edit"></i> Edit Konten SOP</button>'
+      + '<button class="btn btn-sm" style="color:var(--red);background:var(--rl);border:none;border-radius:var(--rs);cursor:pointer;padding:5px 12px;font-size:12px" onclick="resetSOP(\'' + tab + '\')">Reset ke Default</button>'
+      + '</div>' + saved;
+  } else if (tab !== 'custom') {
+    c.innerHTML = '<div style="display:flex;gap:6px;margin-bottom:10px;justify-content:flex-end">'
+      + '<button class="btn btns btn-sm" onclick="editSOP(\'' + tab + '\')"><i class="ti ti-edit"></i> Edit Konten SOP</button>'
+      + '</div>' + fn();
+  } else {
+    c.innerHTML = fn();
+  }
+}
+
+function editSOP(tab) {
+  var c = el('keb-content');
+  if (!c) return;
+  var map = {flow:_kebFlow,biaya:_kebBiaya,instalasi:_kebInstalasi,
+    maintenance:_kebMaintenance,transport:_kebTransport,bbb:_kebBBB,sop:_kebSOP};
+  var fn = map[tab];
+  var savedKey = 'afs_sop_' + tab;
+  var currentContent = localStorage.getItem(savedKey) || (fn ? fn() : '');
+  c.innerHTML = '<div style="display:flex;gap:6px;margin-bottom:10px;justify-content:flex-end">'
+    + '<button class="btn btnp btn-sm" onclick="saveSOP(\'' + tab + '\')"><i class="ti ti-check"></i> Simpan SOP</button>'
+    + '<button class="btn btns btn-sm" onclick="renderKebijakan()">Batal</button></div>'
+    + '<div id="sop-editor" contenteditable="true" style="border:2px dashed var(--blue);border-radius:var(--rl2);padding:16px;min-height:300px;outline:none;font-size:13px;line-height:1.8">'
+    + currentContent + '</div>'
+    + '<div style="font-size:11px;color:var(--t3);margin-top:6px">💡 Klik langsung di area atas untuk edit. Bisa tambah/hapus teks, ubah angka tarif, dll.</div>';
+}
+
+function saveSOP(tab) {
+  var editor = el('sop-editor');
+  if (!editor) return;
+  var content = editor.innerHTML;
+  localStorage.setItem('afs_sop_' + tab, content);
+  notify('SOP ' + tab + ' tersimpan', 'green');
+  renderKebijakan();
+}
+
+function resetSOP(tab) {
+  if (!confirm('Reset SOP ' + tab + ' ke versi default? Semua edit akan hilang.')) return;
+  localStorage.removeItem('afs_sop_' + tab);
+  notify('SOP ' + tab + ' direset ke default', 'blue');
+  renderKebijakan();
 }
 
 function _kebCard(title, badge, body) {
@@ -6417,6 +6475,112 @@ function initSupabaseRealtime() {
 // Init realtime on load
 if (typeof initSupabaseRealtime === 'function') {
   setTimeout(initSupabaseRealtime, 5000);
+}
+</script>
+
+<script>
+// ============================================================
+// GLOBAL RECAP SYNC - centralized metric updater
+// ============================================================
+function updateGlobalRecap() {
+  var tickets = S.tickets || [];
+  var period = S.currentPeriod || {};
+  
+  // Filter by current period
+  var filtered = tickets;
+  if (typeof filterByPeriod === 'function') {
+    try { filtered = filterByPeriod(tickets); } catch(e) {}
+  }
+  
+  // Dashboard metrics
+  var setM = function(id, v) { var e = el(id); if(e) e.textContent = v; };
+  var total = filtered.length;
+  var done = filtered.filter(function(t){ return t.status==='Done'||t.status==='Closed'; }).length;
+  var active = filtered.filter(function(t){ return t.status!=='Done'&&t.status!=='Closed'; }).length;
+  var sc = filtered.filter(function(t){ return (t.ticket_id||'').indexOf('SC/')===0; }).length;
+  var vti = filtered.filter(function(t){ return (t.ticket_id||'').indexOf('VTI/')===0; }).length;
+  var vtr = filtered.filter(function(t){ return (t.ticket_id||'').indexOf('VTR/')===0; }).length;
+  var bali = filtered.filter(function(t){ return (t.ticket_id||'').indexOf('SBV/')===0; }).length;
+  
+  setM('d-total', total); setM('d-active', active); setM('d-done', done);
+  setM('d-sc', sc); setM('d-visit', vti + vtr); setM('d-bali', bali);
+  
+  // HE metrics (calculated)
+  if (typeof calculateHEStats === 'function') calculateHEStats();
+  
+  // SP reorder count
+  var spCritical = (S.sp_db||[]).filter(function(s){ return (s.stok||0) <= 2; }).length;
+  setM('d-sp-alert', spCritical);
+}
+
+// Hook into sv() to trigger recap on every save
+var _origSV = sv;
+sv = function(key) {
+  _origSV(key);
+  // Debounced global recap update
+  clearTimeout(window._recapTimer);
+  window._recapTimer = setTimeout(updateGlobalRecap, 500);
+};
+
+// ============================================================
+// GARANSI ON-DEMAND SEARCH (performance: only search with 3+ chars)
+// ============================================================
+var _origRenderGaransi = renderGaransi;
+renderGaransi = function() {
+  var q = (gv('gar-srch')||'').trim();
+  var db = S.warranty_db || [];
+  
+  // Metrics (always show, no filter needed)
+  var setM = function(id,v){ var e=el(id); if(e) e.textContent=v; };
+  var active = 0;
+  for (var i=0; i<Math.min(db.length, 5000); i++) { if(isWarrantyActive(db[i])) active++; }
+  setM('g-total', db.length); setM('g-active', active);
+  setM('g-expired', db.length - active);
+  
+  var tb = el('gar-tb');
+  var pgEl = el('gar-pagination');
+  if (!tb) return;
+  
+  if (db.length > 5000 && q.length < 3) {
+    // Large dataset: require 3+ chars to search
+    tb.innerHTML = '<tr><td colspan="8"><div class="es"><i class="ti ti-search"></i>'
+      + '<p>Database berisi <strong>' + db.length.toLocaleString() + '</strong> kartu garansi</p>'
+      + '<p style="font-size:12px;color:var(--t3)">Ketik minimal 3 karakter di kolom pencarian untuk menampilkan data</p>'
+      + '</div></td></tr>';
+    if (pgEl) pgEl.innerHTML = '';
+    return;
+  }
+  
+  // If search query exists or small dataset, use original render with pagination
+  _origRenderGaransi();
+};
+
+// ============================================================
+// TICKET CLASSIFICATION (for unclassified Mekari tickets)
+// ============================================================
+function classifyTicket(ticketId, newAction) {
+  var t = S.tickets.find(function(tk){ return tk.ticket_id === ticketId; });
+  if (!t) return;
+  
+  var actionMap = {
+    'SC': 'Service Center', 'VTI': 'Visit Teknisi In House',
+    'VTR': 'Visit Teknisi Rekanan', 'SBV': 'Scuro Bali Visit',
+    'SPO': 'Inquiry Sparepart', 'INS': 'Instalasi'
+  };
+  
+  t.action = actionMap[newAction] || newAction;
+  
+  // Re-generate ticket_id with new prefix
+  var mm = (t.received_date||TODAY).substring(5,7);
+  var existing = S.tickets.filter(function(tk){
+    return (tk.ticket_id||'').indexOf(newAction + '/' + mm + '/') === 0;
+  }).length;
+  t.ticket_id = newAction + '/' + mm + '/' + String(existing + 1).padStart(3, '0');
+  
+  sv('tickets');
+  updateGlobalRecap();
+  renderPage('tiket');
+  notify('Tiket diklasifikasikan ke ' + actionMap[newAction], 'green');
 }
 </script>
 </body>
