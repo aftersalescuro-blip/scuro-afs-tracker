@@ -1229,13 +1229,30 @@ tbody tr:hover td{background:var(--s2)}
 
 <!-- GDRIVE REPOSITORY -->
 <div class="page hide-period" id="page-gdrive">
-  <div class="sfr" style="margin-bottom:10px">
-    <div class="sbox"><i class="ti ti-search" style="color:var(--t3);font-size:14px"></i><input type="text" id="gd-srch" placeholder="Cari folder, link..." oninput="renderGDrive()"></div>
-    <button class="btn btnp btn-sm" onclick="addGDriveLink()"><i class="ti ti-plus"></i> Tambah Link</button>
+  <div class="card" style="margin-bottom:12px">
+    <div class="ch"><div class="ct"><i class="ti ti-plus" style="font-size:13px;color:var(--green)"></i> Tambah Data Drive</div></div>
+    <div class="frow">
+      <div class="fg" style="flex:2"><label>Nama File / Folder *</label><input class="fi" id="gd-i-nama" type="text" placeholder="Contoh: BAST Claim Denali"></div>
+      <div class="fg" style="flex:2"><label>Link Google Drive *</label><input class="fi" id="gd-i-link" type="url" placeholder="https://drive.google.com/..."></div>
+      <div class="fg" style="flex:1"><label>Jenis Data</label>
+        <select class="fs" id="gd-i-jenis">
+          <option value="Claim">Claim</option><option value="Legal">Legal</option>
+          <option value="SOP">SOP</option><option value="Invoice">Invoice</option>
+          <option value="Service">Service</option><option value="QC">QC</option>
+          <option value="Instalasi">Instalasi</option><option value="Sparepart">Sparepart</option>
+          <option value="Foto">Foto</option><option value="Lainnya">Lainnya</option>
+        </select>
+      </div>
+    </div>
+    <div style="margin-top:8px"><button class="btn btnp btn-sm" onclick="addGDriveInline()"><i class="ti ti-plus"></i> Tambah Data Drive</button></div>
+  </div>
+  <div class="sfr" style="margin-bottom:8px">
+    <div class="sbox"><i class="ti ti-search" style="color:var(--t3);font-size:14px"></i><input type="text" id="gd-srch" placeholder="Cari nama file, link, jenis..." oninput="renderGDrive()"></div>
+    <span id="gd-count" style="font-size:12px;color:var(--t3)"></span>
   </div>
   <div class="tw"><table>
-    <thead><tr><th>Nama Folder</th><th>Kategori</th><th>Link</th><th>Tgl Update</th><th>Aksi</th></tr></thead>
-    <tbody id="gd-tb"><tr><td colspan="5"><div class="es"><p>Belum ada link GDrive</p></div></td></tr></tbody>
+    <thead><tr><th>Nama File / Folder</th><th>Jenis</th><th>Link</th><th>Tgl Ditambah</th><th>Aksi</th></tr></thead>
+    <tbody id="gd-tb"><tr><td colspan="5"><div class="es"><i class="ti ti-brand-google-drive"></i><p>Belum ada data drive</p></div></td></tr></tbody>
   </table></div>
 </div>
 
@@ -6333,55 +6350,70 @@ function batchPushToSupabase() {
 function renderGDrive() {
   var data = S.gdrive_links || [];
   var q = (gv('gd-srch')||'').toLowerCase();
-  if (q) data = data.filter(function(d){ return [d.nama,d.kategori,d.link].some(function(v){return (v||'').toLowerCase().indexOf(q)>=0}); });
+  if (q) data = data.filter(function(d){ return [d.nama,d.jenis,d.link].some(function(v){return (v||'').toLowerCase().indexOf(q)>=0}); });
+  var cnt = el('gd-count'); if(cnt) cnt.textContent = data.length + ' file tersimpan';
   var tb = el('gd-tb');
   if (!tb) return;
   tb.innerHTML = data.length === 0
-    ? '<tr><td colspan="5"><div class="es"><i class="ti ti-brand-google-drive"></i><p>Belum ada link GDrive tersimpan</p></div></td></tr>'
+    ? '<tr><td colspan="5"><div class="es"><i class="ti ti-brand-google-drive"></i><p>Belum ada data drive. Gunakan form di atas untuk menambah.</p></div></td></tr>'
     : data.map(function(d, i) {
         return '<tr>'
           + '<td style="font-weight:500">' + (d.nama||'—') + '</td>'
-          + '<td><span class="badge bgr" style="font-size:10px">' + (d.kategori||'—') + '</span></td>'
-          + '<td><a href="' + (d.link||'#') + '" target="_blank" style="color:var(--blue);font-size:11.5px">' + (d.link||'').substring(0,40) + '...</a></td>'
-          + '<td style="font-size:10.5px">' + (d.tgl_update||'—') + '</td>'
-          + '<td><button class="btn btns btn-xs" onclick="editGDrive(' + i + ')"><i class="ti ti-edit" style="font-size:11px"></i></button>'
-          + ' <button class="btn btn-xs" style="color:var(--red);background:var(--rl);border:none;border-radius:var(--rs);cursor:pointer;padding:4px 7px" onclick="deleteGDrive(' + i + ')">✕</button></td>'
-          + '</tr>';
+          + '<td><span class="badge bgr" style="font-size:10px">' + (d.jenis||d.kategori||'—') + '</span></td>'
+          + '<td><a href="' + (d.link||'#') + '" target="_blank" style="color:var(--blue);font-size:11.5px;word-break:break-all">' + (d.link||'').substring(0,50) + (d.link&&d.link.length>50?'...':'') + '</a></td>'
+          + '<td style="font-size:10.5px">' + fD(d.tgl_update||d.tgl||'') + '</td>'
+          + '<td style="white-space:nowrap">'
+          + '<button class="btn btns btn-xs" onclick="editGDriveRow(' + i + ')" title="Edit"><i class="ti ti-edit" style="font-size:11px"></i></button> '
+          + '<button class="btn btn-xs" style="color:var(--red);background:var(--rl);border:none;border-radius:var(--rs);cursor:pointer;padding:4px 7px" onclick="deleteGDrive(' + i + ')" title="Hapus">\ud83d\uddd1\ufe0f</button>'
+          + '</td></tr>';
       }).join('');
 }
 
-function addGDriveLink() {
-  var h = '<div class="mt2" style="margin-bottom:12px">Tambah Link GDrive</div>';
-  h += '<div class="fg"><label>Nama Folder/Dokumen *</label><input class="fi" id="gd-e-nama" type="text" placeholder="Foto Service Juni 2026"></div>';
-  h += '<div class="fg"><label>Kategori</label><select class="fs" id="gd-e-kat"><option>Service</option><option>QC</option><option>Instalasi</option><option>Klaim Denali</option><option>Berita Acara</option><option>Invoice</option><option>Sparepart</option><option>Lainnya</option></select></div>';
-  h += '<div class="fg"><label>Link Google Drive *</label><input class="fi" id="gd-e-link" type="url" placeholder="https://drive.google.com/drive/folders/..."></div>';
-  h += '<div style="text-align:right;margin-top:12px"><button class="btn btns" onclick="closeQuickEdit()">Batal</button> ';
-  h += '<button class="btn btnp" onclick="saveGDrive(-1)"><i class="ti ti-check"></i> Simpan</button></div>';
-  showQuickEdit(h);
+function addGDriveInline() {
+  var nama = gv('gd-i-nama');
+  var link = gv('gd-i-link');
+  var jenis = gv('gd-i-jenis');
+  if (!nama) { notify('Isi Nama File / Folder','red'); el('gd-i-nama').focus(); return; }
+  if (!link) { notify('Isi Link Google Drive','red'); el('gd-i-link').focus(); return; }
+  if (!link.startsWith('http')) { notify('Link harus berupa URL (https://...)','red'); return; }
+  if (!S.gdrive_links) S.gdrive_links = [];
+  S.gdrive_links.unshift({
+    nama: nama, link: link, jenis: jenis||'Lainnya',
+    tgl_update: TODAY, updated_by: CU ? CU.name : ''
+  });
+  sv('gdrive_links');
+  // Clear form
+  gvset('gd-i-nama',''); gvset('gd-i-link','');
+  renderGDrive();
+  notify('Data drive "' + nama + '" ditambahkan','green');
 }
 
-function editGDrive(idx) {
+function editGDriveRow(idx) {
   var d = (S.gdrive_links||[])[idx]; if(!d) return;
-  var h = '<div class="mt2" style="margin-bottom:12px">Edit Link GDrive</div>';
-  h += '<div class="fg"><label>Nama</label><input class="fi" id="gd-e-nama" value="' + (d.nama||'') + '"></div>';
-  h += '<div class="fg"><label>Kategori</label><select class="fs" id="gd-e-kat"><option>Service</option><option>QC</option><option>Instalasi</option><option>Klaim Denali</option><option>Berita Acara</option><option>Invoice</option><option>Sparepart</option><option>Lainnya</option></select></div>';
+  var h = '<div class="mt2" style="margin-bottom:12px">Edit Data Drive</div>';
+  h += '<div class="fg"><label>Nama File / Folder</label><input class="fi" id="gd-e-nama" value="' + (d.nama||'') + '"></div>';
+  h += '<div class="fg"><label>Jenis</label><select class="fs" id="gd-e-jenis"><option>Claim</option><option>Legal</option><option>SOP</option><option>Invoice</option><option>Service</option><option>QC</option><option>Instalasi</option><option>Sparepart</option><option>Foto</option><option>Lainnya</option></select></div>';
   h += '<div class="fg"><label>Link</label><input class="fi" id="gd-e-link" value="' + (d.link||'') + '"></div>';
   h += '<div style="text-align:right;margin-top:12px"><button class="btn btns" onclick="closeQuickEdit()">Batal</button> ';
-  h += '<button class="btn btnp" onclick="saveGDrive(' + idx + ')"><i class="ti ti-check"></i> Simpan</button></div>';
+  h += '<button class="btn btnp" onclick="saveGDriveRow(' + idx + ')"><i class="ti ti-check"></i> Simpan</button></div>';
   showQuickEdit(h);
-  gvset('gd-e-kat', d.kategori||'Service');
+  gvset('gd-e-jenis', d.jenis||d.kategori||'Lainnya');
 }
 
-function saveGDrive(idx) {
-  var nama = gv('gd-e-nama'); var link = gv('gd-e-link');
-  if (!nama || !link) { notify('Isi Nama dan Link','red'); return; }
-  var entry = {nama:nama, kategori:gv('gd-e-kat'), link:link, tgl_update:TODAY, updated_by:CU?CU.name:''};
-  if (!S.gdrive_links) S.gdrive_links = [];
-  if (idx >= 0 && S.gdrive_links[idx]) Object.assign(S.gdrive_links[idx], entry);
-  else S.gdrive_links.unshift(entry);
+function saveGDriveRow(idx) {
+  var d = S.gdrive_links[idx]; if(!d) return;
+  d.nama = gv('gd-e-nama'); d.link = gv('gd-e-link');
+  d.jenis = gv('gd-e-jenis'); d.tgl_update = TODAY;
+  d.updated_by = CU ? CU.name : '';
   sv('gdrive_links'); closeQuickEdit(); renderGDrive();
-  notify('Link GDrive tersimpan','green');
+  notify('Data drive diupdate','green');
 }
+
+/* addGDriveLink replaced by new version */
+
+/* editGDrive replaced by new version */
+
+/* saveGDrive replaced by new version */
 
 function deleteGDrive(idx) {
   if (!confirm('Hapus link ini?')) return;
