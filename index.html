@@ -6823,6 +6823,77 @@ function saveRetur() {
   _rtEditIdx = -1;
 }
 </script>
+
+<script>
+// ============================================================
+// DATA PROTECTION: Anti-hilang saat revisi index.html
+// ============================================================
+var PERSIST_KEYS = ['tickets','denali_claims','retur_ops','he_records','orders','maintenance',
+  'installations','ba_records','qc_records','sp_db','stok_prl','stok_per',
+  'inventory_so','sp_tracking','gdrive_links','warranty_db'];
+
+function saveToCloudAndLocal(key) {
+  // 1. Save to localStorage (instant, offline-safe)
+  try {
+    var data = S[key];
+    if (!data) return;
+    // Skip huge datasets for localStorage (warranty_db = 15k records)
+    if (key === 'warranty_db' && data.length > 5000) return;
+    localStorage.setItem('afs_' + key, JSON.stringify(data));
+  } catch(e) { console.warn('localStorage save failed for ' + key, e); }
+  
+  // 2. Push to Supabase (async, best-effort)
+  if (typeof pushToSupabase === 'function') pushToSupabase(key);
+}
+
+function loadAllPersistedData() {
+  // Read ALL persisted data from localStorage on startup
+  // This ensures data survives index.html file replacements
+  var loaded = 0;
+  PERSIST_KEYS.forEach(function(key) {
+    try {
+      var raw = localStorage.getItem('afs_' + key);
+      if (raw) {
+        var parsed = JSON.parse(raw);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          S[key] = parsed;
+          loaded++;
+        }
+      }
+    } catch(e) {}
+  });
+  
+  // Also load SOP edits
+  ['flow','biaya','instalasi','maintenance','transport','bbb','sop'].forEach(function(tab) {
+    var saved = localStorage.getItem('afs_sop_' + tab);
+    if (saved) loaded++;
+  });
+  
+  // Load custom kebijakan
+  try {
+    var ck = localStorage.getItem('afs_custom_kebijakan');
+    if (ck) loaded++;
+  } catch(e) {}
+  
+  console.log('[DataProtection] Loaded ' + loaded + ' datasets from localStorage');
+  return loaded;
+}
+
+// Hook: ensure sv() always uses saveToCloudAndLocal
+var _origSV2 = typeof sv === 'function' ? sv : null;
+if (_origSV2) {
+  sv = function(key) {
+    _origSV2(key);
+    // Additional cloud sync
+    saveToCloudAndLocal(key);
+  };
+}
+
+// Auto-load on DOMContentLoaded (runs before login)
+document.addEventListener('DOMContentLoaded', function() {
+  loadAllPersistedData();
+});
+</script>
 </body>
 </html
   // Seed HE records from HE_FLOW_DATA
