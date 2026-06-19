@@ -1184,77 +1184,68 @@ tbody tr:hover td{background:var(--s2)}
 
 <!-- KLAIM DENALI -->
 <div class="page hide-period" id="page-denali">
-  <div class="g4" style="margin-bottom:10px">
-    <div class="mc"><div class="ml">Total Klaim</div><div class="mv" id="dn-1">0</div></div>
-    <div class="mc alert"><div class="ml">Menunggu Review</div><div class="mv" id="dn-2">0</div></div>
-    <div class="mc ok"><div class="ml">Approved</div><div class="mv" id="dn-3">0</div></div>
-    <div class="mc"><div class="ml">Ditolak</div><div class="mv" id="dn-4">0</div></div>
+  <div class="stabs" style="margin-bottom:10px">
+    <div class="stab active" onclick="setDenaliTab('klaim',this)">Klaim Kerusakan (CCL)</div>
+    <div class="stab" onclick="setDenaliTab('retur',this)">Retur Operasional</div>
   </div>
-  <div class="card">
-    <div class="sfr">
-      <div class="sbox"><i class="ti ti-search" style="color:var(--t3);font-size:14px"></i><input type="text" id="dn-srch" placeholder="Cari ID klaim, customer, produk..." oninput="renderDenali()"></div>
-      <select class="fs" id="dn-month" onchange="renderDenali()" style="width:auto;padding:6px 10px;font-size:12px">
-        <option value="all">Semua Bulan</option>
-        <option value="2026-01">Jan 2026</option><option value="2026-02">Feb 2026</option>
-        <option value="2026-03">Mar 2026</option><option value="2026-04">Apr 2026</option>
-        <option value="2026-05">Mei 2026</option><option value="2026-06" selected>Jun 2026</option>
-        <option value="2026-07">Jul 2026</option><option value="2026-08">Agu 2026</option>
-        <option value="2026-09">Sep 2026</option><option value="2026-10">Okt 2026</option>
-        <option value="2026-11">Nov 2026</option><option value="2026-12">Des 2026</option>
-      </select>
-      <button class="btn btnp btn-sm" onclick="openDenaliKlaim()"><i class="ti ti-plus"></i> Input Klaim</button>
-    </div>
-    <div class="chips" id="dn-chips">
-      <div class="chip active" onclick="setDnF('all',this)">Semua</div>
-      <div class="chip" onclick="setDnF('Menunggu Review',this)">Menunggu Review</div>
-      <div class="chip" onclick="setDnF('Approved',this)">Approved</div>
-      <div class="chip" onclick="setDnF('Ditolak',this)">Ditolak</div>
-      <div class="chip" onclick="setDnF('Syrup',this)">Syrup</div>
-      <div class="chip" onclick="setDnF('Powder',this)">Powder</div>
-    </div>
-  </div>
-  <div class="card" style="margin-top:8px;padding:0;overflow:hidden">
-    <div class="tw"><table>
-      <thead><tr><th>ID</th><th>Tgl</th><th>Customer</th><th>PT Asal</th><th>No. HP</th><th>Produk</th><th>Jumlah</th><th>Kerusakan</th><th>Foto</th><th>Resi</th><th>Dikirim</th><th>Diterima</th><th>Status</th><th>PIC</th><th></th></tr></thead>
-      <tbody id="dn-tb"><tr><td colspan="15"><div class="es"><i class="ti ti-package-import"></i><p>Belum ada klaim</p></div></td></tr></tbody>
-    </table></div>
-  </div>
-</div>
 
+  <!-- SUB-TAB: KLAIM KERUSAKAN -->
+  <div id="dn-tab-klaim">
+    <div class="g4" style="margin-bottom:10px">
+      <div class="mc"><div class="ml">Total Klaim</div><div class="mv" id="dn-1">0</div></div>
+      <div class="mc alert"><div class="ml">Belum CCL</div><div class="mv" id="dn-2">0</div></div>
+      <div class="mc ok"><div class="ml">Selesai CCL</div><div class="mv" id="dn-3">0</div></div>
+      <div class="mc"><div class="ml">Diterima WH</div><div class="mv" id="dn-4">0</div></div>
+    </div>
+    <div class="card">
+      <div class="sfr">
+        <div class="sbox"><i class="ti ti-search" style="color:var(--t3);font-size:14px"></i><input type="text" id="dn-srch" placeholder="Cari klaim..." oninput="renderDenali()"></div>
+        <select class="fs" id="dn-month" onchange="renderDenali()" style="width:auto;padding:6px 10px;font-size:12px">
+          <option value="all">Semua Bulan</option>
+          <option value="2026-01">Jan 2026</option><option value="2026-02">Feb</option><option value="2026-03">Mar</option>
+          <option value="2026-04">Apr</option><option value="2026-05">Mei</option><option value="2026-06" selected>Jun 2026</option>
+          <option value="2026-07">Jul</option><option value="2026-08">Agu</option><option value="2026-09">Sep</option>
+          <option value="2026-10">Okt</option><option value="2026-11">Nov</option><option value="2026-12">Des</option>
+        </select>
+        <button class="btn btns btn-sm" onclick="exportDenaliExcel()"><i class="ti ti-download"></i> Export Excel</button>
+        <button class="btn btnp btn-sm" onclick="openDenaliKlaim()"><i class="ti ti-plus"></i> Input Klaim</button>
+      </div>
+      <div id="dn-chips" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px"></div>
+    </div>
+    <div class="card" style="margin-top:8px">
+      <div class="tw"><table>
+        <thead><tr><th>ID</th><th>Tgl</th><th>Customer</th><th>PT</th><th>Produk</th><th>Qty</th><th>Kerusakan</th><th>Kurir</th><th>Tgl Follow Up</th><th>Tgl WH</th><th>No. CCL</th><th>Status CCL</th><th>PIC</th><th>Aksi</th></tr></thead>
+        <tbody id="dn-tb"><tr><td colspan="14"><div class="es"><i class="ti ti-package-import"></i><p>Belum ada klaim</p></div></td></tr></tbody>
+      </table></div>
+    </div>
+  </div>
 
+  <!-- SUB-TAB: RETUR OPERASIONAL -->
+  <div id="dn-tab-retur" style="display:none">
+    <div class="g4" style="margin-bottom:10px">
+      <div class="mc"><div class="ml">Total Retur</div><div class="mv" id="rt-1">0</div></div>
+      <div class="mc alert"><div class="ml">Belum Retur</div><div class="mv" id="rt-2">0</div></div>
+      <div class="mc ok"><div class="ml">Selesai Retur</div><div class="mv" id="rt-3">0</div></div>
+      <div class="mc"><div class="ml">Bulan Ini</div><div class="mv" id="rt-4">0</div></div>
+    </div>
+    <div class="card">
+      <div class="sfr">
+        <div class="sbox"><i class="ti ti-search" style="color:var(--t3);font-size:14px"></i><input type="text" id="rt-srch" placeholder="Cari retur, invoice..." oninput="renderRetur()"></div>
+        <button class="btn btnp btn-sm" onclick="openReturInput()"><i class="ti ti-plus"></i> Input Retur</button>
+      </div>
+    </div>
+    <div class="card" style="margin-top:8px">
+      <div class="tw"><table>
+        <thead><tr><th>ID Retur</th><th>Tgl Masuk</th><th>Customer/Toko</th><th>No. Faktur</th><th>Alasan</th><th>Barang & Qty</th><th>PIC Gudang</th><th>Status</th><th>Aksi</th></tr></thead>
+        <tbody id="rt-tb"><tr><td colspan="9"><div class="es"><i class="ti ti-arrow-back-up"></i><p>Belum ada data retur</p></div></td></tr></tbody>
+      </table></div>
+    </div>
+  </div>
+
+</div><!-- /page-denali -->
 </div><!-- /ca -->
 </div><!-- /main -->
 </div><!-- /app -->
-
-
-<!-- GDRIVE REPOSITORY -->
-<div class="page hide-period" id="page-gdrive">
-  <div class="card" style="margin-bottom:12px">
-    <div class="ch"><div class="ct"><i class="ti ti-plus" style="font-size:13px;color:var(--green)"></i> Tambah Data Drive</div></div>
-    <div class="frow">
-      <div class="fg" style="flex:2"><label>Nama File / Folder *</label><input class="fi" id="gd-i-nama" type="text" placeholder="Contoh: BAST Claim Denali"></div>
-      <div class="fg" style="flex:2"><label>Link Google Drive *</label><input class="fi" id="gd-i-link" type="url" placeholder="https://drive.google.com/..."></div>
-      <div class="fg" style="flex:1"><label>Jenis Data</label>
-        <select class="fs" id="gd-i-jenis">
-          <option value="Claim">Claim</option><option value="Legal">Legal</option>
-          <option value="SOP">SOP</option><option value="Invoice">Invoice</option>
-          <option value="Service">Service</option><option value="QC">QC</option>
-          <option value="Instalasi">Instalasi</option><option value="Sparepart">Sparepart</option>
-          <option value="Foto">Foto</option><option value="Lainnya">Lainnya</option>
-        </select>
-      </div>
-    </div>
-    <div style="margin-top:8px"><button class="btn btnp btn-sm" onclick="addGDriveInline()"><i class="ti ti-plus"></i> Tambah Data Drive</button></div>
-  </div>
-  <div class="sfr" style="margin-bottom:8px">
-    <div class="sbox"><i class="ti ti-search" style="color:var(--t3);font-size:14px"></i><input type="text" id="gd-srch" placeholder="Cari nama file, link, jenis..." oninput="renderGDrive()"></div>
-    <span id="gd-count" style="font-size:12px;color:var(--t3)"></span>
-  </div>
-  <div class="tw"><table>
-    <thead><tr><th>Nama File / Folder</th><th>Jenis</th><th>Link</th><th>Tgl Ditambah</th><th>Aksi</th></tr></thead>
-    <tbody id="gd-tb"><tr><td colspan="5"><div class="es"><i class="ti ti-brand-google-drive"></i><p>Belum ada data drive</p></div></td></tr></tbody>
-  </table></div>
-</div>
 
 <!-- MODAL TIKET BARU (WIZARD) -->
 <div class="ov" id="ov-tiket">
@@ -1697,6 +1688,30 @@ tbody tr:hover td{background:var(--s2)}
         <div class="fg"><label>Tgl Barang Dikirim Customer</label><input class="fi" id="dn-tgl-kirim" type="date"></div>
         <div class="fg"><label>Tgl Barang Diterima</label><input class="fi" id="dn-tgl-terima" type="date"></div>
       </div>
+      <div class="frow">
+        <div class="fg"><label>Tgl Follow Up</label><input class="fi" id="dn-tgl-followup" type="date"></div>
+        <div class="fg"><label>Tgl Diterima Warehouse</label><input class="fi" id="dn-tgl-warehouse" type="date"></div>
+      </div>
+      <div class="fg"><label>Opsi Pengiriman</label>
+        <select class="fs" id="dn-opsi-kirim">
+          <option value="">Pilih...</option>
+          <option value="Kurir Warehouse">Kurir Warehouse</option>
+          <option value="JNE">JNE</option><option value="J&T">J&amp;T</option>
+          <option value="SiCepat">SiCepat</option><option value="GoSend">GoSend</option>
+          <option value="Grab Express">Grab Express</option><option value="Lainnya">Lainnya</option>
+        </select>
+      </div>
+      <div class="divider"></div>
+      <div class="section-hdr">Tracking CCL Accurate</div>
+      <div class="frow">
+        <div class="fg"><label>No. Dokumen CCL</label><input class="fi" id="dn-ccl-no" type="text" placeholder="Input nomor CCL..."></div>
+        <div class="fg"><label>Status CCL</label>
+          <select class="fs" id="dn-ccl-status">
+            <option value="BELUM CCL">🔴 BELUM CCL</option>
+            <option value="SELESAI CCL">🟢 SELESAI CCL</option>
+          </select>
+        </div>
+      </div>
       <div id="dn-eligibility" style="margin-top:8px"></div>
     </div>
     <div class="mf">
@@ -1971,6 +1986,39 @@ tbody tr:hover td{background:var(--s2)}
   </div>
 </div>
 
+
+<!-- MODAL RETUR OPERASIONAL -->
+<div class="ov" id="ov-retur">
+  <div class="modal modal-lg">
+    <div class="mh"><div class="mt2" id="rt-modal-ttl">Input Retur Operasional</div><button class="mc2" onclick="closeOv('ov-retur')"><i class="ti ti-x"></i></button></div>
+    <div class="mb">
+      <div class="frow">
+        <div class="fg"><label>Tgl Fisik Masuk Gudang *</label><input class="fi" id="rt-tgl" type="date"></div>
+        <div class="fg"><label>Customer / Toko *</label><input class="fi" id="rt-cust" type="text"></div>
+      </div>
+      <div class="frow">
+        <div class="fg"><label>No. Faktur / Invoice Accurate</label><input class="fi" id="rt-faktur" type="text" placeholder="INV-2026-xxxxx"></div>
+        <div class="fg"><label>Alasan Retur *</label>
+          <select class="fs" id="rt-alasan">
+            <option value="">Pilih...</option>
+            <option>Salah Rasa</option><option>Alamat Tidak Lengkap</option>
+            <option>Kendala Pengiriman / Gagal Kirim</option><option>Expired</option><option>Lainnya</option>
+          </select>
+        </div>
+      </div>
+      <div class="frow">
+        <div class="fg"><label>Detail Barang & Qty *</label><input class="fi" id="rt-barang" type="text" placeholder="Syrup Caramel 2 btl, Powder Matcha 1 pack"></div>
+        <div class="fg"><label>PIC Gudang</label><input class="fi" id="rt-pic" type="text" placeholder="Nama penerima di gudang"></div>
+      </div>
+      <div class="fg"><label>Catatan</label><textarea class="fta" id="rt-catatan" style="min-height:50px"></textarea></div>
+    </div>
+    <div class="mf">
+      <button class="btn btns" onclick="closeOv('ov-retur')">Batal</button>
+      <button class="btn btnp" onclick="saveRetur()"><i class="ti ti-check"></i> Simpan</button>
+    </div>
+  </div>
+</div>
+
 <!-- TOAST & MOBILE ELEMENTS -->
 <div id="toastNotif" style="position:fixed;bottom:80px;right:16px;z-index:9999;display:flex;flex-direction:column;gap:6px;max-width:300px;pointer-events:none"></div>
 <div class="sb-overlay" id="sb-overlay" onclick="closeSidebar()"></div>
@@ -2141,7 +2189,8 @@ function loadFromStorage() {
   // Load SO inventory
   try { const iso = localStorage.getItem('afs_inventory_so'); S.inventory_so = iso ? JSON.parse(iso) : [];
   try { var spt = localStorage.getItem('afs_sp_tracking'); S.sp_tracking = spt ? JSON.parse(spt) : [];
-  try { var gdl = localStorage.getItem('afs_gdrive_links'); S.gdrive_links = gdl ? JSON.parse(gdl) : []; } catch(e) { S.gdrive_links = []; } } catch(e) { S.sp_tracking = []; } } catch(e) { S.inventory_so = []; }
+  try { var gdl = localStorage.getItem('afs_gdrive_links'); S.gdrive_links = gdl ? JSON.parse(gdl) : [];
+  try { var rto = localStorage.getItem('afs_retur_ops'); S.retur_ops = rto ? JSON.parse(rto) : []; } catch(e) { S.retur_ops = []; } } catch(e) { S.gdrive_links = []; } } catch(e) { S.sp_tracking = []; } } catch(e) { S.inventory_so = []; }
   // Warranty DB async
   setTimeout(() => {
     try {
@@ -2328,7 +2377,8 @@ const SB_TABLE_MAP = {
   denali_claims: 'denali_claims', stok_prl: 'stok_prl', stok_per: 'stok_per',
   orders: 'orders',
   inventory_so: 'inventory_so',
-  sp_tracking: 'sp_tracking'
+  sp_tracking: 'sp_tracking',
+  retur_ops: 'retur_ops'
 };
 let _sbPushTimers = {};
 
@@ -2582,77 +2632,72 @@ let _dashTab = 'overview';
 
 function renderDash() {
   var all = S.tickets || [];
-  var t = filterByPeriod(all);
-  var done = t.filter(function(x){ return x.status==='Done'||x.status==='Closed'; });
-  var active = t.filter(function(x){ return x.status!=='Done'&&x.status!=='Closed'; });
-  var sc = t.filter(function(x){ return (x.ticket_id||'').indexOf('SC/')===0||x.action==='Service Center'; });
-  var vt = t.filter(function(x){ return (x.ticket_id||'').indexOf('VTI/')===0||(x.ticket_id||'').indexOf('VTR/')===0||x.action==='Visit Teknisi In House'||x.action==='Visit Teknisi Rekanan'; });
-  var bali = t.filter(function(x){ return (x.ticket_id||'').indexOf('SBV/')===0||x.action==='Scuro Bali Visit'; });
-  var mnt = t.filter(function(x){ return (x.ticket_id||'').indexOf('MNT/')===0||x.action==='Maintenance'; });
+  var t = typeof filterByPeriod==='function' ? filterByPeriod(all) : all;
+  var done = t.filter(function(x){return x.status==='Done'||x.status==='Closed';});
+  var active = t.filter(function(x){return x.status!=='Done'&&x.status!=='Closed';});
+  var sc = t.filter(function(x){return (x.ticket_id||'').indexOf('SC/')===0||x.action==='Service Center';});
+  var vt = t.filter(function(x){return (x.ticket_id||'').indexOf('VTI/')===0||(x.ticket_id||'').indexOf('VTR/')===0||x.action==='Visit Teknisi In House'||x.action==='Visit Teknisi Rekanan';});
+  var bali = t.filter(function(x){return (x.ticket_id||'').indexOf('SBV/')===0||x.action==='Scuro Bali Visit';});
+  var mnt = t.filter(function(x){return (x.ticket_id||'').indexOf('MNT/')===0||x.action==='Maintenance';});
+  var setM=function(id,v){var e=el(id);if(e)e.textContent=v;};
 
-  var setM = function(id, v) { var e = el(id); if(e) e.textContent = v; };
-  
-  // Main metric cards (m-xxx IDs)
-  setM('m-tot', t.length); setM('m-tsub', t.length > 0 ? (done.length + ' selesai') : '—');
-  setM('m-act', active.length); setM('m-asub', active.length > 0 ? 'Sedang berjalan' : '—');
-  setM('m-done', done.length); setM('m-dsub', done.length > 0 ? 'Periode ini' : '—');
-  setM('m-alert', 0); // alerts calculated separately
-  
-  // Activity cards
-  setM('m-sc', sc.length); setM('m-scsub', sc.filter(function(x){return x.status!=='Done';}).length + ' aktif');
-  setM('m-visit', vt.length);
-  setM('m-bali', bali.length);
-  setM('m-mnt', mnt.length);
+  // Metric cards
+  setM('m-tot',t.length); setM('m-tsub',done.length+' selesai, '+active.length+' aktif');
+  setM('m-act',active.length); setM('m-asub',active.length>0?'Sedang berjalan':'—');
+  setM('m-done',done.length); setM('m-dsub',t.length>0?Math.round(done.length/t.length*100)+'% completion':'—');
+  var spCrit=(S.sp_db||[]).filter(function(s){return(s.stok||0)<=2;}).length;
+  var overdue=active.filter(function(x){if(!x.received_date)return false;return(new Date(TODAY)-new Date(x.received_date))/(86400000)>7;}).length;
+  setM('m-alert',spCrit+overdue); 
+  var alertSub=el('m-asub2');if(alertSub)alertSub.textContent=spCrit+overdue>0?'Perlu perhatian':'Semua aman';
+  setM('m-sc',sc.length); setM('m-scsub',sc.filter(function(x){return x.status!=='Done';}).length+' aktif');
+  setM('m-visit',vt.length); setM('m-bali',bali.length); setM('m-mnt',mnt.length);
 
-  // Also try d-xxx IDs (for updateGlobalRecap compatibility)
-  setM('d-total', t.length); setM('d-active', active.length); setM('d-done', done.length);
-  setM('d-sc', sc.length); setM('d-visit', vt.length); setM('d-bali', bali.length);
-
-  // Recent tickets table
-  var tb = el('d-rec');
-  if (tb) {
-    var recent = t.slice(0, 8);
-    tb.innerHTML = recent.length === 0
-      ? ''
-      : recent.map(function(x) {
-          var sCls = x.status==='Done'?'bg':x.status==='In Progress'?'ba':x.status==='Closed'?'br':'bgr';
-          return '<tr><td><code style="font-size:10px">' + (x.ticket_id||'') + '</code></td>'
-            + '<td style="font-weight:500">' + (x.customer||'—') + '</td>'
-            + '<td>' + (x.brand||'') + '</td>'
-            + '<td><span class="badge ' + sCls + '" style="font-size:10px">' + (x.status||'New') + '</span></td></tr>';
-        }).join('');
+  // Tiket Aktif Terbaru - proper table list
+  var recEl=el('d-rec');
+  if(recEl){
+    var recent=active.slice(0,10);
+    recEl.innerHTML=recent.length===0
+      ?'<div style="padding:20px;text-align:center;color:var(--t3);font-size:12px">Tidak ada tiket aktif periode ini</div>'
+      :'<div style="max-height:300px;overflow-y:auto"><table style="width:100%"><tbody>'
+        +recent.map(function(x){
+          var sCls=x.status==='In Progress'?'ba':x.status==='Diagnosa'?'ba':x.status==='New'?'bgr':'bg';
+          var days=x.received_date?Math.round((new Date(TODAY)-new Date(x.received_date))/86400000):0;
+          var overCls=days>7?'color:var(--red);font-weight:600':'color:var(--t3)';
+          return '<tr style="border-bottom:1px solid var(--border)">'
+            +'<td style="padding:8px 6px;width:100px"><code style="font-size:10px;background:var(--s2);padding:2px 6px;border-radius:4px">'+(x.ticket_id||'—')+'</code></td>'
+            +'<td style="padding:8px 6px"><div style="font-size:12.5px;font-weight:500">'+(x.customer||'—')+'</div><div style="font-size:10.5px;color:var(--t3)">'+(x.brand||'')+' '+(x.unit_type||'')+'</div></td>'
+            +'<td style="padding:8px 6px;text-align:right"><span class="badge '+sCls+'" style="font-size:10px;padding:3px 8px">'+(x.status||'New')+'</span>'
+            +'<div style="font-size:10px;margin-top:2px;'+overCls+'">'+days+' hari</div></td></tr>';
+        }).join('')+'</tbody></table></div>';
   }
 
-  // Trouble trend
-  var troubles = {};
-  t.forEach(function(x) {
-    var tr = (x.trouble||'').substring(0, 40);
-    if (tr) troubles[tr] = (troubles[tr]||0) + 1;
-  });
-  var topTr = Object.keys(troubles).map(function(k){return {n:k,c:troubles[k]};})
-    .sort(function(a,b){return b.c-a.c;}).slice(0, 5);
-  var trEl = el('d-tr');
-  if (trEl) {
-    trEl.innerHTML = topTr.map(function(t) {
-      return '<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);font-size:12px">'
-        + '<span>' + t.n + '</span><span class="badge bgr" style="font-size:10px">' + t.c + '</span></div>';
-    }).join('') || '<div style="font-size:12px;color:var(--t3)">Belum ada data</div>';
+  // Trend Trouble - horizontal bars
+  var trEl=el('d-tr');
+  if(trEl){
+    var troubles={};
+    t.forEach(function(x){var tr=(x.trouble||'').substring(0,45);if(tr)troubles[tr]=(troubles[tr]||0)+1;});
+    var topTr=Object.keys(troubles).map(function(k){return{n:k,c:troubles[k]};}).sort(function(a,b){return b.c-a.c;}).slice(0,6);
+    var maxC=topTr.length>0?topTr[0].c:1;
+    trEl.innerHTML=topTr.length===0
+      ?'<div style="padding:16px;text-align:center;color:var(--t3);font-size:12px">Belum ada data trouble</div>'
+      :topTr.map(function(tr){
+        var pct=Math.round(tr.c/maxC*100);
+        return '<div style="margin-bottom:8px">'
+          +'<div style="display:flex;justify-content:space-between;font-size:11.5px;margin-bottom:3px">'
+          +'<span style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="'+tr.n+'">'+tr.n+'</span>'
+          +'<span style="font-weight:600;color:var(--green);flex-shrink:0">'+tr.c+'</span></div>'
+          +'<div style="height:6px;background:var(--s2);border-radius:99px;overflow:hidden">'
+          +'<div style="height:100%;width:'+pct+'%;background:var(--green);border-radius:99px;transition:width .3s"></div></div></div>';
+      }).join('');
   }
 
-  // Alerts
-  var spCritical = (S.sp_db||[]).filter(function(s){ return (s.stok||0) <= 2; }).length;
-  var overdue = active.filter(function(x) {
-    if (!x.received_date) return false;
-    var days = (new Date(TODAY) - new Date(x.received_date)) / (1000*60*60*24);
-    return days > 7;
-  }).length;
-  setM('m-alert', spCritical + overdue);
-  var alertEl = el('d-alerts');
-  if (alertEl) {
-    var alerts = [];
-    if (spCritical) alerts.push('<div style="padding:6px 8px;background:var(--rl);border-radius:var(--rs);font-size:12px;margin-bottom:4px">⚠ ' + spCritical + ' sparepart stok kritis (≤2)</div>');
-    if (overdue) alerts.push('<div style="padding:6px 8px;background:var(--al);border-radius:var(--rs);font-size:12px;margin-bottom:4px">⏰ ' + overdue + ' tiket > 7 hari belum selesai</div>');
-    alertEl.innerHTML = alerts.join('') || '<div style="font-size:12px;color:var(--green)">✅ Tidak ada alert</div>';
+  // Alerts section
+  var alertEl=el('d-alerts');
+  if(alertEl){
+    var alerts=[];
+    if(spCrit)alerts.push('<div style="padding:8px 10px;background:var(--rl);border-radius:var(--rs);font-size:12px;margin-bottom:4px;display:flex;justify-content:space-between"><span>\u26a0 '+spCrit+' sparepart stok kritis</span><button class="btn btns btn-xs" onclick="goPage(\'sp-stok\')">Lihat</button></div>');
+    if(overdue)alerts.push('<div style="padding:8px 10px;background:var(--al);border-radius:var(--rs);font-size:12px;margin-bottom:4px">\u23f0 '+overdue+' tiket > 7 hari belum selesai</div>');
+    alertEl.innerHTML=alerts.join('')||'<div style="padding:12px;text-align:center;font-size:12px;color:var(--green)">\u2705 Semua aman — tidak ada alert</div>';
   }
 }
 
@@ -5246,7 +5291,7 @@ function setDnF(f, btn) {
 function openDenaliKlaim() {
   _dnEditId = null;
   ['dn-cust','dn-phone','dn-buytgl','dn-kode-prod','dn-ket','dn-produk','dn-media','dn-pt',
-   'dn-resi','dn-ekspedisi','dn-tgl-kirim','dn-tgl-terima','dn-exp'].forEach(id=>gvset(id,''));
+   'dn-resi','dn-ekspedisi','dn-tgl-kirim','dn-tgl-terima','dn-tgl-followup','dn-tgl-warehouse','dn-opsi-kirim','dn-ccl-no','dn-exp'].forEach(id=>gvset(id,''));
   gvset('dn-qty','1');
   const w = el('dn-deadline-warn'); if(w) w.style.display='none';
   const e = el('dn-eligibility'); if(e) e.innerHTML='';
@@ -5291,6 +5336,9 @@ function saveDenaliKlaim() {
     keterangan: gv('dn-ket'), media_link: gv('dn-media'),
     pic: gv('dn-pic'),
     resi: gv('dn-resi'), ekspedisi: gv('dn-ekspedisi'),
+    tgl_followup: gv('dn-tgl-followup'), tgl_warehouse: gv('dn-tgl-warehouse'),
+    opsi_kirim: gv('dn-opsi-kirim','dn-ccl-no'),
+    ccl_no: gv('dn-ccl-no'), ccl_status: gv('dn-ccl-status'),
     tgl_kirim: gv('dn-tgl-kirim'), tgl_terima: gv('dn-tgl-terima'),
   };
   if (!S.denali_claims) S.denali_claims = [];
@@ -5315,43 +5363,39 @@ function saveDenaliKlaim() {
 }
 
 function renderDenali() {
-  const data = S.denali_claims||[];
-  const q = (gv('dn-srch')||'').toLowerCase();
-  const month = el('dn-month') ? gv('dn-month') : 'all';
-  let f = data;
-  if (month && month !== 'all') f = f.filter(d => (d.tgl_klaim||'').startsWith(month));
-  if (q) f = f.filter(d => [d.id,d.customer,d.produk,d.kategori,d.resi].some(v=>(v||'').toLowerCase().includes(q)));
-  if (_dnFilter!=='all') {
-    if (['Menunggu Review','Approved','Ditolak'].includes(_dnFilter)) f=f.filter(d=>d.status===_dnFilter);
-    else f=f.filter(d=>d.kategori===_dnFilter);
-  }
-  const setM=(id,v)=>{ const e=el(id); if(e) e.textContent=v; };
-  setM('dn-1', f.length); setM('dn-2', f.filter(d=>d.status==='Menunggu Review').length);
-  setM('dn-3', f.filter(d=>d.status==='Approved').length);
-  setM('dn-4', f.filter(d=>d.status==='Ditolak').length);
-  const tb = el('dn-tb');
-  if (!tb) return;
-  const lnk = (url,label) => url ? '<a href="'+url+'" target="_blank" style="color:var(--blue);font-size:11px">'+label+'</a>' : '<span style="color:var(--t3)">—</span>';
-  tb.innerHTML = f.length===0
-    ? '<tr><td colspan="13"><div class="es"><i class="ti ti-package-import"></i><p>Belum ada klaim periode ini</p></div></td></tr>'
-    : f.map(d=>'<tr>'
-        + '<td><code style="font-size:11px">'+d.id+'</code></td>'
-        + '<td>'+fD(d.tgl_klaim)+'</td>'
-        + '<td style="font-weight:600">'+(d.customer||'—')+'</td>'
-        + '<td><span class="badge bgr" style="font-size:10px">'+(d.pt_asal||'—')+'</span></td>'
-        + '<td style="font-size:11px">'+(d.phone||'—')+'</td>'
-        + '<td>'+(d.kategori||'')+' '+(d.produk||'—')+'</td>'
-        + '<td style="font-family:var(--m)">'+(d.qty||1)+' '+(d.satuan||'')+'</td>'
-        + '<td style="max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="'+(d.kerusakan||'')+(d.keterangan?' — '+d.keterangan:'')+'">'+(d.kerusakan||'—')+'</td>'
-        + '<td>'+lnk(d.media_link,'📷 Foto')+'</td>'
-        + '<td>'+(d.resi ? '<span style="font-family:var(--m);font-size:11px">'+d.resi+'</span>'+(d.ekspedisi?'<div style="font-size:10px;color:var(--t3)">'+d.ekspedisi+'</div>':'') : '—')+'</td>'
-        + '<td>'+(d.tgl_kirim?fD(d.tgl_kirim):'—')+'</td>'
-        + '<td>'+(d.tgl_terima?'<span style="color:var(--green)">'+fD(d.tgl_terima)+'</span>':'—')+'</td>'
-        + '<td><span class="badge '+(d.status==='Approved'?'bg':d.status==='Ditolak'?'br':'bgr')+'" style="font-size:10.5px">'+d.status+'</span>'+(d.alasan?'<div style="font-size:10px;color:var(--t3);max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="'+d.alasan+'">'+d.alasan+'</div>':'')+'</td>'
-        + '<td>'+(d.pic||'—')+'</td>'
-        + '<td style="white-space:nowrap"><button class="btn btns btn-xs" onclick="editDenali(\''+d.id+'\')" title="Edit"><i class="ti ti-edit" style="font-size:11px"></i></button>'
-        + (CU&&CU.role!=='admin'?'':' <button class="btn btns btn-xs" onclick="putuskanDenali(\''+d.id+'\')" title="Review">✓</button>')
-        + '</td></tr>').join('');
+  var data = S.denali_claims||[];
+  var q = (gv('dn-srch')||'').toLowerCase();
+  var month = el('dn-month') ? gv('dn-month') : 'all';
+  var f = data;
+  if (month && month !== 'all') f = f.filter(function(d){return (d.tgl_klaim||'').indexOf(month)>=0;});
+  if (q) f = f.filter(function(d){return [d.id,d.customer,d.produk,d.ccl_no].some(function(v){return (v||'').toLowerCase().indexOf(q)>=0;});});
+  var setM=function(id,v){var e=el(id);if(e)e.textContent=v;};
+  setM('dn-1',f.length);
+  setM('dn-2',f.filter(function(d){return !d.ccl_status||d.ccl_status==='BELUM CCL';}).length);
+  setM('dn-3',f.filter(function(d){return d.ccl_status==='SELESAI CCL';}).length);
+  setM('dn-4',f.filter(function(d){return !!d.tgl_warehouse;}).length);
+  var tb=el('dn-tb'); if(!tb) return;
+  tb.innerHTML=f.length===0
+    ?'<tr><td colspan="14"><div class="es"><i class="ti ti-package-import"></i><p>Belum ada klaim kerusakan</p></div></td></tr>'
+    :f.map(function(d){
+      var cclBadge=d.ccl_status==='SELESAI CCL'?'bg':'br';
+      return '<tr>'
+        +'<td><code style="font-size:10px">'+d.id+'</code></td>'
+        +'<td>'+fD(d.tgl_klaim)+'</td>'
+        +'<td style="font-weight:500">'+( d.customer||'')+'</td>'
+        +'<td><span class="badge bgr" style="font-size:9px">'+(d.pt_asal||'—')+'</span></td>'
+        +'<td>'+(d.kategori||'')+' '+(d.produk||'')+'</td>'
+        +'<td style="font-family:var(--m)">'+(d.qty||1)+'</td>'
+        +'<td style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="'+(d.kerusakan||'')+'">'+(d.kerusakan||'—')+'</td>'
+        +'<td>'+(d.opsi_kirim||d.ekspedisi||'—')+'</td>'
+        +'<td>'+fD(d.tgl_followup)+'</td>'
+        +'<td>'+fD(d.tgl_warehouse)+'</td>'
+        +'<td style="font-family:var(--m);font-size:10.5px">'+(d.ccl_no||'—')+'</td>'
+        +'<td><span class="badge '+cclBadge+'" style="font-size:10px">'+(d.ccl_status||'BELUM CCL')+'</span></td>'
+        +'<td>'+(d.pic||'—')+'</td>'
+        +'<td><button class="btn btns btn-xs" onclick="editDenali(\''+d.id+'\')"><i class="ti ti-edit" style="font-size:11px"></i></button></td>'
+        +'</tr>';
+    }).join('');
 }
 
 let _dnEditId = null;
@@ -5368,6 +5412,7 @@ function editDenali(id) {
   set('dn-media',d.media_link); set('dn-pic',d.pic);
   set('dn-resi',d.resi); set('dn-ekspedisi',d.ekspedisi);
   set('dn-tgl-kirim',d.tgl_kirim); set('dn-tgl-terima',d.tgl_terima);
+  set('dn-tgl-followup',d.tgl_followup); set('dn-tgl-warehouse',d.tgl_warehouse); set('dn-opsi-kirim','dn-ccl-no',d.opsi_kirim);
   const ttl = el('dn-ttl'); if(ttl) ttl.textContent = 'Edit Klaim — ' + id;
   updDnDeadline();
   openOv('ov-denali');
@@ -5593,74 +5638,7 @@ function scheduleSyncToSheets() {
   }, 5000);
 }
 
-async function doSyncGSheets() {
-  const spreadsheetId = gv('gsheet-id');
-  if (!spreadsheetId || !_gsheetToken) { notify('Belum login Google atau Spreadsheet ID kosong','red'); return; }
-  const token = _gsheetToken.token;
-  const btn = el('gs-sync-btn'); if(btn) btn.disabled=true;
-  const prog = el('sync-progress'); if(prog) prog.style.display='block';
-  const msg = el('sync-progress-msg'); const bar = el('sync-progress-bar');
-  let step = 0; const total = 5;
-  const upd = (m,p) => { if(msg) msg.textContent=m; if(bar) bar.style.width=(p*100)+'%'; };
-
-  try {
-    const doSheet = async (sheetName, rows) => {
-      const res = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${sheetName}!A:A?valueRenderOption=UNFORMATTED_VALUE`,{headers:{Authorization:'Bearer '+token}}).then(r=>r.json());
-      const existRows = res.values?.length||1;
-      if (existRows > 1) {
-        await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${sheetName}!A2:ZZ${existRows}:clear`,{method:'POST',headers:{Authorization:'Bearer '+token,'Content-Type':'application/json'},body:'{}'});
-      }
-      if (rows.length > 0) {
-        await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${sheetName}!A2:ZZ?valueInputOption=USER_ENTERED`,{method:'PUT',headers:{Authorization:'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify({values:rows})});
-      }
-    };
-
-    if (el('gs-tickets')?.checked) {
-      upd('Sync All Tiket...', (++step)/total);
-      var tRows = function(arr){ return arr.map(function(t){return [t.ticket_id,t.received_date,t.tgl_drop_visit,t.customer,t.phone,t.brand,t.unit_type,t.serial_number,t.warranty_status,t.trouble,t.action,t.teknisi,t.status,t.sla_actual,t.biaya_service,t.biaya_transport,t.biaya_sp,t.invoice||''];}); };
-      await doSheet('All Tiket', tRows(S.tickets));
-      upd('Sync Service Center...', (++step)/total);
-      await doSheet('Service Center', tRows(S.tickets.filter(function(t){return t.action==='Service Center'||(t.ticket_id||'').indexOf('SC/')===0;})));
-      upd('Sync Visit In-House...', (++step)/total);
-      await doSheet('Visit In-House', tRows(S.tickets.filter(function(t){return t.action==='Visit Teknisi In House'||(t.ticket_id||'').indexOf('VTI/')===0;})));
-      upd('Sync Visit Rekanan...', (++step)/total);
-      await doSheet('Visit Rekanan', tRows(S.tickets.filter(function(t){return t.action==='Visit Teknisi Rekanan'||(t.ticket_id||'').indexOf('VTR/')===0;})));
-      upd('Sync Scuro Bali...', (++step)/total);
-      await doSheet('Scuro Bali', tRows(S.tickets.filter(function(t){return t.action==='Scuro Bali'||t.action==='Scuro Bali Visit'||(t.ticket_id||'').indexOf('SBV/')===0;})));
-    }
-    if (el('gs-maint')?.checked) {
-      upd('Sync maintenance...', (++step)/total);
-      const rows = S.maintenance.map(m=>[m.id,m.serial_number,m.customer,m.brand,m.unit_type,m.program_type,m.m1_date]);
-      await doSheet('Maintenance', rows);
-    }
-    if (el('gs-qc')?.checked) {
-      upd('Sync QC...', (++step)/total);
-      const rows = S.qc_records.map(q=>[q.id,q.tanggal,q.week,q.serial_number,q.unit_type,q.brand,q.teknisi,q.status,q.tujuan,q.catatan]);
-      await doSheet('QC Stok', rows);
-    }
-    if (el('gs-ba')?.checked) {
-      upd('Sync BA...', (++step)/total);
-      const rows = (S.ba_records||[]).map(b=>[b.id,b.tanggal,b.customer,b.brand,b.serial_number,b.nilai,b.status,b.teknisi]);
-      await doSheet('Berita Acara', rows);
-    }
-    if (el('gs-denali')?.checked) {
-      upd('Sync Klaim Denali...', (++step)/total);
-      const rows = (S.denali_claims||[]).map(d=>[d.id,d.tgl_klaim,d.customer,d.tipe_customer,d.kategori,d.produk,d.qty,d.satuan,d.kerusakan,d.keterangan,d.media_link,d.resi,d.ekspedisi,d.tgl_kirim,d.tgl_terima,d.status,d.alasan,d.pic]);
-      await doSheet('Klaim Denali', rows);
-    }
-
-    upd('Selesai!', 1);
-    const result = el('sync-result');
-    if (result) result.innerHTML=`<div class="finf" style="border-left-color:var(--green)">✅ Sync berhasil — ${new Date().toLocaleTimeString('id-ID')}</div>`;
-    notify('Sync ke Google Sheets berhasil!','green');
-  } catch(err) {
-    upd('Error: '+err.message, 0);
-    notify('Sync gagal: '+err.message,'red');
-  } finally {
-    if(btn) btn.disabled=false;
-    setTimeout(()=>{ if(prog) prog.style.display='none'; }, 3000);
-  }
-}
+/* old doSyncGSheets removed - using hybrid sync */
 
 // ============================================================
 // INIT ON LOAD
@@ -6659,6 +6637,190 @@ function classifyTicket(ticketId, newAction) {
   updateGlobalRecap();
   renderPage('tiket');
   notify('Tiket diklasifikasikan ke ' + actionMap[newAction], 'green');
+}
+</script>
+
+<script>
+// ============================================================
+// DENALI EXCEL EXPORT
+// ============================================================
+function exportDenaliExcel() {
+  if (typeof XLSX === 'undefined') { notify('SheetJS belum loaded. Refresh halaman.','red'); return; }
+  var data = S.denali_claims || [];
+  if (data.length === 0) { notify('Tidak ada data klaim untuk di-export','red'); return; }
+  var headers = ['ID Klaim','Tgl Klaim','Customer','PT Asal','No. HP','Tipe Customer',
+    'Kategori','Produk','Qty','Satuan','Kerusakan','Keterangan',
+    'Link Foto','Resi','Ekspedisi','Opsi Kirim',
+    'Tgl Kirim','Tgl Terima','Tgl Follow Up','Tgl Warehouse',
+    'Status','Alasan','PIC'];
+  var rows = data.map(function(d) {
+    return [d.id,d.tgl_klaim,d.customer,d.pt_asal||'',d.phone,d.tipe_customer,
+      d.kategori,d.produk,d.qty,d.satuan,d.kerusakan,d.keterangan,
+      d.media_link,d.resi,d.ekspedisi,d.opsi_kirim||'',
+      d.tgl_kirim,d.tgl_terima,d.tgl_followup||'',d.tgl_warehouse||'',
+      d.status,d.alasan,d.pic];
+  });
+  var ws = XLSX.utils.aoa_to_sheet([headers].concat(rows));
+  var wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Klaim Denali');
+  XLSX.writeFile(wb, 'Klaim_Denali_' + TODAY + '.xlsx');
+  notify('Excel exported: ' + data.length + ' klaim', 'green');
+}
+
+// ============================================================
+// GOOGLE SHEETS HYBRID SYNC (API + CSV fallback)
+// ============================================================
+var _origDoSync = typeof doSyncGSheets === 'function' ? doSyncGSheets : null;
+
+async function doSyncGSheets() {
+  var ssid = gv('gsheet-id');
+  if (!ssid) { notify('Masukkan Spreadsheet ID dulu','red'); return; }
+  
+  // Try OAuth API first
+  if (typeof gapi !== 'undefined' && GS_TOKEN) {
+    try {
+      if (_origDoSync) { await _origDoSync(); return; }
+    } catch(e) {
+      console.log('OAuth sync failed, trying CSV fallback:', e.message);
+      notify('OAuth gagal, mencoba CSV fallback...','blue');
+    }
+  }
+  
+  // CSV Fallback - export from public sheets
+  try {
+    var csvUrl = 'https://docs.google.com/spreadsheets/d/' + ssid + '/export?format=csv';
+    notify('Sync via CSV fallback...','blue');
+    var response = await fetch(csvUrl);
+    if (!response.ok) throw new Error('HTTP ' + response.status);
+    var csvText = await response.text();
+    
+    // Parse CSV
+    var rows = parseCSV(csvText);
+    if (rows.length > 1) {
+      notify('CSV berhasil diambil: ' + (rows.length-1) + ' baris data', 'green');
+      // Store as reference
+      S.sheets_csv_data = rows;
+      sv('sheets_csv_data');
+    }
+    
+    // Now push local data to sheets (write direction)
+    // This requires OAuth - if not available, just notify
+    if (!GS_TOKEN) {
+      notify('Data berhasil dibaca dari Sheets. Untuk menulis balik, login Google dulu.','blue');
+    }
+  } catch(e) {
+    notify('Sync gagal: ' + e.message + '. Pastikan Spreadsheet bersifat publik (view) untuk CSV fallback.','red');
+  }
+}
+
+function parseCSV(text) {
+  var rows = [];
+  var lines = text.split(String.fromCharCode(10));
+  for (var i = 0; i < lines.length; i++) {
+    var line = lines[i].replace(String.fromCharCode(13),'').trim();
+    if (!line) continue;
+    var cells = []; var inQ = false; var cell = '';
+    for (var j = 0; j < line.length; j++) {
+      var ch = line[j];
+      if (ch === '"') inQ = !inQ;
+      else if (ch === ',' && !inQ) { cells.push(cell); cell = ''; }
+      else cell += ch;
+    }
+    cells.push(cell); rows.push(cells);
+  }
+  return rows;
+}
+</script>
+
+<script>
+// ============================================================
+// DENALI SUB-TABS
+// ============================================================
+function setDenaliTab(tab, btn) {
+  var stabs = document.querySelectorAll('#page-denali .stabs .stab');
+  stabs.forEach(function(b){ b.classList.remove('active'); });
+  if (btn) btn.classList.add('active');
+  el('dn-tab-klaim').style.display = tab === 'klaim' ? 'block' : 'none';
+  el('dn-tab-retur').style.display = tab === 'retur' ? 'block' : 'none';
+  if (tab === 'klaim') renderDenali();
+  if (tab === 'retur') renderRetur();
+}
+
+// ============================================================
+// RETUR OPERASIONAL
+// ============================================================
+var _rtEditIdx = -1;
+
+function renderRetur() {
+  var data = S.retur_ops || [];
+  var q = (gv('rt-srch')||'').toLowerCase();
+  if (q) data = data.filter(function(r){ return [r.id,r.customer,r.faktur,r.barang].some(function(v){return (v||'').toLowerCase().indexOf(q)>=0;}); });
+  var setM = function(id,v){ var e=el(id); if(e) e.textContent=v; };
+  var all = S.retur_ops || [];
+  setM('rt-1', all.length);
+  setM('rt-2', all.filter(function(r){return !r.status_retur||r.status_retur==='BELUM RETUR';}).length);
+  setM('rt-3', all.filter(function(r){return r.status_retur==='SELESAI RETUR';}).length);
+  setM('rt-4', all.filter(function(r){return (r.tgl_masuk||'').indexOf(TODAY.substring(0,7))>=0;}).length);
+  var tb = el('rt-tb'); if(!tb) return;
+  tb.innerHTML = data.length === 0
+    ? '<tr><td colspan="9"><div class="es"><i class="ti ti-arrow-back-up"></i><p>Belum ada data retur</p></div></td></tr>'
+    : data.map(function(r, i) {
+        var sBadge = r.status_retur==='SELESAI RETUR' ? 'bg' : 'br';
+        return '<tr>'
+          + '<td><code style="font-size:10px">' + (r.id||'') + '</code></td>'
+          + '<td>' + fD(r.tgl_masuk) + '</td>'
+          + '<td style="font-weight:500">' + (r.customer||'—') + '</td>'
+          + '<td style="font-family:var(--m);font-size:10.5px">' + (r.faktur||'—') + '</td>'
+          + '<td><span class="badge bgr" style="font-size:10px">' + (r.alasan||'—') + '</span></td>'
+          + '<td>' + (r.barang||'—') + '</td>'
+          + '<td>' + (r.pic_gudang||'—') + '</td>'
+          + '<td><span class="badge ' + sBadge + '" style="font-size:10px">' + (r.status_retur||'BELUM RETUR') + '</span></td>'
+          + '<td><button class="btn btns btn-xs" onclick="editRetur(' + i + ')"><i class="ti ti-edit" style="font-size:11px"></i></button></td>'
+          + '</tr>';
+      }).join('');
+}
+
+function openReturInput() {
+  _rtEditIdx = -1;
+  var ttl = el('rt-modal-ttl'); if(ttl) ttl.textContent = 'Input Retur Operasional';
+  ['rt-tgl','rt-cust','rt-faktur','rt-barang','rt-pic','rt-catatan'].forEach(function(id){ gvset(id,''); });
+  gvset('rt-tgl', TODAY);
+  openOv('ov-retur');
+}
+
+function editRetur(idx) {
+  var r = (S.retur_ops||[])[idx]; if(!r) return;
+  _rtEditIdx = idx;
+  var ttl = el('rt-modal-ttl'); if(ttl) ttl.textContent = 'Edit Retur — ' + r.id;
+  gvset('rt-tgl', r.tgl_masuk); gvset('rt-cust', r.customer);
+  gvset('rt-faktur', r.faktur); gvset('rt-alasan', r.alasan);
+  gvset('rt-barang', r.barang); gvset('rt-pic', r.pic_gudang);
+  gvset('rt-catatan', r.catatan);
+  openOv('ov-retur');
+}
+
+function saveRetur() {
+  var cust = gv('rt-cust'); var barang = gv('rt-barang');
+  if (!cust || !barang) { notify('Isi Customer dan Detail Barang','red'); return; }
+  var entry = {
+    tgl_masuk: gv('rt-tgl')||TODAY, customer: cust,
+    faktur: gv('rt-faktur'), alasan: gv('rt-alasan'),
+    barang: barang, pic_gudang: gv('rt-pic'),
+    catatan: gv('rt-catatan'), status_retur: 'BELUM RETUR',
+    created_by: CU?CU.name:'', created_at: TODAY
+  };
+  if (!S.retur_ops) S.retur_ops = [];
+  if (_rtEditIdx >= 0 && S.retur_ops[_rtEditIdx]) {
+    Object.assign(S.retur_ops[_rtEditIdx], entry);
+    notify('Retur diupdate','green');
+  } else {
+    var mm = TODAY.substring(5,7);
+    entry.id = 'RTR/' + mm + '/' + String(S.retur_ops.length+1).padStart(3,'0');
+    S.retur_ops.unshift(entry);
+    notify('Retur ' + entry.id + ' tersimpan','green');
+  }
+  sv('retur_ops'); closeOv('ov-retur'); renderRetur();
+  _rtEditIdx = -1;
 }
 </script>
 </body>
