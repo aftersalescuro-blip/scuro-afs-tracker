@@ -1,217 +1,536 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Scuro Group — Aftersales Tracker Cloud Pro v13</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel=\"stylesheet\">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aftersales Operations Tracker — Pro v14</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/tailwindcss@4"></script>
-
-<style>
-  :root {
-    --bg: #F7F6F3; --surface: #FFF; --border: #E4E0D8;
-    --text: #1A1917; --t2: #6B6760; --green: #3B6D11;
-    --amber: #854F0B; --red: #A32D2D; --blue: #185FA5;
-  }
-  body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg); color: var(--text); }
-  .mono { font-family: 'DM+Mono', monospace; }
-</style>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .nav-btn.active { background-color: #1e293b; color: white; border-color: #1e293b; }
+    </style>
 </head>
-<body class="min-h-screen flex flex-col">
+<body class="bg-slate-50 text-slate-800 min-h-screen pb-12">
 
-<header class="bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center sticky top-0 z-50">
-  <div class="flex items-center gap-3">
-    <div class="bg-amber-800 text-white p-2 rounded-lg font-bold text-xl tracking-wider">SG</div>
-    <div>
-      <h1 class="text-lg font-bold tracking-tight">Aftersales Operations Tracker</h1>
-      <p class="text-xs text-gray-500">Enterprise Cloud Database Engine — Pro v13</p>
-    </div>
-  </div>
-  <div id="cloud-status-badge" class="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold bg-gray-100 text-gray-600 transition-all duration-300">
-    <span class="w-2 h-2 rounded-full bg-gray-400 animate-pulse"></span> Memeriksa Jaringan...
-  </div>
-</header>
-
-<div class="flex flex-1">
-  <aside class="w-64 bg-white border-r border-gray-200 p-4 flex flex-col gap-1 shrink-0">
-    <p class="text-[10px] font-bold text-gray-400 px-3 uppercase tracking-wider mb-2">Main Menu</p>
-    <button onclick="switchTab('dashboard')" id="btn-dashboard" class="nav-btn flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium w-full text-left bg-gray-100 text-gray-900"><i class="ti ti-layout-dashboard text-lg"></i> Dashboard</button>
-    <button onclick="switchTab('tickets')" id="btn-tickets" class="nav-btn flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium w-full text-left text-gray-600 hover:bg-gray-50"><i class="ti ti-ticket text-lg"></i> Tiket & CRM <span id="badge-unclassified-count" class="ml-auto bg-amber-100 text-amber-800 text-xs px-2 py-0.5 rounded-full font-bold hidden">0</span></button>
-    <button onclick="switchTab('denali')" id="btn-denali" class="nav-btn flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium w-full text-left text-gray-600 hover:bg-gray-50"><i class="ti ti-coffee text-lg"></i> Klaim & Retur Denali</button>
-    <button onclick="switchTab('gdrive')" id="btn-gdrive" class="nav-btn flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium w-full text-left text-gray-600 hover:bg-gray-50"><i class="ti ti-folder text-lg"></i> 📂 GDrive Repository</button>
-    <button onclick="switchTab('sop')" id="btn-sop" class="nav-btn flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium w-full text-left text-gray-600 hover:bg-gray-50"><i class="ti ti-book text-lg"></i> Kebijakan & SOP</button>
-  </aside>
-
-  <main class="flex-1 p-6 overflow-y-auto max-w-7xl mx-auto w-full">
-
-    <section id="tab-dashboard" class="tab-content flex flex-col gap-6">
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-xs">
-          <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Belum Terklasifikasi</p>
-          <p id="dash-unclassified" class="text-3xl font-bold mt-2 text-amber-600">0</p>
-        </div>
-        <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-xs">
-          <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Service Center</p>
-          <p id="dash-sc" class="text-3xl font-bold mt-2 text-blue-600">0</p>
-        </div>
-        <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-xs">
-          <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Visit In-House</p>
-          <p id="dash-visit" class="text-3xl font-bold mt-2 text-purple-600">0</p>
-        </div>
-        <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-xs">
-          <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Scuro Bali</p>
-          <p id="dash-bali" class="text-3xl font-bold mt-2 text-green-600">0</p>
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div class="lg:col-span-2 bg-white p-6 rounded-xl border border-gray-200 shadow-xs flex flex-col gap-4">
-          <h3 class="text-sm font-bold text-gray-800 flex items-center gap-2"><i class="ti ti-list text-lg text-amber-700"></i> Antrean Tiket Aktif Terbaru</h3>
-          <div class="max-h-[320px] overflow-y-auto border border-gray-100 rounded-lg">
-            <table class="w-full text-left text-xs border-collapse">
-              <thead>
-                <tr class="bg-gray-50 border-b border-gray-100 text-gray-500 font-semibold uppercase tracking-wider">
-                  <th class="p-3">ID Tiket</th>
-                  <th class="p-3">Customer</th>
-                  <th class="p-3">Klasifikasi</th>
-                  <th class="p-3">Status</th>
-                </tr>
-              </thead>
-              <tbody id="dash-ticket-list-body" class="divide-y divide-gray-50">
-                <tr><td colspan="4" class="p-4 text-center text-gray-400">Memuat data dari cloud...</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-xs flex flex-col gap-4">
-          <h3 class="text-sm font-bold text-gray-800 flex items-center gap-2"><i class="ti ti-chart-bar text-lg text-blue-700"></i> Ringkasan Trend Masalah</h3>
-          <div id="dash-trend-box" class="flex flex-col gap-3">
-            <p class="text-xs text-gray-400 text-center py-8">Menghitung statistik...</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section id="tab-tickets" class="tab-content hidden flex flex-col gap-6">
-      <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-xs flex flex-col gap-4">
-        <div class="flex justify-between items-center gap-4 flex-wrap">
-          <div>
-            <h2 class="text-md font-bold text-gray-800">Manajemen Klasifikasi Tiket CRM</h2>
-            <p class="text-xs text-gray-500">Impor data terintegrasi Mekari untuk didistribusikan ke divisi logistik & teknisi.</p>
-          </div>
-          <button onclick="triggerSheetsSync()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-xs font-semibold flex items-center gap-2 transition-all"><i class="ti ti-refresh text-sm"></i> Sync Mekari CRM</button>
-        </div>
-
-        <div class="w-full overflow-x-auto border border-gray-100 rounded-xl">
-          <table class="w-full text-left text-xs">
-            <thead>
-              <tr class="bg-gray-50 border-b border-gray-100 text-gray-500 font-semibold uppercase tracking-wider">
-                <th class="p-3">ID Tiket</th>
-                <th class="p-3">Customer</th>
-                <th class="p-3">Masalah</th>
-                <th class="p-3">Klasifikasi Gudang</th>
-                <th class="p-3">Status Kerja</th>
-                <th class="p-3 text-center">Aksi</th>
-              </tr>
-            </thead>
-            <tbody id="ticket-table-body" class="divide-y divide-gray-100">
-              </tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-
-    <section id="tab-denali" class="tab-content hidden flex flex-col gap-6">
-      <div class="border-b border-gray-200 flex gap-4">
-        <button onclick="switchDenaliSubTab('kerusakan')" id="sub-btn-kerusakan" class="border-b-2 border-amber-700 text-amber-800 font-bold px-4 py-2.5 text-xs tracking-wide">📦 KLAIM KERUSAKAN (CCL)</button>
-        <button onclick="switchDenaliSubTab('retur')" id="sub-btn-retur" class="border-b-2 border-transparent text-gray-500 hover:text-gray-800 font-semibold px-4 py-2.5 text-xs tracking-wide">🔄 RETUR OPERASIONAL (ACCURATE)</button>
-      </div>
-
-      <div id="denali-sub-kerusakan" class="flex flex-col gap-6">
-        <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-xs flex flex-col gap-4">
-          <div class="flex justify-between items-center gap-4 flex-wrap">
-            <h3 class="text-sm font-bold text-gray-800">Form Input Klaim Kerusakan Unit</h3>
-            <button onclick="exportKlaimExcel()" class="bg-emerald-700 hover:bg-emerald-800 text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-2 transition-all"><i class="ti ti-file-spreadsheet text-sm"></i> 📊 Generate File Excel</button>
-          </div>
-          <form id="form-klaim-kerusakan" class="grid grid-cols-1 md:grid-cols-4 gap-4 text-xs" onsubmit="saveKlaimKerusakan(event)">
-            <input type="text" id="klm-no" placeholder="No. Klaim (Contoh: KLM-01)" class="p-2.5 border border-gray-200 rounded-lg bg-gray-50 focus:bg-white focus:outline-blue-500" required>
-            <input type="text" id="klm-cust" placeholder="Nama Customer" class="p-2.5 border border-gray-200 rounded-lg bg-gray-50 focus:bg-white focus:outline-blue-500" required>
-            <input type="text" id="klm-prod" placeholder="Produk / Varian Denali" class="p-2.5 border border-gray-200 rounded-lg bg-gray-50 focus:bg-white focus:outline-blue-500" required>
-            <input type="number" id="klm-qty" placeholder="Qty" class="p-2.5 border border-gray-200 rounded-lg bg-gray-50 focus:bg-white focus:outline-blue-500" required>
-            
-            <div class="flex flex-col gap-1"><label class="text-[10px] text-gray-400 font-bold uppercase">Tgl Follow Up</label><input type="date" id="klm-tgl-fu" class="p-2 border border-gray-200 rounded-lg bg-gray-50 focus:bg-white focus:outline-blue-500" required></div>
-            <div class="flex flex-col gap-1"><label class="text-[10px] text-gray-400 font-bold uppercase">Tgl Terima Gudang</label><input type="date" id="klm-tgl-rcv" class="p-2 border border-gray-200 rounded-lg bg-gray-50 focus:bg-white focus:outline-blue-500" required></div>
-            
-            <div class="flex flex-col gap-1">
-              <label class="text-[10px] text-gray-400 font-bold uppercase">Opsi Pengiriman</label>
-              <select id="klm-kurir" class="p-2 border border-gray-200 rounded-lg bg-gray-50 focus:bg-white focus:outline-blue-500">
-                <option value="Kurir Warehouse">Kurir Warehouse</option>
-                <option value="JNE / J&T / Sicepat">Ekspedisi Pihak ke-3</option>
-                <option value="Customer Send">Diantar Mandiri</option>
-              </select>
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="bg-red-600 text-white font-bold px-3 py-1.5 rounded-md text-sm tracking-wider shadow-sm">SCURO</div>
+                <div>
+                    <h1 class="text-lg font-bold tracking-tight">Aftersales Operations Tracker</h1>
+                    <p class="text-xs text-slate-500 font-medium">Enterprise Cloud Database Engine — Pro v14</p>
+                </div>
             </div>
-            <div class="flex flex-col gap-1">
-              <label class="text-[10px] text-gray-400 font-bold uppercase">No. CCL Accurate</label>
-              <input type="text" id="klm-ccl" placeholder="Input nomor CCL..." class="p-2 border border-gray-200 rounded-lg bg-gray-50 focus:bg-white focus:outline-blue-500">
+            <div id="network-badge" class="flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-800 shadow-sm">
+                <i class="fa-solid fa-spinner fa-spin"></i> <span id="network-status">Menghubungkan ke Cloud...</span>
             </div>
-            <div class="md:col-span-4 flex justify-end">
-              <button type="submit" class="bg-amber-800 hover:bg-amber-900 text-white px-5 py-2.5 rounded-lg font-bold shadow-xs transition-all flex items-center gap-2"><i class="ti ti-plus text-sm"></i> Simpan & Kirim ke Cloud</button>
-            </div>
-          </form>
         </div>
+    </header>
 
-        <div class="w-full overflow-x-auto shadow-sm border border-gray-200 rounded-xl bg-white">
-          <table class="w-full text-left text-xs min-w-[1000px]">
-            <thead>
-              <tr class="bg-gray-50 border-b border-gray-200 text-gray-500 font-semibold uppercase tracking-wider">
-                <th class="p-3">No. Klaim</th>
-                <th class="p-3">Customer</th>
-                <th class="p-3">Produk & Qty</th>
-                <th class="p-3">Tgl Follow Up</th>
-                <th class="p-3">Tgl Gudang</th>
-                <th class="p-3">Metode Kirim</th>
-                <th class="p-3">No. CCL Accurate</th>
-                <th class="p-3">Status Accurate</th>
-                <th class="p-3 text-center">Aksi</th>
-              </tr>
-            </thead>
-            <tbody id="table-klaim-body" class="divide-y divide-gray-100">
-              </tbody>
-          </table>
-        </div>
-      </div>
+    <main class="max-w-7xl mx-auto px-4 mt-6">
+        <nav class="flex flex-wrap gap-2 mb-6 border-b border-slate-200 pb-3">
+            <button onclick="switchTab('dashboard')" class="nav-btn active px-4 py-2 border border-slate-300 rounded-lg text-sm font-medium bg-white hover:bg-slate-50 transition-all flex items-center gap-2 shadow-sm">
+                <i class="fa-solid fa-chart-pie text-blue-500"></i> Dashboard
+            </button>
+            <button onclick="switchTab('tickets-tab')" class="nav-btn px-4 py-2 border border-slate-300 rounded-lg text-sm font-medium bg-white hover:bg-slate-50 transition-all flex items-center gap-2 shadow-sm">
+                <i class="fa-solid fa-ticket text-teal-500"></i> Tiket & CRM <span id="ticket-count-badge" class="bg-slate-100 text-slate-700 px-2 py-0.5 rounded-full text-xs font-bold">0</span>
+            </button>
+            <button onclick="switchTab('claims-tab')" class="nav-btn px-4 py-2 border border-slate-300 rounded-lg text-sm font-medium bg-white hover:bg-slate-50 transition-all flex items-center gap-2 shadow-sm">
+                <i class="fa-solid fa-mug-saucer text-orange-500"></i> Klaim & Retur Denali
+            </button>
+            <button onclick="switchTab('gdrive-tab')" class="nav-btn px-4 py-2 border border-slate-300 rounded-lg text-sm font-medium bg-white hover:bg-slate-50 transition-all flex items-center gap-2 shadow-sm">
+                <i class="fa-solid fa-folder-open text-yellow-500"></i> GDrive Repository
+            </button>
+            <button onclick="switchTab('sop-tab')" class="nav-btn px-4 py-2 border border-slate-300 rounded-lg text-sm font-medium bg-white hover:bg-slate-50 transition-all flex items-center gap-2 shadow-sm">
+                <i class="fa-solid fa-book-bookmark text-purple-500"></i> Kebijakan & SOP
+            </button>
+        </nav>
 
-      <div id="denali-sub-retur" class="hidden flex flex-col gap-6">
-        <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-xs flex flex-col gap-4">
-          <h3 class="text-sm font-bold text-gray-800">Input Retur Operasional (Salah Rasa / Alamat Gagal Kirim)</h3>
-          <form id="form-retur-operasional" class="grid grid-cols-1 md:grid-cols-4 gap-4 text-xs" onsubmit="saveReturOperasional(event)">
-            <input type="text" id="rtr-id" placeholder="ID Retur (Contoh: RTR-01)" class="p-2.5 border border-gray-200 rounded-lg bg-gray-50 focus:bg-white" required>
-            <div class="flex flex-col gap-1"><label class="text-[10px] text-gray-400 font-bold uppercase">Tgl Fisik Masuk Gudang</label><input type="date" id="rtr-tgl-masuk" class="p-2 border border-gray-200 rounded-lg bg-gray-50 focus:bg-white" required></div>
-            <input type="text" id="rtr-cust" placeholder="Nama Customer / Toko" class="p-2.5 border border-gray-200 rounded-lg bg-gray-50 focus:bg-white mt-4" required>
-            <input type="text" id="rtr-faktur" placeholder="No. Faktur Asal / Invoice Accurate" class="p-2.5 border border-gray-200 rounded-lg bg-gray-50 focus:bg-white mt-4" required>
-            
-            <div class="flex flex-col gap-1">
-              <label class="text-[10px] text-gray-400 font-bold uppercase">Alasan Retur</label>
-              <select id="rtr-alasan" class="p-2 border border-gray-200 rounded-lg bg-gray-50 focus:bg-white">
-                <option value="Salah Rasa">Salah Order Rasa</option>
-                <option value="Alamat Tidak Lengkap">Alamat Tidak Lengkap</option>
-                <option value="Kendala Pengiriman / Gagal Kirim">Kendala Pengiriman / Gagal Kirim</option>
-                <option value="Lainnya">Lainnya / Gagal Komunikasi</option>
-              </select>
+        <section id="dashboard" class="tab-content active space-y-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
+                    <div class="p-3 bg-amber-50 text-amber-600 rounded-lg text-2xl"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                    <div>
+                        <p class="text-sm font-medium text-slate-500">Belum Terklasifikasi</p>
+                        <h3 id="count-unclassified" class="text-2xl font-bold tracking-tight mt-0.5">0</h3>
+                    </div>
+                </div>
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
+                    <div class="p-3 bg-blue-50 text-blue-600 rounded-lg text-2xl"><i class="fa-solid fa-screwdriver-wrench"></i></div>
+                    <div>
+                        <p class="text-sm font-medium text-slate-500">Service Center</p>
+                        <h3 id="count-sc" class="text-2xl font-bold tracking-tight mt-0.5">0</h3>
+                    </div>
+                </div>
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
+                    <div class="p-3 bg-purple-50 text-purple-600 rounded-lg text-2xl"><i class="fa-solid fa-car-side"></i></div>
+                    <div>
+                        <p class="text-sm font-medium text-slate-500">Visit In-House</p>
+                        <h3 id="count-visit" class="text-2xl font-bold tracking-tight mt-0.5">0</h3>
+                    </div>
+                </div>
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
+                    <div class="p-3 bg-emerald-50 text-emerald-600 rounded-lg text-2xl"><i class="fa-solid fa-location-dot"></i></div>
+                    <div>
+                        <p class="text-sm font-medium text-slate-500">Scuro Bali</p>
+                        <h3 id="count-bali" class="text-2xl font-bold tracking-tight mt-0.5">0</h3>
+                    </div>
+                </div>
             </div>
-            <input type="text" id="rtr-detail" placeholder="Detail Nama Barang & Total Qty" class="p-2.5 border border-gray-200 rounded-lg bg-gray-50 focus:bg-white mt-4 md:col-span-2" required>
-            <input type="text" id="rtr-pic" placeholder="PIC Gudang Penerima" class="p-2.5 border border-gray-200 rounded-lg bg-gray-50 focus:bg-white mt-4" required>
 
-            <div class="md:col-span-4 flex justify-end">
-              <button type="submit" class="bg-gray-800 hover:bg-gray-900 text-white px-5 py-2.5 rounded-lg font-bold shadow-xs transition-all flex items-center gap-2"><i class="ti ti-plus text-sm"></i> Tambah Log Retur</button>
+            <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="px-5 py-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
+                    <h3 class="font-bold text-slate-700 flex items-center gap-2"><i class="fa-solid fa-list-ul"></i> Antrean Tiket Aktif Terbaru</h3>
+                    <span class="text-xs bg-blue-100 text-blue-800 px-2.5 py-1 rounded-full font-semibold">Realtime Link</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm border-collapse">
+                        <thead>
+                            <tr class="bg-slate-100/70 text-slate-600 font-semibold border-b border-slate-200">
+                                <th class="p-3 w-32">ID Tiket</th>
+                                <th class="p-3">Customer</th>
+                                <th class="p-3 w-48">Klasifikasi</th>
+                                <th class="p-3 w-32">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dashboard-ticket-rows">
+                            <tr>
+                                <td colspan="4" class="p-8 text-center text-slate-400 font-medium">
+                                    <i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Memuat data dari cloud...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-          </form>
-        </div>
+        </section>
 
-        <div class="w-full overflow-
+        <section id="tickets-tab" class="tab-content space-y-6">
+            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                <h3 class="text-lg font-bold mb-4 flex items-center gap-2 text-slate-700"><i class="fa-solid fa-square-plus text-teal-600"></i> Buat Tiket Masuk Baru</h3>
+                <form id="form-ticket" onsubmit="submitTicket(event)" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-500 mb-1.5">ID / No. Referensi Tiket</label>
+                        <input type="text" id="tk-id" required placeholder="Contoh: AFS-1092" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-500 mb-1.5">Nama Customer / Instansi</label>
+                        <input type="text" id="tk-customer" required placeholder="Contoh: Starbucks Sudirman" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-500 mb-1.5">Klasifikasi Awal Penanganan</label>
+                        <select id="tk-klasifikasi" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white">
+                            <option value="UNCLASSIFIED">UNCLASSIFIED (Belum Jelas)</option>
+                            <option value="SERVICE_CENTER">SERVICE_CENTER (Bawa Ke Kantor)</option>
+                            <option value="VISIT_IN_HOUSE">VISIT_IN_HOUSE (Teknisi Jalan)</option>
+                            <option value="SCURO_BALI">SCURO_BALI (Cabang Bali)</option>
+                        </select>
+                    </div>
+                    <div class="md:col-span-3">
+                        <label class="block text-xs font-bold uppercase text-slate-500 mb-1.5">Detail Keluhan / Kronologi Masalah</label>
+                        <textarea id="tk-masalah" rows="3" placeholder="Tulis kerusakan mesin atau keluhan di sini secara lengkap..." class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"></textarea>
+                    </div>
+                    <div class="md:col-span-3 flex justify-end">
+                        <button type="submit" class="bg-teal-600 hover:bg-teal-700 text-white font-semibold px-6 py-2 rounded-lg text-sm shadow-sm flex items-center gap-2 transition-all">
+                            <i class="fa-solid fa-paper-plane"></i> Simpan Tiket Ke Cloud
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="p-4 border-b border-slate-100 bg-slate-50 font-bold text-slate-700"><i class="fa-solid fa-database"></i> Live Database Tiket</div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm border-collapse">
+                        <thead>
+                            <tr class="bg-slate-100 text-slate-600 font-semibold border-b border-slate-200">
+                                <th class="p-3">ID Tiket</th>
+                                <th class="p-3">Customer</th>
+                                <th class="p-3">Masalah</th>
+                                <th class="p-3">Klasifikasi</th>
+                                <th class="p-3">Status</th>
+                                <th class="p-3 text-center">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="master-ticket-rows">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section id="claims-tab" class="tab-content space-y-8">
+            <div class="space-y-4">
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                    <h3 class="text-base font-bold mb-4 text-orange-700 flex items-center gap-2"><i class="fa-solid fa-circle-plus"></i> Input Log Klaim Kerusakan Baru</h3>
+                    <form id="form-claim" onsubmit="submitClaim(event)" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                        <input type="text" id="cl-no" required placeholder="No. Klaim (cth: KLM-01)" class="px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none">
+                        <input type="text" id="cl-customer" required placeholder="Nama Customer" class="px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none">
+                        <input type="text" id="cl-produk" required placeholder="Nama Produk / Item" class="px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none">
+                        <input type="number" id="cl-qty" value="1" min="1" required class="px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none">
+                        <input type="date" id="cl-tgl-fu" class="px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none">
+                        <input type="date" id="cl-tgl-rcv" class="px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none">
+                        <input type="text" id="cl-kurir" placeholder="Nama Kurir / Ekspedisi" class="px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none">
+                        <button type="submit" class="bg-orange-600 hover:bg-orange-700 text-white font-bold text-sm rounded-lg shadow-sm">Simpan Klaim</button>
+                    </form>
+                </div>
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                    <table class="w-full text-left text-sm border-collapse"><thead class="bg-slate-100 text-slate-600 border-b font-semibold"><tr class="bg-orange-50 text-orange-900"><th class="p-3">No. Klaim</th><th class="p-3">Customer</th><th class="p-3">Produk</th><th class="p-3">Qty</th><th class="p-3">Follow-Up</th><th class="p-3">Received</th><th class="p-3">Kurir</th><th class="p-3">No. CCL</th><th class="p-3">Status CCL</th></tr></thead><tbody id="claim-rows"></tbody></table>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                    <h3 class="text-base font-bold mb-4 text-rose-700 flex items-center gap-2"><i class="fa-solid fa-circle-plus"></i> Input Log Retur Barang Baru</h3>
+                    <form id="form-return" onsubmit="submitReturn(event)" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                        <input type="text" id="rt-id" required placeholder="ID Retur" class="px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none">
+                        <input type="date" id="rt-tgl" required class="px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none">
+                        <input type="text" id="rt-customer" required placeholder="Nama Customer" class="px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none">
+                        <input type="text" id="rt-faktur" required placeholder="No. Faktur" class="px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none">
+                        <input type="text" id="rt-alasan" placeholder="Alasan Retur" class="px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none">
+                        <input type="text" id="rt-detail" placeholder="Detail Barang" class="px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none">
+                        <input type="text" id="rt-pic" placeholder="PIC Gudang / AFS" class="px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none">
+                        <button type="submit" class="bg-rose-600 hover:bg-rose-700 text-white font-bold text-sm rounded-lg shadow-sm">Simpan Retur</button>
+                    </form>
+                </div>
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                    <table class="w-full text-left text-sm border-collapse"><thead class="bg-slate-100 text-slate-600 border-b font-semibold"><tr class="bg-rose-50 text-rose-900"><th class="p-3">ID Retur</th><th class="p-3">Tgl Masuk</th><th class="p-3">Customer</th><th class="p-3">No. Faktur</th><th class="p-3">Alasan</th><th class="p-3">Detail Barang</th><th class="p-3">PIC</th><th class="p-3">Status</th></tr></thead><tbody id="return-rows"></tbody></table>
+                </div>
+            </div>
+        </section>
+
+        <section id="gdrive-tab" class="tab-content space-y-6">
+            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                <h3 class="text-lg font-bold mb-4 text-slate-700 flex items-center gap-2"><i class="fa-solid fa-cloud-arrow-up text-yellow-600"></i> Daftarkan Link Arsip Dokumen GDrive</h3>
+                <form id="form-gdrive" onsubmit="submitGDrive(event)" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="md:col-span-2">
+                        <input type="text" id="gd-nama" required placeholder="Nama Berkas / Judul File Arsip" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none">
+                    </div>
+                    <div>
+                        <input type="url" id="gd-link" required placeholder="https://drive.google.com/..." class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none">
+                    </div>
+                    <div>
+                        <select id="gd-jenis" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none bg-white">
+                            <option value="FOTO_KERUSAKAN">Foto Fisik Kerusakan (Unit)</option>
+                            <option value="BERITA_ACARA">Berita Acara / Surat Jalan</option>
+                            <option value="FAKTUR_PENDUKUNG">Faktur Pajak & Invoice</option>
+                            <option value="LAINNYA">Dokumen Lainnya</option>
+                        </select>
+                    </div>
+                    <div class="md:col-span-4 flex justify-end">
+                        <button type="submit" class="bg-yellow-600 hover:bg-yellow-700 text-white font-bold px-5 py-2 text-sm rounded-lg shadow-sm">Sematkan Link Berkas</button>
+                    </div>
+                </form>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="gdrive-cards-container"></div>
+        </section>
+
+        <section id="sop-tab" class="tab-content space-y-4">
+            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-2">
+                    <h3 class="text-lg font-bold text-purple-900 flex items-center gap-2"><i class="fa-solid fa-graduation-cap"></i> Standar Operasional Prosedur (SOP) Internal</h3>
+                    <button onclick="toggleSopEdit()" class="text-xs bg-slate-100 hover:bg-slate-200 border text-slate-600 font-bold px-3 py-1.5 rounded-md"><i class="fa-solid fa-pen-to-square"></i> Mode Edit Teks</button>
+                </div>
+                
+                <div id="sop-edit-box" class="hidden bg-slate-50 p-4 border rounded-lg mb-4 space-y-3">
+                    <label class="block text-xs font-bold text-slate-600 uppercase">Konten HTML SOP Master</label>
+                    <textarea id="sop-editor-textarea" rows="8" class="w-full p-3 border border-slate-300 rounded-md font-mono text-xs"></textarea>
+                    <div class="flex justify-end gap-2">
+                        <button onclick="toggleSopEdit()" class="px-3 py-1.5 text-xs font-semibold bg-slate-300 text-slate-700 rounded">Batal</button>
+                        <button onclick="saveSopChange()" class="px-4 py-1.5 text-xs font-bold bg-purple-700 text-white rounded shadow-sm">Simpan Perubahan Teks</button>
+                    </div>
+                </div>
+
+                <div id="sop-content-area" class="prose prose-slate max-w-none text-sm leading-relaxed p-2">
+                    <p class="text-slate-400 italic"><i class="fa-solid fa-spinner fa-spin mr-2"></i> Mengunduh dokumen SOP dari master cloud...</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // URL Otomatis Proyek Supabase Anda
+        const SUPABASE_URL = "https://resbzezgvrnjgmenlqgk.supabase.co";
+        
+        // ⚠️ TUGAS ANDA: GANTI TEKS DI BAWAH INI DENGAN ANON KEY SUPABASE ANDA YANG ASLI
+        const SUPABASE_ANON_KEY = "MASUKKAN_ANON_KEY_ANDA_DISINI";
+
+        let supabaseClient = null;
+
+        // Inisialisasi Klien dengan Proteksi Anti-Stuck
+        try {
+            if (SUPABASE_ANON_KEY === "MASUKKAN_ANON_KEY_ANDA_DISINI" || !SUPABASE_ANON_KEY) {
+                updateNetworkBadge(false, "Anon Key Belum Diisi");
+            } else {
+                supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                updateNetworkBadge(true, "Cloud Terhubung");
+            }
+        } catch (err) {
+            console.error("Inisialisasi Gagal:", err);
+            updateNetworkBadge(false, "Gagal Inisialisasi");
+        }
+
+        function updateNetworkBadge(isSuccess, text) {
+            const badge = document.getElementById('network-badge');
+            if (isSuccess) {
+                badge.className = "flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 shadow-sm";
+                badge.innerHTML = `<i class="fa-solid fa-cloud-check text-emerald-600"></i> <span>${text}</span>`;
+            } else {
+                badge.className = "flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-rose-100 text-rose-800 shadow-sm";
+                badge.innerHTML = `<i class="fa-solid fa-circle-exclamation text-rose-600"></i> <span>${text}</span>`;
+            }
+        }
+
+        // Ambil Data Saat Aplikasi Dimuat
+        document.addEventListener("DOMContentLoaded", () => {
+            if (supabaseClient) {
+                refreshAllData();
+            } else {
+                document.getElementById('dashboard-ticket-rows').innerHTML = `<tr><td colspan="4" class="p-4 text-center text-rose-500 font-bold">Aplikasi Offline. Harap isi API Anon Key di file index.html terlebih dahulu!</td></tr>`;
+            }
+        });
+
+        function refreshAllData() {
+            fetchTickets();
+            fetchClaims();
+            fetchReturns();
+            fetchGDrive();
+            fetchSOP();
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        // ================= ENGINE: CORE DATA FETCHING =================
+        async function fetchTickets() {
+            if (!supabaseClient) return;
+            try {
+                const { data, error } = await supabaseClient.from('tickets').select('*').order('created_at', { ascending: false });
+                if (error) throw error;
+
+                document.getElementById('ticket-count-badge').innerText = data.length;
+                
+                let unclassified = 0, sc = 0, visit = 0, bali = 0;
+                let dashRowsHtml = '';
+                let masterRowsHtml = '';
+
+                data.forEach(tk => {
+                    if (tk.klasifikasi === 'UNCLASSIFIED') unclassified++;
+                    if (tk.klasifikasi === 'SERVICE_CENTER') sc++;
+                    if (tk.klasifikasi === 'VISIT_IN_HOUSE') visit++;
+                    if (tk.klasifikasi === 'SCURO_BALI') bali++;
+
+                    let statusColor = tk.status === 'SELESAI' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800';
+                    let klasifikasiBadge = `<span class="px-2 py-0.5 rounded text-xs font-semibold bg-slate-100">${tk.klasifikasi}</span>`;
+
+                    dashRowsHtml += `
+                        <tr class="border-b border-slate-100 hover:bg-slate-50/50">
+                            <td class="p-3 font-mono font-bold text-slate-600">${tk.id}</td>
+                            <td class="p-3 font-semibold">${tk.customer}</td>
+                            <td class="p-3">${klasifikasiBadge}</td>
+                            <td class="p-3"><span class="px-2 py-0.5 rounded-full text-xs font-bold ${statusColor}">${tk.status}</span></td>
+                        </tr>
+                    `;
+
+                    masterRowsHtml += `
+                        <tr class="border-b border-slate-200 hover:bg-slate-50/80">
+                            <td class="p-3 font-mono font-bold">${tk.id}</td>
+                            <td class="p-3 font-semibold">${tk.customer}</td>
+                            <td class="p-3 text-slate-500 text-xs max-w-xs truncate">${tk.masalah || '-'}</td>
+                            <td class="p-3">${klasifikasiBadge}</td>
+                            <td class="p-3"><span class="px-2 py-0.5 rounded-full text-xs font-bold ${statusColor}">${tk.status}</span></td>
+                            <td class="p-3 text-center">
+                                <button onclick="updateTicketStatus('${tk.id}', '${tk.status === 'SELESAI' ? 'PROSES' : 'SELESAI'}')" class="text-xs bg-slate-100 hover:bg-slate-200 font-bold border px-2 py-1 rounded">
+                                    Toggle Status
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                document.getElementById('count-unclassified').innerText = unclassified;
+                document.getElementById('count-sc').innerText = sc;
+                document.getElementById('count-visit').innerText = visit;
+                document.getElementById('count-bali').innerText = bali;
+
+                document.getElementById('dashboard-ticket-rows').innerHTML = dashRowsHtml || `<tr><td colspan="4" class="p-4 text-center text-slate-400">Belum ada antrean tiket aktif.</td></tr>`;
+                document.getElementById('master-ticket-rows').innerHTML = masterRowsHtml || `<tr><td colspan="6" class="p-4 text-center text-slate-400">Database kosong.</td></tr>`;
+
+            } catch (err) {
+                console.error("Fetch Tickets Error:", err);
+            }
+        }
+
+        async function submitTicket(e) {
+            e.preventDefault();
+            if (!supabaseClient) return;
+            const payload = {
+                id: document.getElementById('tk-id').value,
+                customer: document.getElementById('tk-customer').value,
+                klasifikasi: document.getElementById('tk-klasifikasi').value,
+                masalah: document.getElementById('tk-masalah').value,
+                status: 'PROSES'
+            };
+            const { error } = await supabaseClient.from('tickets').insert([payload]);
+            if (!error) {
+                document.getElementById('form-ticket').reset();
+                fetchTickets();
+            } else { alert("Gagal input tiket: " + error.message); }
+        }
+
+        async function updateTicketStatus(id, nextStatus) {
+            const { error } = await supabaseClient.from('tickets').update({ status: nextStatus }).eq('id', id);
+            if (!error) fetchTickets();
+        }
+
+        // ================= ENGINE: KLAIM & RETUR DENALI =================
+        async function fetchClaims() {
+            if (!supabaseClient) return;
+            const { data, error } = await supabaseClient.from('denali_claims').select('*').order('id', { ascending: false });
+            if (!error) {
+                let html = '';
+                data.forEach(c => {
+                    html += `<tr class="border-b border-slate-200">
+                        <td class="p-3 font-bold">${c.no_klaim}</td>
+                        <td class="p-3 font-medium">${c.customer}</td>
+                        <td class="p-3">${c.produk}</td>
+                        <td class="p-3 font-mono">${c.qty}</td>
+                        <td class="p-3 text-xs">${c.tgl_followup || '-'}</td>
+                        <td class="p-3 text-xs">${c.tgl_received || '-'}</td>
+                        <td class="p-3 text-slate-500">${c.kurir || '-'}</td>
+                        <td class="p-3 font-mono">${c.no_ccl || '-'}</td>
+                        <td class="p-3"><span class="px-2 py-0.5 rounded text-xs font-bold ${c.status_ccl === 'SUDAH CCL' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">${c.status_ccl}</span></td>
+                    </tr>`;
+                });
+                document.getElementById('claim-rows').innerHTML = html;
+            }
+        }
+
+        async function submitClaim(e) {
+            e.preventDefault();
+            const payload = {
+                no_klaim: document.getElementById('cl-no').value,
+                customer: document.getElementById('cl-customer').value,
+                produk: document.getElementById('cl-produk').value,
+                qty: parseInt(document.getElementById('cl-qty').value),
+                tgl_followup: document.getElementById('cl-tgl-fu').value || null,
+                tgl_received: document.getElementById('cl-tgl-rcv').value || null,
+                kurir: document.getElementById('cl-kurir').value || ''
+            };
+            const { error } = await supabaseClient.from('denali_claims').insert([payload]);
+            if (!error) { document.getElementById('form-claim').reset(); fetchClaims(); }
+        }
+
+        async function fetchReturns() {
+            if (!supabaseClient) return;
+            const { data, error } = await supabaseClient.from('denali_returns').select('*').order('id', { ascending: false });
+            if (!error) {
+                let html = '';
+                data.forEach(r => {
+                    html += `<tr class="border-b border-slate-200">
+                        <td class="p-3 font-bold text-rose-700">${r.id_retur}</td>
+                        <td class="p-3 text-xs">${r.tgl_masuk}</td>
+                        <td class="p-3 font-medium">${r.customer}</td>
+                        <td class="p-3 font-mono">${r.no_faktur}</td>
+                        <td class="p-3 text-slate-600">${r.alasan || '-'}</td>
+                        <td class="p-3 text-xs max-w-xs truncate">${r.detail_barang || '-'}</td>
+                        <td class="p-3 text-xs font-semibold">${r.pic || '-'}</td>
+                        <td class="p-3"><span class="px-2 py-0.5 text-xs font-bold rounded bg-slate-100">${r.status_retur}</span></td>
+                    </tr>`;
+                });
+                document.getElementById('return-rows').innerHTML = html;
+            }
+        }
+
+        async function submitReturn(e) {
+            e.preventDefault();
+            const payload = {
+                id_retur: document.getElementById('rt-id').value,
+                tgl_masuk: document.getElementById('rt-tgl').value,
+                customer: document.getElementById('rt-customer').value,
+                no_faktur: document.getElementById('rt-faktur').value,
+                alasan: document.getElementById('rt-alasan').value,
+                detail_barang: document.getElementById('rt-detail').value,
+                pic: document.getElementById('rt-pic').value
+            };
+            const { error } = await supabaseClient.from('denali_returns').insert([payload]);
+            if (!error) { document.getElementById('form-return').reset(); fetchReturns(); }
+        }
+
+        // ================= ENGINE: GDRIVE REPOSITORY =================
+        async function fetchGDrive() {
+            if (!supabaseClient) return;
+            const { data, error } = await supabaseClient.from('gdrive_repo').select('*').order('id', { ascending: false });
+            if (!error) {
+                let html = '';
+                data.forEach(g => {
+                    html += `
+                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between gap-3 hover:border-yellow-400 transition-all">
+                            <div>
+                                <div class="flex justify-between items-start gap-2">
+                                    <span class="text-[10px] bg-yellow-100 text-yellow-800 font-bold px-2 py-0.5 rounded uppercase tracking-wider">${g.jenis_data || 'DOKUMEN'}</span>
+                                    <span class="text-slate-400 text-[11px] font-mono">ID: ${g.id}</span>
+                                </div>
+                                <h4 class="font-bold text-slate-800 text-sm mt-1.5 leading-tight">${g.nama_file}</h4>
+                            </div>
+                            <a href="${g.link}" target="_blank" class="w-full bg-slate-50 hover:bg-yellow-50 text-slate-700 hover:text-yellow-700 font-bold border border-slate-200 hover:border-yellow-300 py-1.5 rounded text-center text-xs flex items-center justify-center gap-1.5 transition-colors">
+                                <i class="fa-solid fa-arrow-up-right-from-square"></i> Buka Link Google Drive
+                            </a>
+                        </div>
+                    `;
+                });
+                document.getElementById('gdrive-cards-container').innerHTML = html || `<p class="text-slate-400 text-sm italic col-span-2">Belum ada berkas terdaftar.</p>`;
+            }
+        }
+
+        async function submitGDrive(e) {
+            e.preventDefault();
+            const payload = {
+                nama_file: document.getElementById('gd-nama').value,
+                link: document.getElementById('gd-link').value,
+                jenis_data: document.getElementById('gd-jenis').value
+            };
+            const { error } = await supabaseClient.from('gdrive_repo').insert([payload]);
+            if (!error) { document.getElementById('form-gdrive').reset(); fetchGDrive(); }
+        }
+
+        // ================= ENGINE: SOP MANAGEMENT =================
+        async function fetchSOP() {
+            if (!supabaseClient) return;
+            const { data, error } = await supabaseClient.from('sop_data').select('*').eq('id', 1).single();
+            if (!error && data) {
+                document.getElementById('sop-content-area').innerHTML = data.content_html;
+                document.getElementById('sop-editor-textarea').value = data.content_html;
+            } else {
+                document.getElementById('sop-content-area').innerHTML = `<p class="text-slate-500">Gagal memuat teks SOP dari tabel Supabase. Pastikan tabel sop_data sudah dibuat & diisi.</p>`;
+            }
+        }
+
+        function toggleSopEdit() {
+            const box = document.getElementById('sop-edit-box');
+            box.classList.toggle('hidden');
+        }
+
+        async function saveSopChange() {
+            if (!supabaseClient) return;
+            const updatedHtml = document.getElementById('sop-editor-textarea').value;
+            const { error } = await supabaseClient.from('sop_data').update({ content_html: updatedHtml }).eq('id', 1);
+            if (!error) {
+                toggleSopEdit();
+                fetchSOP();
+            } else { alert("Gagal update teks: " + error.message); }
+        }
+    </script>
+</body>
+</html>
