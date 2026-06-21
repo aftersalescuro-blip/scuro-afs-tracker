@@ -611,7 +611,7 @@ tbody tr:hover td{background:var(--s2)}
           <span class="plbl" id="plbl">—</span>
           <button class="ab" onclick="shiftP(1)"><i class="ti ti-chevron-right" style="font-size:13px"></i></button>
         </div>
-        <button class="btn btnp" onclick="openNewTicket()"><i class="ti ti-plus"></i> Tiket Baru</button>
+        <span id="cloud-status-badge" style="font-size:10.5px;padding:4px 8px;border-radius:99px;background:var(--s2);color:var(--t3)">🔴 Offline</span> <button class="btn btnp" onclick="openNewTicket()"><i class="ti ti-plus"></i> Tiket Baru</button>
         <button class="btn btns" onclick="syncToSheets()" title="Sync data ke Google Sheets" id="sync-btn"><i class="ti ti-table-export"></i> Sync Sheets</button>
         <div class="notif-bell" id="notif-bell" onclick="toggleAlerts()">
           <i class="ti ti-bell"></i>
@@ -666,7 +666,7 @@ tbody tr:hover td{background:var(--s2)}
   <div class="card">
     <div class="sfr">
       <div class="sbox"><i class="ti ti-search" style="color:var(--t3);font-size:14px"></i><input type="text" id="t-srch" placeholder="Cari ID, customer, SN, lokasi, trouble..." oninput="S._tPage=0;clearTimeout(window._tTimer);window._tTimer=setTimeout(renderT,200)"></div>
-      <button class="btn btnp" onclick="openNewTicket()"><i class="ti ti-plus"></i> Tiket Baru</button>
+      <span id="cloud-status-badge" style="font-size:10.5px;padding:4px 8px;border-radius:99px;background:var(--s2);color:var(--t3)">🔴 Offline</span> <button class="btn btnp" onclick="openNewTicket()"><i class="ti ti-plus"></i> Tiket Baru</button>
     </div>
     <div class="chips" id="t-chips">
       <div class="chip active" onclick="setTF('all',this)">Semua</div>
@@ -2085,6 +2085,16 @@ const USERS = {
 
 let CU = null;
 const TODAY = '2026-06-04';
+/* -- ADD TO SUPABASE (run if tables don't exist):
+-- CREATE TABLE IF NOT EXISTS denali_returns (id TEXT PRIMARY KEY, tgl_masuk DATE, customer TEXT, faktur TEXT, alasan TEXT, barang TEXT, pic_gudang TEXT, catatan TEXT, status_retur TEXT DEFAULT 'BELUM RETUR', created_by TEXT, created_at TIMESTAMPTZ DEFAULT NOW());
+-- CREATE TABLE IF NOT EXISTS gdrive_repo (id TEXT PRIMARY KEY, nama TEXT, link TEXT, jenis TEXT, tgl_update DATE, updated_by TEXT, created_at TIMESTAMPTZ DEFAULT NOW());
+-- CREATE TABLE IF NOT EXISTS sop_data (id TEXT PRIMARY KEY, tab TEXT, content TEXT, updated_by TEXT, updated_at TIMESTAMPTZ DEFAULT NOW());
+-- ALTER TABLE denali_returns ENABLE ROW LEVEL SECURITY;
+-- ALTER TABLE gdrive_repo ENABLE ROW LEVEL SECURITY;
+-- ALTER TABLE sop_data ENABLE ROW LEVEL SECURITY;
+-- CREATE POLICY "anon_all_denali_returns" ON denali_returns FOR ALL TO anon USING (true) WITH CHECK (true);
+-- CREATE POLICY "anon_all_gdrive_repo" ON gdrive_repo FOR ALL TO anon USING (true) WITH CHECK (true);
+-- CREATE POLICY "anon_all_sop_data" ON sop_data FOR ALL TO anon USING (true) WITH CHECK (true); */
 const SB_URL = 'https://resbzezgvrnjgmenlqgk.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJlc2J6ZXpndnJuamdtZW5scWdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxOTY1MzgsImV4cCI6MjA5NDc3MjUzOH0.p18ypHBMYGA2JSuP-AcQ6rLCi3hrwaLMHHL7sr6YN-U';
 
@@ -2375,10 +2385,10 @@ const SB_TABLE_MAP = {
   tickets: 'tickets', maintenance: 'maintenance', installations: 'installations',
   qc_records: 'qc_records', ba_records: 'ba', he_records: 'he',
   denali_claims: 'denali_claims', stok_prl: 'stok_prl', stok_per: 'stok_per',
-  orders: 'orders',
-  inventory_so: 'inventory_so',
+  orders: 'orders', inventory_so: 'inventory_so',
   sp_tracking: 'sp_tracking',
-  retur_ops: 'retur_ops'
+  retur_ops: 'denali_returns',
+  gdrive_links: 'gdrive_repo',
 };
 let _sbPushTimers = {};
 
@@ -4918,6 +4928,7 @@ function saveSOP(tab) {
   if (!editor) return;
   var content = editor.innerHTML;
   localStorage.setItem('afs_sop_' + tab, content);
+  upsertToSupabase('sop_data', {id: 'sop_'+tab, tab: tab, content: content, updated_by: CU?CU.name:'', updated_at: TODAY});
   notify('SOP ' + tab + ' tersimpan', 'green');
   renderKebijakan();
 }
@@ -5358,6 +5369,7 @@ function saveDenaliKlaim() {
     notify('Klaim ' + claim.id + ' tersimpan', 'green');
   }
   sv('denali_claims');
+  upsertToSupabase('denali_claims', _dnEditId?S.denali_claims.find(function(x){return x.id===_dnEditId;}):S.denali_claims[0]);
   closeOv('ov-denali');
   renderDenali();
 }
@@ -6250,41 +6262,90 @@ function renderHEFlow() {
 // ============================================================
 function fetchFromSupabase() {
   if (!navigator.onLine) return;
-  var tables = {
-    tickets: 'tickets',
-    he_records: 'he',
-    denali_claims: 'denali_claims',
-    orders: 'orders'
-  };
-  Object.keys(tables).forEach(function(key) {
-    fetch(SB_URL + '/rest/v1/' + tables[key] + '?limit=1000', {
-      headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'Accept': 'application/json' }
+  var url = SB_URL;
+  var key = SB_KEY;
+  var badge = el('sb-cloud-badge');
+  
+  // Update cloud badge
+  function setCloudStatus(ok) {
+    S.sb.connected = ok;
+    var live = el('sb-live');
+    if (live) {
+      live.innerHTML = ok
+        ? '<i class="ti ti-circle-filled" style="font-size:8px;color:var(--green)"></i> ONLINE'
+        : '<i class="ti ti-circle-filled" style="font-size:8px"></i> OFFLINE';
+      live.style.color = ok ? 'var(--green)' : '';
+    }
+    var badge2 = el('sb-st');
+    if (badge2) {
+      badge2.textContent = ok ? '🟢 Online' : '🔴 Offline';
+      badge2.style.background = ok ? 'var(--gl)' : 'var(--rl)';
+      badge2.style.color = ok ? 'var(--green)' : 'var(--red)';
+    }
+    // Header cloud indicator
+    var hdr = el('cloud-status-badge');
+    if (hdr) {
+      hdr.textContent = ok ? '🟢 Terhubung ke Cloud' : '🔴 Offline (Menggunakan Penyimpanan Lokal)';
+      hdr.style.background = ok ? 'var(--gl)' : 'var(--rl)';
+      hdr.style.color = ok ? 'var(--green)' : 'var(--red)';
+    }
+  }
+
+  // Tables to fetch: local key → supabase table
+  var fetchMap = [
+    {key:'tickets', table:'tickets', id:'ticket_id'},
+    {key:'denali_claims', table:'denali_claims', id:'id'},
+    {key:'retur_ops', table:'denali_returns', id:'id'},
+    {key:'gdrive_links', table:'gdrive_repo', id:'id'},
+    {key:'orders', table:'orders', id:'id'},
+    {key:'maintenance', table:'maintenance', id:'id'},
+    {key:'he_records', table:'he', id:'id'},
+  ];
+
+  var successCount = 0;
+  fetchMap.forEach(function(cfg) {
+    fetch(url + '/rest/v1/' + cfg.table + '?limit=2000&order=' + cfg.id + '.desc', {
+      headers: {'apikey':key,'Authorization':'Bearer '+key,'Accept':'application/json'}
     })
-    .then(function(r) { return r.ok ? r.json() : null; })
+    .then(function(r) {
+      if (!r.ok) throw new Error('HTTP '+r.status);
+      successCount++;
+      setCloudStatus(true);
+      return r.json();
+    })
     .then(function(data) {
-      if (data && data.length > 0) {
-        // Merge: Supabase data takes priority for existing records
-        var local = S[key] || [];
-        var localIds = {};
-        local.forEach(function(r) {
-          var id = r.ticket_id || r.id || '';
-          if (id) localIds[id] = r;
-        });
-        data.forEach(function(r) {
-          var id = r.ticket_id || r.id || '';
-          if (id && localIds[id]) {
-            // Update local with Supabase version (newer)
-            Object.assign(localIds[id], r);
-          } else if (id) {
-            local.push(r);
-          }
-        });
-        S[key] = local;
-        sv(key);
-      }
+      if (!data || data.length === 0) return;
+      // MERGE: Supabase is source of truth; local new records kept
+      var local = S[cfg.key] || [];
+      var cloudIds = {};
+      data.forEach(function(r){ cloudIds[r[cfg.id]]=r; });
+      // Add local-only records (not yet pushed)
+      var merged = data.slice();
+      local.forEach(function(r){
+        if (r[cfg.id] && !cloudIds[r[cfg.id]]) merged.unshift(r);
+      });
+      S[cfg.key] = merged;
+      try { if (merged.length < 5000) localStorage.setItem('afs_'+cfg.key, JSON.stringify(merged)); } catch(e){}
     })
-    .catch(function() { /* offline or error - use local data */ });
+    .catch(function(e){
+      if (successCount === 0) setCloudStatus(false);
+    });
   });
+}
+
+// DIRECT UPSERT to Supabase (for immediate saves)
+function upsertToSupabase(table, data) {
+  if (!navigator.onLine) return Promise.resolve(null);
+  var rows = Array.isArray(data) ? data : [data];
+  return fetch(SB_URL + '/rest/v1/' + table, {
+    method: 'POST',
+    headers: {
+      'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY,
+      'Content-Type': 'application/json',
+      'Prefer': 'resolution=merge-duplicates,return=minimal'
+    },
+    body: JSON.stringify(rows)
+  }).catch(function(e){ console.warn('Supabase upsert failed:', e.message); });
 }
 
 // ============================================================
@@ -6356,10 +6417,12 @@ function addGDriveInline() {
   if (!link.startsWith('http')) { notify('Link harus berupa URL (https://...)','red'); return; }
   if (!S.gdrive_links) S.gdrive_links = [];
   S.gdrive_links.unshift({
+    id: 'GDR/' + Date.now().toString(36).toUpperCase(),
     nama: nama, link: link, jenis: jenis||'Lainnya',
     tgl_update: TODAY, updated_by: CU ? CU.name : ''
   });
   sv('gdrive_links');
+  upsertToSupabase('gdrive_repo', S.gdrive_links[0]);
   // Clear form
   gvset('gd-i-nama',''); gvset('gd-i-link','');
   renderGDrive();
@@ -6819,7 +6882,9 @@ function saveRetur() {
     S.retur_ops.unshift(entry);
     notify('Retur ' + entry.id + ' tersimpan','green');
   }
-  sv('retur_ops'); closeOv('ov-retur'); renderRetur();
+  sv('retur_ops');
+  upsertToSupabase('denali_returns', _rtEditIdx>=0?S.retur_ops[_rtEditIdx]:S.retur_ops[0]);
+  closeOv('ov-retur'); renderRetur();
   _rtEditIdx = -1;
 }
 </script>
