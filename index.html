@@ -6959,6 +6959,50 @@ document.addEventListener('DOMContentLoaded', function() {
   loadAllPersistedData();
 });
 </script>
+
+
+<!-- PATCH 9-12 AUTO INJECT -->
+<script>
+window.AFTERSALES_PATCH_VERSION = "PATCH_9_12";
+
+function applyPatch912(){
+  try{
+    window.createBackupSnapshot = function(state){
+      try{
+        localStorage.setItem(
+          'afs_backup_'+new Date().toISOString().slice(0,10),
+          JSON.stringify(state||window.S||{})
+        );
+      }catch(e){console.log(e);}
+    };
+
+    window.safeUpdateRecord = function(oldData,newData){
+      const oldVersion = oldData?.sync_version || 0;
+      const newVersion = newData?.sync_version || Date.now();
+
+      if(newVersion >= oldVersion){
+        newData.sync_version = newVersion;
+        return newData;
+      }
+      return oldData;
+    };
+
+    window.lockTicketEditor = function(ticket,user){
+      if(!ticket) return ticket;
+      ticket.locked_by = user || 'Unknown';
+      ticket.locked_at = Date.now();
+      return ticket;
+    };
+
+    console.log("Patch 9-12 loaded");
+  }catch(err){
+    console.error(err);
+  }
+}
+
+applyPatch912();
+</script>
+
 </body>
 </html
   // Seed HE records from HE_FLOW_DATA
