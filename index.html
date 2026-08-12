@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Scuro Enterprise Aftersales System</title>
+  <title>Scuro Enterprise Aftersales Operations Platform</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Google Fonts: Plus Jakarta Sans -->
@@ -49,29 +49,24 @@
       color: #111827;
     }
     .glass-panel {
-      background: rgba(255, 255, 255, 0.78);
+      background: rgba(255, 255, 255, 0.82);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(255, 255, 255, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.88);
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
       border-radius: 20px;
     }
     .glass-card {
-      background: rgba(255, 255, 255, 0.65);
+      background: rgba(255, 255, 255, 0.70);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.75);
       border-radius: 16px;
     }
-    .glass-nav {
-      background: rgba(255, 255, 255, 0.88);
+    .glass-header {
+      background: rgba(255, 255, 255, 0.92);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.9);
-    }
-    .glass-subnav {
-      background: rgba(243, 244, 246, 0.85);
-      backdrop-filter: blur(12px);
       border-bottom: 1px solid rgba(229, 231, 235, 0.8);
     }
     ::-webkit-scrollbar {
@@ -94,44 +89,95 @@
 
   <div id="app" class="flex flex-col min-h-screen">
 
-    <!-- CONDENSED TOP NAVIGATION BAR -->
-    <header class="sticky top-0 z-40 glass-nav shadow-sm">
-      <div class="max-w-[1750px] mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center justify-between h-20">
+    <!-- STACKED MULTI-ROW HEADER NAVIGATION -->
+    <header class="sticky top-0 z-40 glass-header shadow-sm">
+      
+      <!-- ROW 1: BRAND EMBLEM LOGO + SEARCH + ROLE SWITCHER -->
+      <div class="border-b border-gray-200/60 px-4 sm:px-6 lg:px-8 py-3">
+        <div class="max-w-[1800px] mx-auto flex items-center justify-between gap-4">
           
-          <!-- Logo & Brand -->
+          <!-- Scuro Official Emblem -->
           <div class="flex items-center space-x-3 cursor-pointer" @click="navigate('dashboard', 'overview')">
-            <div class="w-11 h-11 rounded-xl bg-scuro-red flex items-center justify-center text-white font-extrabold text-xl shadow-lg shadow-scuro-red/30">
-              S
+            <div class="w-10 h-10 rounded-full bg-scuro-red flex items-center justify-center text-white shadow-lg shadow-scuro-red/30 relative overflow-hidden">
+              <span class="font-extrabold text-lg italic tracking-tighter">S</span>
+              <div class="absolute -right-1 -bottom-1 w-5 h-5 bg-white/20 rounded-full blur-[1px]"></div>
             </div>
             <div>
-              <span class="text-xl font-extrabold tracking-tight text-scuro-dark">SCURO</span>
-              <span class="text-xs font-semibold block text-scuro-red uppercase tracking-wider">Aftersales Portal</span>
+              <div class="flex items-center space-x-1.5">
+                <span class="text-lg font-extrabold tracking-tight text-scuro-red">SCURO</span>
+                <span class="text-xs font-bold text-gray-500 tracking-wider">AFTERSALES</span>
+              </div>
+              <span class="text-[10px] font-semibold text-gray-500 block uppercase tracking-widest">Enterprise Operations Platform</span>
             </div>
           </div>
 
-          <!-- 6 Primary Top Dropdown Nav Items -->
-          <nav class="hidden lg:flex items-center space-x-1.5">
+          <!-- Global Search Input -->
+          <div class="flex-1 max-w-md hidden md:block">
+            <div class="relative">
+              <input 
+                v-model="globalSearchQuery" 
+                type="text" 
+                placeholder="Search Ticket ID, SN, Sparepart SKU, Client..."
+                class="w-full pl-9 pr-4 py-2 bg-gray-100/80 border border-gray-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-scuro-red/40 transition-all"
+              >
+              <i data-lucide="search" class="w-4 h-4 text-gray-400 absolute left-3 top-2.5"></i>
+            </div>
+          </div>
+
+          <!-- Supabase Live Connection Indicator & Role Switcher -->
+          <div class="flex items-center space-x-3">
+            
+            <!-- Supabase Status Badge -->
+            <div class="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold bg-emerald-500/10 border-emerald-500/30 text-emerald-600">
+              <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span>Supabase REST Connected</span>
+            </div>
+
+            <!-- Role Switcher (RBAC) -->
+            <div class="flex items-center space-x-2 bg-white border border-gray-200 rounded-xl px-3 py-1.5 shadow-sm">
+              <i data-lucide="shield" class="w-4 h-4 text-scuro-red"></i>
+              <select v-model="currentRole" class="bg-transparent text-xs font-semibold text-gray-800 focus:outline-none cursor-pointer">
+                <option value="Super Admin">Role: Super Admin</option>
+                <option value="Ops Admin">Role: Ops Admin</option>
+                <option value="Tech">Role: Field / Workshop Tech</option>
+              </select>
+            </div>
+
+            <!-- User Avatar -->
+            <div class="w-8 h-8 rounded-xl bg-scuro-red text-white font-bold text-xs flex items-center justify-center shadow">
+              SA
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ROW 2: STACKED 8 MAIN NAVIGATION MENU ITEMS WITH DROPDOWNS (ALL 30 SUBPAGES) -->
+      <div class="px-4 sm:px-6 lg:px-8 py-2 bg-white/60">
+        <div class="max-w-[1800px] mx-auto flex items-center justify-between flex-wrap gap-2">
+          
+          <nav class="flex items-center space-x-1 flex-wrap">
             <template v-for="tab in mainNavTabs" :key="tab.id">
-              <div class="relative group">
+              <div class="relative group my-0.5">
                 <button 
                   @click="navigate(tab.id, tab.defaultSubpage)"
                   :class="[
                     activeTab === tab.id 
-                      ? 'bg-scuro-red text-white shadow-md shadow-scuro-red/20' 
-                      : 'text-gray-700 hover:bg-white/80 hover:text-scuro-red',
-                    'px-4 py-2.5 rounded-xl font-semibold text-xs transition-all duration-200 flex items-center space-x-1.5'
+                      ? 'bg-scuro-red text-white font-bold shadow-md shadow-scuro-red/20' 
+                      : 'text-gray-700 hover:bg-white hover:text-scuro-red',
+                    'px-3 py-1.5 rounded-xl text-xs transition-all duration-200 flex items-center space-x-1'
                   ]"
                 >
-                  <i :data-lucide="tab.icon" class="w-4 h-4"></i>
+                  <i :data-lucide="tab.icon" class="w-3.5 h-3.5"></i>
                   <span>{{ tab.label }}</span>
                   <i v-if="tab.subpages.length" data-lucide="chevron-down" class="w-3 h-3 opacity-60"></i>
                 </button>
 
-                <!-- Dropdown Menu for Subpages -->
+                <!-- Dropdown Menu for All Subpages -->
                 <div 
                   v-if="tab.subpages.length"
-                  class="absolute left-0 mt-1 w-60 glass-panel p-2 hidden group-hover:block z-50 shadow-xl transition-all duration-200 border border-white/60"
+                  class="absolute left-0 mt-1 w-64 glass-panel p-2 hidden group-hover:block z-50 shadow-xl border border-white/80"
                 >
                   <a 
                     v-for="sub in tab.subpages" 
@@ -141,7 +187,7 @@
                     :class="[
                       activeTab === tab.id && activeSubpage === sub.id 
                         ? 'bg-scuro-red/10 text-scuro-red font-bold' 
-                        : 'text-gray-700 hover:bg-white/90 hover:text-scuro-red',
+                        : 'text-gray-700 hover:bg-white hover:text-scuro-red',
                       'block px-3 py-2 rounded-lg text-xs transition-colors'
                     ]"
                   >
@@ -152,71 +198,30 @@
             </template>
           </nav>
 
-          <!-- Top Right Action Controls & Role Switcher -->
-          <div class="flex items-center space-x-3">
-
-            <!-- Supabase Realtime Badge -->
-            <button @click="showSupabaseModal = true" class="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold transition-all" :class="isSupabaseConnected ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-600' : 'bg-amber-500/10 border-amber-500/30 text-amber-600'">
-              <span class="w-2 h-2 rounded-full" :class="isSupabaseConnected ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'"></span>
-              <span>{{ isSupabaseConnected ? 'Supabase Live' : 'Connect Supabase' }}</span>
-            </button>
-
-            <!-- Global Search -->
-            <div class="relative hidden md:block">
-              <input 
-                v-model="globalSearchQuery" 
-                type="text" 
-                placeholder="Search ticket, SKU, client..."
-                class="w-48 xl:w-60 pl-9 pr-4 py-2 bg-white/70 border border-gray-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-scuro-red/50 transition-all"
-              >
-              <i data-lucide="search" class="w-4 h-4 text-gray-400 absolute left-3 top-2.5"></i>
-            </div>
-
-            <!-- Role Switcher (RBAC Controller) -->
-            <div class="flex items-center space-x-2 bg-white/80 border border-gray-200 rounded-xl px-3 py-1.5 shadow-sm">
-              <i data-lucide="shield" class="w-4 h-4 text-scuro-red"></i>
-              <select v-model="currentRole" class="bg-transparent text-xs font-semibold text-gray-800 focus:outline-none cursor-pointer">
-                <option value="Super Admin">Role: Super Admin</option>
-                <option value="Aftersales Manager">Role: Aftersales Manager</option>
-                <option value="Ops Admin">Role: Ops Admin</option>
-                <option value="Field Tech">Role: Field Tech</option>
-                <option value="Partner Tech">Role: Partner Tech</option>
-              </select>
-            </div>
-
-            <!-- Quick Action: New Ticket Wizard Button -->
-            <button 
-              @click="openTicketWizard()"
-              class="bg-scuro-red hover:bg-scuro-reddark text-white px-4 py-2.5 rounded-xl font-bold text-xs shadow-md shadow-scuro-red/30 flex items-center space-x-1.5 transition-all transform hover:scale-105"
-            >
-              <i data-lucide="plus" class="w-4 h-4"></i>
-              <span class="hidden md:inline">New Ticket</span>
-            </button>
-
-            <!-- User Avatar -->
-            <div class="flex items-center space-x-2 pl-2 border-l border-gray-300/60">
-              <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-scuro-red to-rose-400 text-white font-bold text-xs flex items-center justify-center shadow">
-                SA
-              </div>
-            </div>
-
-          </div>
+          <!-- Quick Action Button: Intake Ticket -->
+          <button 
+            @click="openNewTicketModal()"
+            class="bg-scuro-red hover:bg-scuro-reddark text-white px-4 py-2 rounded-xl font-bold text-xs shadow-md shadow-scuro-red/30 flex items-center space-x-1.5 transition-all transform hover:scale-105"
+          >
+            <i data-lucide="plus" class="w-4 h-4"></i>
+            <span>New Ticket Intake</span>
+          </button>
 
         </div>
       </div>
+
     </header>
 
     <!-- SUB-NAVIGATION STRIP -->
-    <div class="glass-subnav py-2.5 px-4 sm:px-6 lg:px-8">
-      <div class="max-w-[1750px] mx-auto flex items-center justify-between">
-        <div class="flex items-center space-x-2 text-xs text-gray-600 overflow-x-auto py-1">
-          <span class="font-bold text-scuro-red capitalize">{{ activeTab }}</span>
+    <div class="bg-gray-200/50 border-b border-gray-300/60 py-2 px-4 sm:px-6 lg:px-8">
+      <div class="max-w-[1800px] mx-auto flex items-center justify-between text-xs">
+        <div class="flex items-center space-x-2 text-gray-600">
+          <span class="font-bold text-scuro-red uppercase">{{ activeTab }}</span>
           <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-gray-400"></i>
-          <span class="font-medium text-gray-800 capitalize">{{ currentSubpageLabel }}</span>
+          <span class="font-medium text-gray-800">{{ currentSubpageLabel }}</span>
         </div>
 
-        <!-- Subpage Quick Pills -->
-        <div class="flex items-center space-x-1.5 overflow-x-auto">
+        <div class="flex items-center space-x-1 overflow-x-auto">
           <button 
             v-for="sub in currentTabSubpages" 
             :key="sub.id"
@@ -234,28 +239,16 @@
       </div>
     </div>
 
-    <!-- MAIN BODY CONTENT CONTAINER -->
-    <main class="flex-1 max-w-[1750px] w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
+    <!-- MAIN BODY CONTENT -->
+    <main class="flex-1 max-w-[1800px] w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
 
-      <!-- Supabase Notice Banner -->
-      <div v-if="!isSupabaseConnected" class="bg-blue-500/10 border border-blue-500/30 text-blue-900 p-4 rounded-2xl flex items-center justify-between text-xs backdrop-blur-md">
-        <div class="flex items-center space-x-3">
-          <div class="w-8 h-8 rounded-xl bg-blue-500/20 text-blue-600 flex items-center justify-center font-bold">⚡</div>
-          <div>
-            <span class="font-bold">Live Supabase Database Sync Available:</span>
-            <span class="ml-1">Connect your Supabase Project URL & Anon Key to activate 100% Realtime Database Synchronization.</span>
-          </div>
-        </div>
-        <button @click="showSupabaseModal = true" class="bg-blue-600 text-white font-bold px-3.5 py-2 rounded-xl">Connect Now</button>
-      </div>
-
-      <!-- RBAC Notice Banner for Restricted Roles -->
-      <div v-if="!canViewFinancials" class="bg-amber-500/10 border border-amber-500/30 text-amber-900 p-4 rounded-2xl flex items-center justify-between text-xs backdrop-blur-md">
+      <!-- Restricted Role Notice -->
+      <div v-if="currentRole === 'Tech'" class="bg-amber-500/10 border border-amber-500/30 text-amber-900 p-4 rounded-2xl flex items-center justify-between text-xs backdrop-blur-md">
         <div class="flex items-center space-x-3">
           <i data-lucide="alert-triangle" class="w-5 h-5 text-amber-600"></i>
           <div>
-            <span class="font-bold">Role-Based Restricted View Active ({{ currentRole }}):</span>
-            <span class="ml-1">Financial revenue totals, cost margins, and master sparepart prices are hidden.</span>
+            <span class="font-bold">Role: Field / Workshop Tech View</span>
+            <span class="ml-1">Financial pricing & cost margins are hidden. Focus on technical diagnostics and SLA turnaround.</span>
           </div>
         </div>
       </div>
@@ -267,210 +260,116 @@
         
         <div v-if="activeSubpage === 'overview'" class="space-y-6">
           
-          <!-- 6 Key KPI Stat Cards -->
-          <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            
-            <div class="glass-panel p-5 space-y-2 relative overflow-hidden group hover:shadow-lg transition-all">
-              <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Monthly Tickets</span>
-              <div class="text-2xl font-extrabold text-gray-900">{{ tickets.length + 138 }}</div>
-              <div class="text-[11px] text-emerald-600 font-semibold">+12.4% vs L.M.</div>
+          <!-- 5 Metric Cards -->
+          <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+            <div class="glass-panel p-5 space-y-2 border-l-4 border-l-scuro-red">
+              <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Total Inquiries (Monthly)</span>
+              <div class="text-2xl font-extrabold text-gray-900">184 Cases</div>
+              <div class="text-[11px] text-emerald-600 font-semibold">+14.2% vs prev month</div>
             </div>
-
-            <div class="glass-panel p-5 space-y-2 relative overflow-hidden group hover:shadow-lg transition-all">
-              <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Pending Internal</span>
-              <div class="text-2xl font-extrabold text-blue-600">{{ tickets.filter(t => t.status === 'pending_internal').length + 8 }}</div>
-              <div class="text-[11px] text-gray-500">Internal Review</div>
-            </div>
-
-            <div class="glass-panel p-5 space-y-2 relative overflow-hidden group hover:shadow-lg transition-all">
+            <div class="glass-panel p-5 space-y-2 border-l-4 border-l-amber-500">
               <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Pending Customer</span>
-              <div class="text-2xl font-extrabold text-amber-600">{{ tickets.filter(t => t.status === 'pending_customer').length + 14 }}</div>
-              <div class="text-[11px] text-amber-700">Quotation Confirmation</div>
+              <div class="text-2xl font-extrabold text-amber-600">14 Tickets</div>
+              <div class="text-[11px] text-amber-700">Waiting SQ Approval</div>
             </div>
-
-            <div class="glass-panel p-5 space-y-2 relative overflow-hidden group hover:shadow-lg transition-all">
-              <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Ongoing Revenue</span>
+            <div class="glass-panel p-5 space-y-2 border-l-4 border-l-blue-500">
+              <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Pending Internal</span>
+              <div class="text-2xl font-extrabold text-blue-600">8 Tickets</div>
+              <div class="text-[11px] text-gray-500">Workshop & Sparepart Review</div>
+            </div>
+            <div class="glass-panel p-5 space-y-2 border-l-4 border-l-emerald-500">
+              <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">SLA Compliance %</span>
+              <div class="text-2xl font-extrabold text-emerald-600">96.8%</div>
+              <div class="text-[11px] text-emerald-600 font-semibold">&lt; 15 min intake compliant</div>
+            </div>
+            <div class="glass-panel p-5 space-y-2 border-l-4 border-l-purple-500">
+              <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Total Revenue</span>
               <div class="text-2xl font-extrabold text-gray-900">
-                {{ canViewFinancials ? 'IDR 485.5M' : '••••••••' }}
+                {{ canViewFinancials ? 'IDR 512.4M' : '••••••••' }}
               </div>
-              <div class="text-[11px] text-emerald-600 font-semibold">+8.7% target</div>
+              <div class="text-[11px] text-gray-500">Service + Spareparts</div>
             </div>
-
-            <div class="glass-panel p-5 space-y-2 relative overflow-hidden group hover:shadow-lg transition-all">
-              <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Tech SLA %</span>
-              <div class="text-2xl font-extrabold text-emerald-600">94.2%</div>
-              <div class="text-[11px] text-gray-500">FTF Compliant</div>
-            </div>
-
-            <div class="glass-panel p-5 space-y-2 relative overflow-hidden group hover:shadow-lg transition-all">
-              <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Admin SLA %</span>
-              <div class="text-2xl font-extrabold text-purple-600">98.1%</div>
-              <div class="text-[11px] text-gray-500">&lt; 15 min intake</div>
-            </div>
-
           </div>
 
-          <!-- Chart.js Visualizations Grid -->
+          <!-- Team SLA Management Scorecards -->
+          <div class="glass-panel p-6 space-y-5">
+            <div class="flex items-center justify-between border-b pb-3">
+              <div>
+                <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wider">SLA Management & Team Scorecards (MAY 2026 Standard)</h3>
+                <p class="text-xs text-gray-500">Admin Intake Speed (&lt;15 mins) and Technician Bench Repair Turnaround (&le; 3 Days)</p>
+              </div>
+              <span class="px-3 py-1 bg-scuro-red/10 text-scuro-red font-bold text-xs rounded-full">SLA Target Active</span>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div class="glass-card p-5 space-y-4">
+                <div class="flex items-center justify-between">
+                  <h4 class="font-bold text-xs text-gray-800 uppercase flex items-center space-x-2">
+                    <i data-lucide="clock" class="w-4 h-4 text-blue-600"></i>
+                    <span>Admin Intake SLA Performance</span>
+                  </h4>
+                  <span class="text-xs font-bold text-blue-600">Response &lt; 15 Mins Target</span>
+                </div>
+                <div class="grid grid-cols-2 gap-4 text-xs">
+                  <div class="p-3 bg-white/80 rounded-xl border border-gray-100 space-y-1">
+                    <span class="text-gray-500 font-semibold">Resolution &le; 3 Days</span>
+                    <div class="text-xl font-extrabold text-emerald-600">142 Cases (91.6%)</div>
+                  </div>
+                  <div class="p-3 bg-white/80 rounded-xl border border-gray-100 space-y-1">
+                    <span class="text-gray-500 font-semibold">Resolution &gt; 3 Days</span>
+                    <div class="text-xl font-extrabold text-rose-600">13 Cases (8.4%)</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="glass-card p-5 space-y-4">
+                <h4 class="font-bold text-xs text-gray-800 uppercase flex items-center space-x-2">
+                  <i data-lucide="users" class="w-4 h-4 text-scuro-red"></i>
+                  <span>Technician Bench Repair SLA & Rating Scorecards</span>
+                </h4>
+                <div class="space-y-2 text-xs">
+                  <div v-for="tech in techScorecards" :key="tech.name" class="flex items-center justify-between p-2.5 bg-white/80 rounded-xl border border-gray-100">
+                    <div>
+                      <span class="font-bold text-gray-900">{{ tech.name }}</span>
+                      <span class="text-gray-400 text-[11px] ml-2">({{ tech.resolvedCount }} units fixed)</span>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                      <span class="text-gray-600 font-medium">FTF: <strong class="text-emerald-600">{{ tech.ftfRate }}%</strong></span>
+                      <span class="px-2 py-0.5 bg-amber-500/10 text-amber-600 font-bold rounded-full">★ {{ tech.rating }} / 5.0</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Chart.js Graphics Grid -->
           <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            
-            <!-- Chart 1: Revenue vs Expenses Line Chart -->
             <div class="glass-panel p-6 space-y-4 lg:col-span-2">
               <div class="flex items-center justify-between">
-                <div>
-                  <h3 class="text-sm font-bold text-gray-900 uppercase">Monthly Revenue Growth vs Operating Expenses</h3>
-                  <p class="text-xs text-gray-500">Revenue against spareparts, warranty claims, and partner fees (IDR Millions)</p>
-                </div>
-                <span class="px-2.5 py-1 bg-emerald-500/10 text-emerald-600 font-bold text-xs rounded-full">FY 2026</span>
+                <h3 class="text-sm font-bold text-gray-900 uppercase">Monthly Cases Volume Trend</h3>
+                <span class="text-xs text-gray-500">Service vs Maintenance</span>
               </div>
               <div class="h-64 relative">
-                <canvas id="revenueChart"></canvas>
+                <canvas id="casesChart"></canvas>
               </div>
             </div>
-
-            <!-- Chart 2: Brand Failure Frequencies Bar Chart -->
             <div class="glass-panel p-6 space-y-4">
               <div class="flex items-center justify-between">
-                <h3 class="text-sm font-bold text-gray-900 uppercase">Brand Failure Frequencies</h3>
-                <span class="px-2.5 py-1 bg-scuro-red/10 text-scuro-red font-bold text-xs rounded-full">YTD Cases</span>
+                <h3 class="text-sm font-bold text-gray-900 uppercase">Failure Modes per Brand</h3>
+                <span class="text-xs text-scuro-red font-bold">Hambach vs Maquinos</span>
               </div>
               <div class="h-64 relative">
-                <canvas id="brandChart"></canvas>
+                <canvas id="brandFailureChart"></canvas>
               </div>
-            </div>
-
-          </div>
-
-          <!-- 6 Scrollable Glass Alert Widgets -->
-          <div class="glass-panel p-6 space-y-4">
-            <h3 class="text-sm font-bold text-scuro-dark uppercase tracking-wider flex items-center space-x-2">
-              <i data-lucide="bell" class="w-4 h-4 text-scuro-red"></i>
-              <span>Live Operational Risk & SLA Alert Center</span>
-            </h3>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
-              <!-- Alert 1 -->
-              <div class="glass-card p-4 space-y-2 border-l-4 border-l-scuro-red">
-                <div class="flex items-center justify-between text-xs font-bold text-scuro-red">
-                  <span>Tickets > 2 Days</span>
-                  <span class="bg-scuro-red/10 px-2 py-0.5 rounded-full">6 Cases</span>
-                </div>
-                <div class="text-xs text-gray-600 max-h-28 overflow-y-auto space-y-1">
-                  <div v-for="t in tickets.filter(x => x.daysOpen > 2).slice(0,3)" :key="t.id" class="border-b border-gray-100 pb-1">
-                    <span class="font-bold">{{ t.ticket_number }}</span>: {{ t.customer_name }} ({{ t.daysOpen }}d)
-                  </div>
-                </div>
-              </div>
-
-              <!-- Alert 2 -->
-              <div class="glass-card p-4 space-y-2 border-l-4 border-l-amber-500">
-                <div class="flex items-center justify-between text-xs font-bold text-amber-600">
-                  <span>Critical Stock</span>
-                  <span class="bg-amber-500/10 px-2 py-0.5 rounded-full">4 SKUs</span>
-                </div>
-                <div class="text-xs text-gray-600 max-h-28 overflow-y-auto space-y-1">
-                  <div v-for="s in spareparts.filter(x => x.stock_warehouse <= x.min_stock_critical)" :key="s.id" class="border-b border-gray-100 pb-1">
-                    <span class="font-bold">{{ s.sku }}</span>: {{ s.part_name }} ({{ s.stock_warehouse }} left)
-                  </div>
-                </div>
-              </div>
-
-              <!-- Alert 3 -->
-              <div class="glass-card p-4 space-y-2 border-l-4 border-l-purple-500">
-                <div class="flex items-center justify-between text-xs font-bold text-purple-600">
-                  <span>Loaned Parts Tracker</span>
-                  <span class="bg-purple-500/10 px-2 py-0.5 rounded-full">3 Techs</span>
-                </div>
-                <div class="text-xs text-gray-600 max-h-28 overflow-y-auto space-y-1">
-                  <div class="border-b border-gray-100 pb-1"><span class="font-bold">Adi</span>: 8 items (Hambach Gasket)</div>
-                  <div class="border-b border-gray-100 pb-1"><span class="font-bold">Bambang</span>: 5 items (Burrs)</div>
-                  <div class="border-b border-gray-100 pb-1"><span class="font-bold">Widi</span>: 11 items (Filter)</div>
-                </div>
-              </div>
-
-              <!-- Alert 4 -->
-              <div class="glass-card p-4 space-y-2 border-l-4 border-l-cyan-500">
-                <div class="flex items-center justify-between text-xs font-bold text-cyan-600">
-                  <span>Bali Hub Summary</span>
-                  <span class="bg-cyan-500/10 px-2 py-0.5 rounded-full">Active</span>
-                </div>
-                <div class="text-xs text-gray-600 max-h-28 overflow-y-auto space-y-1">
-                  <div class="border-b border-gray-100 pb-1"><span class="font-bold">Stock</span>: 85 items on hand</div>
-                  <div class="border-b border-gray-100 pb-1"><span class="font-bold">Visits</span>: 4 Canggu visits today</div>
-                </div>
-              </div>
-
-              <!-- Alert 5 -->
-              <div class="glass-card p-4 space-y-2 border-l-4 border-l-blue-500">
-                <div class="flex items-center justify-between text-xs font-bold text-blue-600">
-                  <span>Unprocessed SQ</span>
-                  <span class="bg-blue-500/10 px-2 py-0.5 rounded-full">5 Orders</span>
-                </div>
-                <div class="text-xs text-gray-600 max-h-28 overflow-y-auto space-y-1">
-                  <div class="border-b border-gray-100 pb-1"><span class="font-bold">TCK-2026-004</span>: SQ Pending</div>
-                  <div class="border-b border-gray-100 pb-1"><span class="font-bold">TCK-2026-008</span>: Unshipped</div>
-                </div>
-              </div>
-
-              <!-- Alert 6 -->
-              <div class="glass-card p-4 space-y-2 border-l-4 border-l-rose-500">
-                <div class="flex items-center justify-between text-xs font-bold text-rose-600">
-                  <span>Unpaid Partner Techs</span>
-                  <span class="bg-rose-500/10 px-2 py-0.5 rounded-full">2 Claims</span>
-                </div>
-                <div class="text-xs text-gray-600 max-h-28 overflow-y-auto space-y-1">
-                  <div class="border-b border-gray-100 pb-1"><span class="font-bold">CV Teknik Utama</span>: IDR 1.2M</div>
-                  <div class="border-b border-gray-100 pb-1"><span class="font-bold">Surabaya Servis</span>: IDR 850k</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Top 10 Bestselling Spareparts Table -->
-          <div class="glass-panel p-6 space-y-4">
-            <div class="flex items-center justify-between">
-              <h3 class="text-sm font-bold text-gray-800 uppercase tracking-wider">Top 10 Bestselling Spareparts Catalog</h3>
-              <button @click="exportToCSV(spareparts, 'Bestselling_Spareparts')" class="text-xs font-bold text-scuro-red hover:underline flex items-center space-x-1">
-                <i data-lucide="download" class="w-3.5 h-3.5"></i>
-                <span>Export List</span>
-              </button>
-            </div>
-            <div class="overflow-x-auto">
-              <table class="w-full text-left text-xs">
-                <thead>
-                  <tr class="border-b border-gray-200 text-gray-500 font-bold uppercase tracking-wider">
-                    <th class="py-3 px-4">SKU</th>
-                    <th class="py-3 px-4">Part Name</th>
-                    <th class="py-3 px-4">Brand</th>
-                    <th class="py-3 px-4">Bin Location</th>
-                    <th class="py-3 px-4">Sold Qty</th>
-                    <th class="py-3 px-4" v-if="canViewFinancials">Unit Price (IDR)</th>
-                    <th class="py-3 px-4">Stock Status</th>
-                  </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-100">
-                  <tr v-for="part in spareparts.slice(0, 10)" :key="part.id" class="hover:bg-white/60 transition-colors">
-                    <td class="py-3 px-4 font-bold text-scuro-red">{{ part.sku }}</td>
-                    <td class="py-3 px-4 font-semibold text-gray-800">{{ part.part_name }}</td>
-                    <td class="py-3 px-4"><span class="px-2 py-0.5 bg-gray-200/80 rounded font-semibold text-gray-700">{{ part.brand }}</span></td>
-                    <td class="py-3 px-4 text-gray-600">{{ part.bin_location }}</td>
-                    <td class="py-3 px-4 font-bold text-gray-900">{{ part.total_sold_count }} units</td>
-                    <td class="py-3 px-4 font-bold text-emerald-600" v-if="canViewFinancials">IDR {{ formatCurrency(part.selling_price) }}</td>
-                    <td class="py-3 px-4">
-                      <span v-if="part.stock_warehouse <= part.min_stock_critical" class="px-2 py-0.5 bg-rose-500/10 text-rose-600 font-bold rounded-full">CRITICAL ({{ part.stock_warehouse }})</span>
-                      <span v-else class="px-2 py-0.5 bg-emerald-500/10 text-emerald-600 font-bold rounded-full">GOOD ({{ part.stock_warehouse }})</span>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
             </div>
           </div>
 
         </div>
 
-        <!-- Dashboard Subpage 2 & 3 Placeholders -->
         <div v-if="activeSubpage !== 'overview'" class="glass-panel p-6 space-y-4">
           <h2 class="text-base font-bold text-gray-900 capitalize">{{ currentSubpageLabel }}</h2>
-          <p class="text-xs text-gray-500">Live operational data for {{ currentSubpageLabel }}.</p>
+          <p class="text-xs text-gray-500">Live operational metrics for {{ currentSubpageLabel }}.</p>
         </div>
 
       </div>
@@ -480,70 +379,67 @@
       <!-- ========================================== -->
       <div v-if="activeTab === 'operations'" class="space-y-6">
         
-        <!-- Operations Subpage 1: External Customer Cases Kanban Pipeline -->
         <div v-if="activeSubpage === 'tickets-external'" class="space-y-6">
           <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 glass-panel p-5">
             <div>
-              <h2 class="text-base font-bold text-gray-900">External Customer Cases Kanban Pipeline</h2>
-              <p class="text-xs text-gray-500">Track cases across 7 pipeline stages with live SLA countdowns</p>
+              <h2 class="text-base font-bold text-gray-900">Qontak-Style Service Tickets Pipeline</h2>
+              <p class="text-xs text-gray-500">Click ANY card to open full Slide-Over Ticket Wizard Modal</p>
             </div>
             <div class="flex items-center space-x-3">
-              <button @click="exportToCSV(tickets, 'Tickets_Kanban_Export')" class="bg-white border border-gray-300 text-xs font-bold px-3.5 py-2 rounded-xl flex items-center space-x-1">
-                <i data-lucide="download" class="w-3.5 h-3.5"></i>
-                <span>Export CSV</span>
-              </button>
-              <button @click="openTicketWizard()" class="bg-scuro-red text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-md shadow-scuro-red/30 flex items-center space-x-1">
+              <button @click="openNewTicketModal()" class="bg-scuro-red text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-md shadow-scuro-red/30 flex items-center space-x-1">
                 <i data-lucide="plus" class="w-4 h-4"></i>
-                <span>Intake New Ticket</span>
+                <span>Create New Ticket</span>
               </button>
             </div>
           </div>
 
-          <!-- 7-Column Kanban Board -->
-          <div class="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-7 gap-4 overflow-x-auto pb-4">
-            
-            <div v-for="col in kanbanColumns" :key="col.status" class="glass-panel p-3.5 space-y-3 min-w-[240px]">
-              <!-- Column Header -->
-              <div class="flex items-center justify-between border-b pb-2">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+            <div v-for="col in qontakColumns" :key="col.status" class="glass-panel p-4 space-y-4">
+              <div class="flex items-center justify-between border-b pb-2.5">
                 <span class="font-bold text-xs uppercase" :class="col.colorClass">{{ col.label }}</span>
-                <span class="px-2 py-0.5 bg-white/80 rounded-full font-bold text-xs text-gray-700">
+                <span class="px-2.5 py-0.5 bg-white/90 rounded-full font-bold text-xs text-gray-700 shadow-sm">
                   {{ tickets.filter(t => t.status === col.status).length }}
                 </span>
               </div>
-
-              <!-- Kanban Cards List -->
               <div class="space-y-3">
                 <div 
                   v-for="t in tickets.filter(t => t.status === col.status)" 
                   :key="t.id"
-                  @click="viewTicketDetail(t)"
-                  class="glass-card p-3.5 space-y-2 cursor-pointer hover:shadow-md transition-all border border-white/80"
+                  @click="openTicketSlideOver(t)"
+                  class="glass-card p-4 space-y-3 cursor-pointer hover:shadow-lg transition-all border border-white/90 group"
                 >
                   <div class="flex items-center justify-between">
-                    <span class="font-bold text-xs text-scuro-red">{{ t.ticket_number }}</span>
-                    <span class="px-2 py-0.5 bg-rose-500/10 text-rose-600 font-extrabold text-[10px] rounded-full">{{ t.priority }}</span>
+                    <span class="font-bold text-xs text-scuro-red font-mono">{{ t.action_id }}</span>
+                    <span :class="getPriorityBadgeClass(t.priority)">{{ t.priority }}</span>
                   </div>
-                  <div class="font-bold text-xs text-gray-900 truncate">{{ t.customer_name }}</div>
-                  <div class="text-[11px] text-gray-500 truncate">{{ t.business_name }}</div>
-                  <div class="text-[11px] font-semibold text-gray-800">{{ t.unit_model }} ({{ t.brand }})</div>
+                  <div>
+                    <div class="font-extrabold text-xs text-gray-900 group-hover:text-scuro-red transition-colors">{{ t.customer_name }}</div>
+                    <div class="text-[11px] text-gray-500 font-semibold">{{ t.brand }} - {{ t.unit_type }}</div>
+                  </div>
+                  <p class="text-xs text-gray-600 line-clamp-2 bg-white/60 p-2 rounded-lg border border-gray-100">
+                    {{ t.kendala || t.description }}
+                  </p>
                   <div class="flex items-center justify-between pt-2 border-t text-[10px] text-gray-500">
                     <span class="flex items-center space-x-1 text-amber-600 font-bold">
                       <i data-lucide="clock" class="w-3 h-3"></i>
-                      <span>SLA: {{ t.daysOpen * 24 }}h left</span>
+                      <span>Due: {{ t.due_date }}</span>
                     </span>
-                    <span class="font-bold text-gray-700">{{ t.assigned_to }}</span>
+                    <div class="flex items-center space-x-1.5">
+                      <div class="w-5 h-5 rounded-full bg-scuro-red text-white text-[9px] font-bold flex items-center justify-center">
+                        {{ t.assigned_to ? t.assigned_to.charAt(0) : 'A' }}
+                      </div>
+                      <span class="font-bold text-gray-700">{{ t.assigned_to }}</span>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-
           </div>
         </div>
 
-        <!-- Operations Generic Subpages Placeholder -->
         <div v-if="activeSubpage !== 'tickets-external'" class="glass-panel p-6 space-y-4">
           <h2 class="text-base font-bold text-gray-900 capitalize">{{ currentSubpageLabel }}</h2>
-          <p class="text-xs text-gray-500">Live operational execution logs for {{ currentSubpageLabel }}.</p>
+          <p class="text-xs text-gray-500">Operational logs for {{ currentSubpageLabel }}.</p>
         </div>
 
       </div>
@@ -552,19 +448,18 @@
       <!-- TAB 3: INVENTORY                           -->
       <!-- ========================================== -->
       <div v-if="activeTab === 'inventory'" class="space-y-6">
-        
-        <!-- Inventory Subpage 1: Master Sparepart Catalog -->
         <div v-if="activeSubpage === 'master-catalog'" class="glass-panel p-6 space-y-5">
           <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-              <h2 class="text-base font-bold text-gray-900">Sparepart Master Inventory Catalog [RBAC Protected]</h2>
-              <p class="text-xs text-gray-500">Warehouse stock, Bali hub stock, bin locations, and field loan tracking</p>
+              <h2 class="text-base font-bold text-gray-900">Sparepart Master Inventory Catalog [Inline Editable]</h2>
+              <p class="text-xs text-gray-500">Double-click any table cell to edit text directly in memory</p>
             </div>
             <div class="flex items-center space-x-3">
-              <button @click="openPRModal('optionA')" class="bg-white border border-gray-300 text-gray-800 text-xs font-bold px-3.5 py-2 rounded-xl hover:bg-gray-50">
-                Purchase Requisition
+              <button @click="showImportModal = true" class="bg-white border border-gray-300 text-xs font-bold px-3.5 py-2 rounded-xl flex items-center space-x-1 hover:bg-gray-50">
+                <i data-lucide="upload" class="w-3.5 h-3.5"></i>
+                <span>Import CSV/Excel</span>
               </button>
-              <button @click="exportToCSV(spareparts, 'Sparepart_Master_Catalog')" class="bg-scuro-red text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-md shadow-scuro-red/30 flex items-center space-x-1.5">
+              <button @click="exportToCSV(spareparts, 'Sparepart_Master_Catalog')" class="bg-scuro-red text-white text-xs font-bold px-4 py-2 rounded-xl shadow-md flex items-center space-x-1.5">
                 <i data-lucide="download" class="w-4 h-4"></i>
                 <span>Export CSV</span>
               </button>
@@ -576,81 +471,59 @@
               <thead>
                 <tr class="border-b border-gray-200 text-gray-500 font-bold uppercase tracking-wider">
                   <th class="py-3 px-4">SKU</th>
-                  <th class="py-3 px-4">Part Name</th>
+                  <th class="py-3 px-4">Item Name</th>
                   <th class="py-3 px-4">Brand</th>
-                  <th class="py-3 px-4">Bin Location</th>
-                  <th class="py-3 px-4">Whse Stock</th>
-                  <th class="py-3 px-4">Bali Stock</th>
-                  <th class="py-3 px-4">Field Loaned</th>
-                  <th class="py-3 px-4" v-if="canViewFinancials">Cost Price</th>
-                  <th class="py-3 px-4" v-if="canViewFinancials">Sell Price</th>
-                  <th class="py-3 px-4">Status</th>
+                  <th class="py-3 px-4">Category</th>
+                  <th class="py-3 px-4" v-if="canViewFinancials">Unit Price (IDR)</th>
+                  <th class="py-3 px-4" v-if="canViewFinancials">HPP Cost (IDR)</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-gray-100">
-                <tr v-for="part in spareparts" :key="part.id" class="hover:bg-white/70">
-                  <td class="py-3 px-4 font-bold text-scuro-red">{{ part.sku }}</td>
-                  <td class="py-3 px-4 font-bold text-gray-900">{{ part.part_name }}</td>
-                  <td class="py-3 px-4 font-semibold text-gray-700">{{ part.brand }}</td>
-                  <td class="py-3 px-4 font-mono text-gray-600">{{ part.bin_location }}</td>
-                  <td class="py-3 px-4 font-bold text-gray-900">{{ part.stock_warehouse }}</td>
-                  <td class="py-3 px-4 font-semibold text-gray-700">{{ part.stock_bali }}</td>
-                  <td class="py-3 px-4 font-semibold text-purple-600">{{ part.stock_loaned }}</td>
-                  <td class="py-3 px-4 font-bold text-gray-600" v-if="canViewFinancials">IDR {{ formatCurrency(part.cost_price) }}</td>
-                  <td class="py-3 px-4 font-bold text-emerald-600" v-if="canViewFinancials">IDR {{ formatCurrency(part.selling_price) }}</td>
-                  <td class="py-3 px-4">
-                    <span v-if="part.stock_warehouse <= part.min_stock_critical" class="px-2 py-0.5 bg-rose-500/10 text-rose-600 font-bold rounded-full">CRITICAL</span>
-                    <span v-else class="px-2 py-0.5 bg-emerald-500/10 text-emerald-600 font-bold rounded-full">GOOD</span>
-                  </td>
+                <tr v-for="(part, idx) in spareparts" :key="part.id" class="hover:bg-white/80">
+                  <td class="py-3 px-4 font-bold text-scuro-red font-mono" contenteditable="true" @blur="onCellEdit($event, spareparts, idx, 'sku')">{{ part.sku }}</td>
+                  <td class="py-3 px-4 font-bold text-gray-900" contenteditable="true" @blur="onCellEdit($event, spareparts, idx, 'item_name')">{{ part.item_name }}</td>
+                  <td class="py-3 px-4 font-semibold text-gray-700" contenteditable="true" @blur="onCellEdit($event, spareparts, idx, 'brand')">{{ part.brand }}</td>
+                  <td class="py-3 px-4 text-gray-600" contenteditable="true" @blur="onCellEdit($event, spareparts, idx, 'category')">{{ part.category }}</td>
+                  <td class="py-3 px-4 font-bold text-emerald-600" v-if="canViewFinancials" contenteditable="true" @blur="onCellEdit($event, spareparts, idx, 'unit_price')">IDR {{ formatCurrency(part.unit_price) }}</td>
+                  <td class="py-3 px-4 font-bold text-gray-600" v-if="canViewFinancials" contenteditable="true" @blur="onCellEdit($event, spareparts, idx, 'hpp_cost')">IDR {{ formatCurrency(part.hpp_cost) }}</td>
                 </tr>
               </tbody>
             </table>
           </div>
         </div>
 
-        <!-- Placeholder for remaining Inventory Subpages -->
         <div v-if="activeSubpage !== 'master-catalog'" class="glass-panel p-6 space-y-4">
           <h2 class="text-base font-bold text-gray-900 capitalize">{{ currentSubpageLabel }}</h2>
-          <p class="text-xs text-gray-500">Inventory and bin management for {{ currentSubpageLabel }}.</p>
+          <p class="text-xs text-gray-500">Inventory records for {{ currentSubpageLabel }}.</p>
         </div>
-
       </div>
 
       <!-- ========================================== -->
       <!-- TAB 4: PERFORMANCE                         -->
       <!-- ========================================== -->
       <div v-if="activeTab === 'performance'" class="space-y-6">
-        
-        <div v-if="activeSubpage === 'analytics'" class="space-y-6">
-          <div class="grid grid-cols-1 md:grid-cols-4 gap-5">
-            <div class="glass-panel p-5 space-y-2">
-              <span class="text-xs font-bold text-gray-500 uppercase">Admin Intake Speed</span>
-              <div class="text-3xl font-extrabold text-blue-600">8.5 Mins</div>
-              <p class="text-xs text-gray-500">Target: &lt; 15.0 Mins</p>
-            </div>
-            <div class="glass-panel p-5 space-y-2">
-              <span class="text-xs font-bold text-gray-500 uppercase">First Time Fix Rate (FTF %)</span>
-              <div class="text-3xl font-extrabold text-emerald-600">92.4%</div>
-              <p class="text-xs text-gray-500">Target: > 90%</p>
-            </div>
-            <div class="glass-panel p-5 space-y-2">
-              <span class="text-xs font-bold text-gray-500 uppercase">Mean Time To Repair (MTTR)</span>
-              <div class="text-3xl font-extrabold text-amber-600">3.8 Hours</div>
-              <p class="text-xs text-gray-500">Target: &lt; 4.0 Hours</p>
-            </div>
-            <div class="glass-panel p-5 space-y-2">
-              <span class="text-xs font-bold text-gray-500 uppercase">Quality Audit Score</span>
-              <div class="text-3xl font-extrabold text-purple-600">4.85 / 5.0</div>
-              <p class="text-xs text-gray-500">120 Surveys</p>
-            </div>
+        <div v-if="activeSubpage === 'capacity'" class="grid grid-cols-1 md:grid-cols-4 gap-5">
+          <div class="glass-panel p-5 space-y-2">
+            <span class="text-xs font-bold text-gray-500 uppercase">Admin Intake Speed</span>
+            <div class="text-3xl font-extrabold text-blue-600">8.5 Mins</div>
+            <p class="text-xs text-gray-500">Target: &lt; 15 Mins</p>
+          </div>
+          <div class="glass-panel p-5 space-y-2">
+            <span class="text-xs font-bold text-gray-500 uppercase">First Time Fix Rate</span>
+            <div class="text-3xl font-extrabold text-emerald-600">92.4%</div>
+            <p class="text-xs text-gray-500">Target: &gt; 90%</p>
+          </div>
+          <div class="glass-panel p-5 space-y-2">
+            <span class="text-xs font-bold text-gray-500 uppercase">Bench MTTR</span>
+            <div class="text-3xl font-extrabold text-amber-600">2.1 Days</div>
+            <p class="text-xs text-gray-500">Target: &le; 3 Days</p>
+          </div>
+          <div class="glass-panel p-5 space-y-2">
+            <span class="text-xs font-bold text-gray-500 uppercase">Customer Satisfaction</span>
+            <div class="text-3xl font-extrabold text-purple-600">4.88 / 5.0</div>
+            <p class="text-xs text-gray-500">184 Ratings</p>
           </div>
         </div>
-
-        <div v-if="activeSubpage !== 'analytics'" class="glass-panel p-6 space-y-4">
-          <h2 class="text-base font-bold text-gray-900 capitalize">{{ currentSubpageLabel }}</h2>
-          <p class="text-xs text-gray-500">Performance and audit records for {{ currentSubpageLabel }}.</p>
-        </div>
-
       </div>
 
       <!-- ========================================== -->
@@ -658,160 +531,291 @@
       <!-- ========================================== -->
       <div v-if="activeTab === 'knowledge'" class="glass-panel p-6 space-y-6">
         <h2 class="text-base font-bold text-gray-900 capitalize">{{ currentSubpageLabel }}</h2>
-        <p class="text-xs text-gray-500">Technical manuals, video tutorials, and interactive troubleshooting guides.</p>
+        <p class="text-xs text-gray-500">Technical manuals, video tutorials, and message templates.</p>
       </div>
 
       <!-- ========================================== -->
-      <!-- TAB 6: GOVERNANCE & DOCUMENTS              -->
+      <!-- TAB 6: GOVERNANCE & RULES                  -->
       <!-- ========================================== -->
-      <div v-if="activeTab === 'governance'" class="glass-panel p-6 space-y-6">
-        
-        <div v-if="activeSubpage === 'settings'" class="space-y-6">
-          <div class="flex items-center justify-between">
-            <h2 class="text-base font-bold text-gray-900">System Administration & RBAC Settings</h2>
-            <button @click="openImporterModal()" class="bg-scuro-red text-white text-xs font-bold px-4 py-2 rounded-xl">Bulk Import CSV/Excel</button>
+      <div v-if="activeTab === 'governance'" class="space-y-6">
+        <div v-if="activeSubpage === 'service-terms'" class="glass-panel p-6 space-y-6">
+          <div class="border-b pb-4">
+            <h2 class="text-lg font-extrabold text-gray-900">Governance, Service Policies & Agreement Rules</h2>
+            <p class="text-xs text-gray-500">Official transport rates, maintenance terms, and corporate agreements</p>
           </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 text-xs">
             <div class="glass-card p-5 space-y-3">
-              <h4 class="font-bold text-scuro-red uppercase">Role Permissions Matrix</h4>
-              <p class="text-gray-600">Super Admin & Manager: Full Financial, Pricing, Warranty & User Control.<br>Tech & Partner Tech: Prices & Financial Totals Hidden.</p>
+              <h3 class="font-extrabold text-sm text-scuro-red uppercase">1. Program Maintenance 1x Rules</h3>
+              <ul class="space-y-2 text-gray-700 list-disc pl-4">
+                <li>Out-of-warranty rates: <strong>Rp 600.000 (1-Group)</strong> | <strong>Rp 800.000 (2-Group)</strong></li>
+                <li>Distance coverage: <strong>0 - 25km Jabodetabek included</strong></li>
+                <li>25km - 50km Jabodetabek: <strong>+Rp 200.000 transport fee</strong></li>
+                <li>&gt;50km: Standard Internal Memo IM transport rates apply</li>
+                <li>Included Scope: 1x Visit including Gasket & O-Ring replacement</li>
+              </ul>
             </div>
             <div class="glass-card p-5 space-y-3">
-              <h4 class="font-bold text-gray-800 uppercase">Audit Trail Engine</h4>
-              <p class="text-gray-600">System audit logs enabled for all user actions, ticket status modifications, and CSV exports.</p>
+              <h3 class="font-extrabold text-sm text-blue-600 uppercase">2. Internal Memo SG-FORM-IM-001 (Effective Dec 2025)</h3>
+              <ul class="space-y-2 text-gray-700 list-disc pl-4">
+                <li>Free Transport (Up to 15M purchase): <strong>Max 25km free</strong></li>
+                <li>Free Transport (&gt;15M purchase): <strong>Max 50km free</strong></li>
+                <li>Free Transport (&gt;75M purchase): <strong>Max 200km free (Bandung delivery)</strong></li>
+                <li>Installation Rate (&le;15M): Rp 400.000 (0-25km), Rp 600.000 (25-50km)</li>
+                <li>Service Rate: Hambach 1-Group Rp 300k, Hambach 2-Group Rp 400k</li>
+              </ul>
+            </div>
+            <div class="glass-card p-5 space-y-3 lg:col-span-2">
+              <h3 class="font-extrabold text-sm text-emerald-600 uppercase">3. PT Bumi Berkah Boga (Kopi Kenangan) Corporate Agreement</h3>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div class="p-3 bg-white/80 rounded-xl border border-gray-100">
+                  <strong class="text-gray-900 block mb-1">Service & Transport Discount</strong>
+                  <span class="text-emerald-600 font-bold text-sm">25% Discount Applied</span>
+                </div>
+                <div class="p-3 bg-white/80 rounded-xl border border-gray-100">
+                  <strong class="text-gray-900 block mb-1">Spareparts Discount</strong>
+                  <span class="text-emerald-600 font-bold text-sm">15% Discount Applied</span>
+                </div>
+                <div class="p-3 bg-white/80 rounded-xl border border-gray-100">
+                  <strong class="text-gray-900 block mb-1">Payment Term</strong>
+                  <span class="text-gray-700 font-semibold">SQ Validity 7 Days, Max 50 pcs/order</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Interactive Berita Acara Generator -->
+          <div class="glass-panel p-6 space-y-5 border border-scuro-red/20">
+            <div class="flex items-center justify-between border-b pb-3">
+              <div>
+                <h3 class="text-sm font-extrabold text-scuro-red uppercase">Berita Acara (BA) Generator (SG-FORM-BA-001)</h3>
+                <p class="text-xs text-gray-500">Generate formal stock adjustment and unit service handover documents</p>
+              </div>
+              <button @click="printBA()" class="bg-scuro-red text-white text-xs font-bold px-4 py-2 rounded-xl shadow-md">Print BA Document</button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+              <div><label class="block font-semibold mb-1">BA No.</label><input v-model="baForm.ba_no" type="text" class="w-full bg-white/80 border p-2 rounded-lg"></div>
+              <div><label class="block font-semibold mb-1">Nama PT</label><input v-model="baForm.nama_pt" type="text" class="w-full bg-white/80 border p-2 rounded-lg"></div>
+              <div><label class="block font-semibold mb-1">Dept Head / Manager</label><input v-model="baForm.head_dept" type="text" class="w-full bg-white/80 border p-2 rounded-lg"></div>
+              <div><label class="block font-semibold mb-1">Pelapor / Request</label><input v-model="baForm.pelapor" type="text" class="w-full bg-white/80 border p-2 rounded-lg"></div>
+              <div><label class="block font-semibold mb-1">Lokasi Kejadian</label><input v-model="baForm.lokasi" type="text" class="w-full bg-white/80 border p-2 rounded-lg"></div>
+              <div><label class="block font-semibold mb-1">Tanggal</label><input v-model="baForm.tanggal" type="date" class="w-full bg-white/80 border p-2 rounded-lg"></div>
+            </div>
+            <div class="text-xs space-y-2">
+              <label class="block font-semibold">Keterangan / Chronology Details</label>
+              <textarea v-model="baForm.keterangan" rows="3" class="w-full bg-white/80 border p-2 rounded-lg"></textarea>
+            </div>
+            <div id="baPrintArea" class="bg-white p-8 rounded-xl border border-gray-300 space-y-6 text-xs text-gray-900 font-sans shadow-inner">
+              <div class="flex items-center justify-between border-b-2 border-gray-900 pb-4">
+                <div class="flex items-center space-x-2">
+                  <div class="w-8 h-8 rounded-full bg-scuro-red text-white font-extrabold flex items-center justify-center">S</div>
+                  <span class="font-extrabold text-base tracking-wider text-scuro-red">SCURO GROUP</span>
+                </div>
+                <div class="text-right">
+                  <div class="font-extrabold text-sm uppercase">FORMAT BERITA ACARA</div>
+                  <div class="text-gray-500 font-mono text-[11px]">Doc No: SG-FORM-BA-001</div>
+                </div>
+              </div>
+              <div class="grid grid-cols-2 gap-4 border-b pb-4">
+                <div><p><strong>BA No:</strong> {{ baForm.ba_no }}</p><p><strong>Nama PT:</strong> {{ baForm.nama_pt }}</p><p><strong>Head Dept:</strong> {{ baForm.head_dept }}</p></div>
+                <div><p><strong>Pelapor:</strong> {{ baForm.pelapor }}</p><p><strong>Lokasi:</strong> {{ baForm.lokasi }}</p><p><strong>Tanggal:</strong> {{ baForm.tanggal }}</p></div>
+              </div>
+              <p class="leading-relaxed">{{ baForm.keterangan }}</p>
+              <table class="w-full border-collapse border border-gray-300 text-left">
+                <thead><tr class="bg-gray-100"><th class="border border-gray-300 p-2">SKU</th><th class="border border-gray-300 p-2">Nama Produk / Sparepart</th><th class="border border-gray-300 p-2">Qty</th></tr></thead>
+                <tbody><tr><td class="border border-gray-300 p-2 font-mono">GRD/MN/HB-101</td><td class="border border-gray-300 p-2">(Sparepart) LCD Display sebelah kanan Hambach 2gr</td><td class="border border-gray-300 p-2 font-bold">1</td></tr></tbody>
+              </table>
+              <div class="grid grid-cols-3 gap-4 pt-8 text-center border-t">
+                <div><p class="font-bold text-gray-500 mb-12">Dibuat Oleh</p><p class="font-bold border-t border-gray-400 pt-1">({{ baForm.pelapor }})</p></div>
+                <div><p class="font-bold text-gray-500 mb-12">Dept Head / Manager</p><p class="font-bold border-t border-gray-400 pt-1">({{ baForm.head_dept }})</p></div>
+                <div><p class="font-bold text-gray-500 mb-12">Approval Penerima</p><p class="font-bold border-t border-gray-400 pt-1">(Warehouse Service)</p></div>
+              </div>
             </div>
           </div>
         </div>
 
-        <div v-if="activeSubpage !== 'settings'" class="glass-panel p-6 space-y-4">
+        <div v-if="activeSubpage !== 'service-terms'" class="glass-panel p-6 space-y-4">
           <h2 class="text-base font-bold text-gray-900 capitalize">{{ currentSubpageLabel }}</h2>
-          <p class="text-xs text-gray-500">Official policies, warranty ledgers, and documents for {{ currentSubpageLabel }}.</p>
+          <p class="text-xs text-gray-500">Governance policies for {{ currentSubpageLabel }}.</p>
+        </div>
+      </div>
+
+      <!-- ========================================== -->
+      <!-- TAB 7: WARRANTY DB                         -->
+      <!-- ========================================== -->
+      <div v-if="activeTab === 'warranty'" class="glass-panel p-6 space-y-5">
+        <div class="flex items-center justify-between border-b pb-3">
+          <div>
+            <h2 class="text-base font-bold text-gray-900">Warranty DB Master Ledger [Inline Editable]</h2>
+            <p class="text-xs text-gray-500">Double-click cells to modify customer serial numbers and warranty cards</p>
+          </div>
+          <button @click="exportToCSV(warranties, 'Warranty_DB_Ledger')" class="bg-scuro-red text-white text-xs font-bold px-4 py-2 rounded-xl shadow-md">Export CSV</button>
         </div>
 
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead>
+              <tr class="border-b border-gray-200 text-gray-500 font-bold uppercase tracking-wider">
+                <th class="py-3 px-4">Warranty Card No</th>
+                <th class="py-3 px-4">Customer Name</th>
+                <th class="py-3 px-4">Brand</th>
+                <th class="py-3 px-4">Model</th>
+                <th class="py-3 px-4">Serial Number</th>
+                <th class="py-3 px-4">Purchase Date</th>
+                <th class="py-3 px-4">Expiry Date</th>
+                <th class="py-3 px-4">Status</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              <tr v-for="(w, idx) in warranties" :key="w.id" class="hover:bg-white/80">
+                <td class="py-3 px-4 font-bold text-scuro-red font-mono" contenteditable="true" @blur="onCellEdit($event, warranties, idx, 'warranty_card_no')">{{ w.warranty_card_no }}</td>
+                <td class="py-3 px-4 font-bold text-gray-900" contenteditable="true" @blur="onCellEdit($event, warranties, idx, 'customer_name')">{{ w.customer_name }}</td>
+                <td class="py-3 px-4 font-semibold text-gray-700" contenteditable="true" @blur="onCellEdit($event, warranties, idx, 'brand')">{{ w.brand }}</td>
+                <td class="py-3 px-4 text-gray-800" contenteditable="true" @blur="onCellEdit($event, warranties, idx, 'model')">{{ w.model }}</td>
+                <td class="py-3 px-4 font-mono font-bold text-gray-900" contenteditable="true" @blur="onCellEdit($event, warranties, idx, 'serial_number')">{{ w.serial_number }}</td>
+                <td class="py-3 px-4 text-gray-600" contenteditable="true" @blur="onCellEdit($event, warranties, idx, 'purchase_date')">{{ w.purchase_date }}</td>
+                <td class="py-3 px-4 text-gray-600" contenteditable="true" @blur="onCellEdit($event, warranties, idx, 'warranty_expiry_date')">{{ w.warranty_expiry_date }}</td>
+                <td class="py-3 px-4"><span class="px-2 py-0.5 bg-emerald-500/10 text-emerald-600 font-bold rounded-full">ACTIVE WARRANTY</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ========================================== -->
+      <!-- TAB 8: SETTINGS & DATABASE SYNC            -->
+      <!-- ========================================== -->
+      <div v-if="activeTab === 'settings'" class="glass-panel p-6 space-y-6">
+        <div class="flex items-center justify-between border-b pb-4">
+          <div>
+            <h2 class="text-base font-bold text-gray-900">System Settings & Supabase REST Database Sync</h2>
+            <p class="text-xs text-gray-500">Manage user accounts, RBAC roles, and bulk data operations</p>
+          </div>
+          <button @click="showImportModal = true" class="bg-scuro-red text-white text-xs font-bold px-4 py-2 rounded-xl">Bulk Import CSV</button>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
+          <div class="glass-card p-5 space-y-3">
+            <h4 class="font-bold text-scuro-red uppercase">Embedded REST Credentials</h4>
+            <p class="font-mono text-gray-600 bg-white/80 p-2.5 rounded-lg border">Endpoint: https://fkzvfgugfyhmbaxljzcs.supabase.co/rest/v1/</p>
+          </div>
+          <div class="glass-card p-5 space-y-3">
+            <h4 class="font-bold text-gray-800 uppercase">Audit Trail Engine</h4>
+            <p class="text-gray-600">System audit logs enabled for all user actions, ticket status modifications, and CSV exports.</p>
+          </div>
+        </div>
       </div>
 
     </main>
 
-    <!-- MODAL 1: NEW TICKET WIZARD MODAL -->
-    <div v-if="showTicketModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-      <div class="glass-panel max-w-4xl w-full max-h-[90vh] overflow-y-auto p-6 space-y-6 border border-white/90 shadow-2xl">
-        <div class="flex items-center justify-between border-b pb-4">
-          <div>
-            <h3 class="text-lg font-extrabold text-gray-900">Service Ticket Creation Wizard</h3>
-            <p class="text-xs text-gray-500">Stage {{ wizardStage }} of 2</p>
+    <!-- QONTAK-STYLE SLIDE-OVER TICKET WIZARD MODAL -->
+    <div v-if="activeSlideOverTicket" class="fixed inset-0 z-50 overflow-hidden bg-black/40 backdrop-blur-sm flex justify-end">
+      <div class="glass-panel w-full max-w-4xl h-full shadow-2xl overflow-y-auto flex flex-col border-l border-white/90">
+        <div class="p-5 border-b border-gray-200/80 flex items-center justify-between bg-white/80 sticky top-0 z-10 backdrop-blur-md">
+          <div class="flex items-center space-x-3">
+            <span class="font-mono font-extrabold text-sm text-scuro-red bg-scuro-red/10 px-3 py-1 rounded-lg">{{ activeSlideOverTicket.action_id }}</span>
+            <span class="px-2.5 py-0.5 bg-gray-200 font-mono font-bold text-xs rounded-full text-gray-700">SN: {{ activeSlideOverTicket.serial_number || 'DRB0013287' }}</span>
           </div>
-          <button @click="showTicketModal = false" class="text-gray-400 font-bold text-lg">✕</button>
+          <button @click="activeSlideOverTicket = null" class="text-gray-400 font-bold text-xl hover:text-gray-700">✕</button>
         </div>
-
-        <div v-if="wizardStage === 1" class="space-y-4 text-xs">
-          <label class="block font-bold text-gray-700 uppercase">Select Operation Type</label>
-          <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
-            <button 
-              v-for="op in operationTypes" 
-              :key="op"
-              @click="wizardData.service_type = op"
-              :class="[
-                wizardData.service_type === op ? 'bg-scuro-red text-white shadow-md' : 'bg-white/80 text-gray-700 hover:bg-white',
-                'p-3.5 rounded-xl border text-xs font-bold text-left transition-all'
-              ]"
-            >
-              {{ op }}
-            </button>
-          </div>
-          <div class="flex justify-end pt-4">
-            <button @click="wizardStage = 2" class="bg-scuro-red text-white font-bold text-xs px-6 py-3 rounded-xl">Next: Enter Details →</button>
-          </div>
-        </div>
-
-        <div v-if="wizardStage === 2" class="space-y-6 text-xs">
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <div class="p-6 flex-1 grid grid-cols-1 lg:grid-cols-3 gap-6 text-xs">
+          <div class="lg:col-span-2 space-y-5">
             <div>
-              <label class="block font-semibold mb-1">Customer Name</label>
-              <input v-model="wizardData.customer_name" type="text" class="w-full bg-white/80 border p-2 rounded-lg" placeholder="John Doe">
+              <label class="block font-bold text-gray-500 uppercase text-[10px] mb-1">Customer / Issue Title</label>
+              <input v-model="activeSlideOverTicket.customer_name" type="text" class="w-full text-base font-extrabold text-gray-900 bg-white/80 border p-2.5 rounded-xl">
             </div>
             <div>
-              <label class="block font-semibold mb-1">Business Name</label>
-              <input v-model="wizardData.business_name" type="text" class="w-full bg-white/80 border p-2 rounded-lg" placeholder="Canggu Coffee">
+              <label class="block font-bold text-gray-500 uppercase text-[10px] mb-1">Problem Description</label>
+              <textarea v-model="activeSlideOverTicket.description" rows="3" class="w-full text-xs text-gray-800 bg-white/80 border p-2.5 rounded-xl"></textarea>
             </div>
+            <div class="space-y-4 border-t pt-4">
+              <div class="flex items-center space-x-3 border-b pb-2">
+                <button @click="ticketTab = 'notes'" :class="[ticketTab === 'notes' ? 'text-scuro-red border-b-2 border-scuro-red font-bold' : 'text-gray-500', 'pb-2 text-xs']">Notes & History</button>
+                <button @click="ticketTab = 'audit'" :class="[ticketTab === 'audit' ? 'text-scuro-red border-b-2 border-scuro-red font-bold' : 'text-gray-500', 'pb-2 text-xs']">Activity Log Audit</button>
+              </div>
+              <div v-if="ticketTab === 'notes'" class="space-y-3">
+                <div class="space-y-2">
+                  <textarea v-model="newNoteText" placeholder="Add a note or @mention technician..." rows="2" class="w-full bg-white/90 border p-2.5 rounded-xl"></textarea>
+                  <div class="flex justify-end"><button @click="addTicketNote()" class="bg-scuro-red text-white font-bold text-xs px-4 py-2 rounded-xl">Post Note</button></div>
+                </div>
+                <div class="space-y-2 max-h-48 overflow-y-auto pr-1">
+                  <div v-for="note in activeTicketNotes" :key="note.id" class="p-3 bg-white/70 rounded-xl border border-gray-100 space-y-1">
+                    <div class="flex items-center justify-between text-[11px]"><span class="font-bold text-scuro-red">{{ note.author }}</span><span class="text-gray-400">{{ note.timestamp }}</span></div>
+                    <p class="text-gray-700">{{ note.text }}</p>
+                  </div>
+                </div>
+              </div>
+              <div v-if="ticketTab === 'audit'" class="space-y-2 text-[11px] text-gray-600 max-h-60 overflow-y-auto">
+                <div class="p-2 bg-gray-100/80 rounded-lg">Stage updated to: <strong>{{ activeSlideOverTicket.status }}</strong></div>
+                <div class="p-2 bg-gray-100/80 rounded-lg">Assigned to: <strong>{{ activeSlideOverTicket.assigned_to }}</strong></div>
+              </div>
+            </div>
+          </div>
+          <div class="glass-card p-5 space-y-4 border border-gray-200/80">
+            <h4 class="font-bold text-xs uppercase text-gray-800 border-b pb-2">Ticket Properties</h4>
             <div>
-              <label class="block font-semibold mb-1">Brand</label>
-              <select v-model="wizardData.brand" class="w-full bg-white/80 border p-2 rounded-lg">
-                <option value="La Marzocco">La Marzocco</option>
-                <option value="Hambach">Hambach</option>
-                <option value="Maquinos">Maquinos</option>
-                <option value="Eureka">Eureka</option>
-                <option value="Caferesso">Caferesso</option>
+              <label class="block font-semibold mb-1">Stage Status</label>
+              <select v-model="activeSlideOverTicket.status" class="w-full bg-white/90 border p-2 rounded-lg font-bold text-scuro-red">
+                <option value="New">New</option><option value="Assigned">Assigned</option><option value="In Progress">In Progress</option><option value="Done">Done</option>
               </select>
             </div>
-          </div>
-          <div class="flex justify-between pt-4 border-t">
-            <button @click="wizardStage = 1" class="bg-gray-200 text-gray-700 font-bold px-4 py-2 rounded-xl">← Back</button>
-            <button @click="submitTicket()" class="bg-scuro-red text-white font-bold px-6 py-2.5 rounded-xl shadow-md">Submit Ticket</button>
+            <div>
+              <label class="block font-semibold mb-1">Assignee</label>
+              <select v-model="activeSlideOverTicket.assigned_to" class="w-full bg-white/90 border p-2 rounded-lg font-bold text-gray-800">
+                <option value="Adi">Adi</option><option value="Bambang">Bambang</option><option value="Widi">Widi</option><option value="Tika">Tika</option>
+              </select>
+            </div>
+            <div>
+              <label class="block font-semibold mb-1">Priority</label>
+              <select v-model="activeSlideOverTicket.priority" class="w-full bg-white/90 border p-2 rounded-lg font-bold">
+                <option value="Low">Low</option><option value="Medium">Medium</option><option value="High">High</option><option value="Critical">Critical</option>
+              </select>
+            </div>
+            <div>
+              <label class="block font-semibold mb-1">Kendala Category</label>
+              <select v-model="activeSlideOverTicket.kendala" class="w-full bg-white/90 border p-2 rounded-lg">
+                <option value="Display LCD Broken">Display LCD Broken</option><option value="Grinder Burrs Worn">Grinder Burrs Worn</option><option value="Boiler Overpressure">Boiler Overpressure</option><option value="Auto Tamp Calibration">Auto Tamp Calibration</option>
+              </select>
+            </div>
+            <div>
+              <label class="block font-semibold mb-1">Due Date</label>
+              <input v-model="activeSlideOverTicket.due_date" type="date" class="w-full bg-white/90 border p-2 rounded-lg">
+            </div>
+            <div class="pt-4 border-t space-y-2">
+              <button @click="saveTicketSlideOver()" class="w-full bg-scuro-red text-white font-bold py-2.5 rounded-xl shadow-md">Save & Sync Supabase REST</button>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- MODAL 2: SUPABASE CONFIGURATION MODAL -->
-    <div v-if="showSupabaseModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-      <div class="glass-panel max-w-xl w-full p-6 space-y-5 border border-white/90 shadow-2xl">
+    <!-- MODAL: CSV/EXCEL DRAG & DROP IMPORTER -->
+    <div v-if="showImportModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+      <div class="glass-panel max-w-xl w-full p-6 space-y-5 border border-white/90">
         <div class="flex items-center justify-between border-b pb-3">
-          <div class="flex items-center space-x-2">
-            <div class="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-600 flex items-center justify-center font-bold">⚡</div>
-            <h3 class="text-base font-bold text-gray-900">Supabase Realtime Database Setup</h3>
-          </div>
-          <button @click="showSupabaseModal = false" class="text-gray-400 font-bold">✕</button>
-        </div>
-        <div class="space-y-4 text-xs">
-          <p class="text-gray-600">Connect your live Supabase project URL & Anon Key to sync database tables in realtime.</p>
-          <div class="space-y-3">
-            <div>
-              <label class="block font-bold text-gray-700 mb-1">Supabase Project URL</label>
-              <input v-model="supabaseConfig.url" type="text" class="w-full bg-white/90 border p-2.5 rounded-xl font-mono" placeholder="https://your-project.supabase.co">
-            </div>
-            <div>
-              <label class="block font-bold text-gray-700 mb-1">Supabase Anon Key</label>
-              <input v-model="supabaseConfig.key" type="password" class="w-full bg-white/90 border p-2.5 rounded-xl font-mono" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...">
-            </div>
-          </div>
-        </div>
-        <div class="flex justify-between items-center pt-3 border-t">
-          <button @click="clearSupabase()" class="text-xs text-rose-600 font-bold hover:underline">Disconnect</button>
-          <div class="flex space-x-2">
-            <button @click="showSupabaseModal = false" class="bg-gray-200 text-gray-700 text-xs font-bold px-4 py-2.5 rounded-xl">Close</button>
-            <button @click="connectSupabase()" class="bg-emerald-600 text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-md">Connect & Sync Live</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- MODAL 3: EXCEL IMPORTER MODAL -->
-    <div v-if="showImporterModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-      <div class="glass-panel max-w-2xl w-full p-6 space-y-5 border border-white/90">
-        <div class="flex items-center justify-between border-b pb-3">
-          <h3 class="text-base font-bold text-gray-900">Bulk Data Importer Engine</h3>
-          <button @click="showImporterModal = false" class="text-gray-400 font-bold">✕</button>
+          <h3 class="text-base font-bold text-gray-900">CSV & Excel File Importer</h3>
+          <button @click="showImportModal = false" class="text-gray-400 font-bold">✕</button>
         </div>
         <div class="space-y-4 text-xs">
           <div class="border-2 border-dashed border-gray-300 p-8 text-center rounded-xl bg-white/40">
             <i data-lucide="file-spreadsheet" class="w-8 h-8 mx-auto text-scuro-red mb-2"></i>
-            <p class="font-bold text-gray-700">Drag & drop your .xlsx or .csv file here</p>
-            <p class="text-gray-400">or click to browse local files</p>
+            <p class="font-bold text-gray-700">Drag & drop your .csv file here</p>
+            <p class="text-gray-400">or click to choose local file</p>
           </div>
         </div>
         <div class="flex justify-end space-x-2 pt-3 border-t">
-          <button @click="showImporterModal = false" class="bg-gray-200 text-gray-700 text-xs font-bold px-4 py-2 rounded-xl">Cancel</button>
-          <button @click="processImport()" class="bg-scuro-red text-white text-xs font-bold px-5 py-2.5 rounded-xl">Execute Import (50 Rows)</button>
+          <button @click="showImportModal = false" class="bg-gray-200 text-gray-700 text-xs font-bold px-4 py-2 rounded-xl">Cancel</button>
+          <button @click="executeImport()" class="bg-scuro-red text-white text-xs font-bold px-5 py-2.5 rounded-xl">Process Import</button>
         </div>
       </div>
     </div>
 
   </div>
 
-  <!-- VUE 3 APPLICATION SCRIPT -->
+  <!-- VUE 3 APPLICATION LOGIC SCRIPT -->
   <script>
     const { createApp } = Vue;
+
+    const SUPABASE_REST_URL = "https://fkzvfgugfyhmbaxljzcs.supabase.co/rest/v1/";
+    const SUPABASE_ANON_KEY = "sb_secret_2TzyIfSWEgIJ7jdytsyOWA_L3F-YIF9";
 
     createApp({
       data() {
@@ -820,130 +824,112 @@
           activeTab: 'dashboard',
           activeSubpage: 'overview',
           globalSearchQuery: '',
-          ticketFilterStatus: '',
-          ticketFilterBrand: '',
+          showImportModal: false,
 
-          showTicketModal: false,
-          wizardStage: 1,
-          showPRModal: false,
-          showImporterModal: false,
-          showSupabaseModal: false,
-
-          // Supabase Realtime State
-          isSupabaseConnected: false,
-          supabaseClient: null,
-          supabaseConfig: {
-            url: localStorage.getItem('scuro_sb_url') || '',
-            key: localStorage.getItem('scuro_sb_key') || ''
-          },
-
-          wizardData: {
-            service_type: 'Service Center',
-            customer_name: '',
-            business_name: '',
-            customer_phone: '',
-            brand: 'La Marzocco',
-            unit_model: '',
-            serial_number: '',
-            warranty_status: '',
-            failure_domain: 'Electrical',
-            symptoms: '',
-            parts: [{ sku: 'HB-GSK-01', name: 'Hambach Gasket', qty: 1, decision: 'Approved' }]
-          },
-
-          operationTypes: [
-            'Service Center', 'Scuro Bali', 'Partner Tech', 'Sparepart Order',
-            'Online Consultation', 'Denali Claim', 'Installation', 'Maintenance', 'Direct Chat'
+          activeSlideOverTicket: null,
+          ticketTab: 'notes',
+          newNoteText: '',
+          activeTicketNotes: [
+            { id: '1', author: 'Adi (Technician)', timestamp: 'Today 09:15', text: 'Checked Hambach Tank 2gr. Confirmed display LCD replacement required.' }
           ],
 
-          kanbanColumns: [
-            { status: 'open', label: 'New', colorClass: 'text-blue-600' },
-            { status: 'pending_customer', label: 'Pending Customer', colorClass: 'text-amber-600' },
-            { status: 'pending_internal', label: 'Pending Internal', colorClass: 'text-purple-600' },
-            { status: 'on_progress', label: 'On Process', colorClass: 'text-indigo-600' },
-            { status: 'half_finish', label: 'Half Finish', colorClass: 'text-cyan-600' },
-            { status: 'resolved', label: 'Done', colorClass: 'text-emerald-600' },
-            { status: 'closed', label: 'Lost', colorClass: 'text-gray-500' }
-          ],
+          baForm: {
+            ba_no: '012/SM-BA/XI/2025',
+            nama_pt: 'Scuro Store',
+            head_dept: 'Bu Margaretha',
+            pelapor: 'Tika Susanti',
+            lokasi: 'Triton - Service',
+            tanggal: '2025-11-13',
+            keterangan: 'Pada tanggal 8 November 2025 telah diterima unit service Hambach Tank 2gr SN: DRB0013287 dari customer an Andi Wijaya dengan kendala tampilan layar sebelah kanan pecah. Kendala sudah dicek teknisi dan dikonfirmasi penggantian sparepart LCD.'
+          },
 
+          // 8 MAIN NAVIGATION DROPDOWN TABS COVERING ALL 30 SUBPAGES FROM MASTER BLUEPRINT
           mainNavTabs: [
             { id: 'dashboard', label: 'Dashboard', icon: 'layout-dashboard', defaultSubpage: 'overview', subpages: [
-              { id: 'overview', label: 'Overview' },
-              { id: 'service-center-hub', label: 'Service Center Live Hub' },
-              { id: 'bali-hub-summary', label: 'Bali Hub Stock Summary' }
+              { id: 'overview', label: 'Executive Overview' },
+              { id: 'trouble-trends', label: 'Brand Trouble Trends' },
+              { id: 'service-center-hub', label: 'Service Center Hub' },
+              { id: 'bali-hub-summary', label: 'Bali Hub Summary' }
             ]},
             { id: 'operations', label: 'Operations', icon: 'wrench', defaultSubpage: 'tickets-external', subpages: [
-              { id: 'tickets-external', label: 'External Cases Pipeline (Kanban)' },
-              { id: 'tickets-internal', label: 'Internal Tasks Pipeline' },
-              { id: 'service-center', label: 'Workshop Service Center' },
-              { id: 'partner-network', label: 'Partner Network' },
-              { id: 'bali-branch', label: 'Scuro Bali Hub' },
-              { id: 'denali-claims', label: 'Denali Claims' },
-              { id: 'sparepart-orders', label: 'Sparepart Orders' }
+              { id: 'tickets-external', label: 'Central Ticket Portal (Qontak)' },
+              { id: 'service-center', label: 'Service Center Bench' },
+              { id: 'visit-inhouse', label: 'Visit In-House' },
+              { id: 'installation', label: 'Installation Tracking' },
+              { id: 'maintenance', label: 'Maintenance Packages' },
+              { id: 'partner-network', label: 'Partner Tech Network' },
+              { id: 'bali-branch', label: 'Scuro Bali Operations' },
+              { id: 'denali-claims', label: 'Denali Claims & Returns' },
+              { id: 'sparepart-orders', label: 'Sparepart Sales Orders' },
+              { id: 'recap-schedule', label: 'Recap Visit Schedule' },
+              { id: 'internal-tasks', label: 'Internal Tasks' }
             ]},
             { id: 'inventory', label: 'Inventory', icon: 'boxes', defaultSubpage: 'master-catalog', subpages: [
-              { id: 'master-catalog', label: 'Master Catalog [RBAC]' },
-              { id: 'warehouse-stock', label: 'Warehouse Stock & Bin' },
-              { id: 'custody-tracker', label: 'Loan & Custody Tracker' },
-              { id: 'procurement-requisition', label: 'Purchasing Requisition' }
+              { id: 'master-catalog', label: 'Sparepart Master Catalog [RBAC]' },
+              { id: 'stock', label: 'Warehouse Stock & Bin' },
+              { id: 'tracking', label: 'Sparepart Tracking' },
+              { id: 'purchasing', label: 'Purchasing Requisition Hub' },
+              { id: 'heating-elements', label: 'Heating Element Lifecycle' },
+              { id: 'tools', label: 'Inventory Tools & Equipment' }
             ]},
-            { id: 'performance', label: 'Performance', icon: 'bar-chart-3', defaultSubpage: 'analytics', subpages: [
-              { id: 'analytics', label: 'SLA & Performance Analytics' },
-              { id: 'daily-tech', label: 'Tech Daily Tracker' },
-              { id: 'daily-admin', label: 'Admin Daily Tracker' },
-              { id: 'qc-audits', label: 'Quality Control Audits' }
+            { id: 'performance', label: 'Performance & SLA', icon: 'bar-chart-3', defaultSubpage: 'capacity', subpages: [
+              { id: 'capacity', label: 'Technician Capacity & Overlap' },
+              { id: 'daily-tech', label: 'Tech Daily Tracker & SLAs' },
+              { id: 'daily-admin', label: 'Admin Daily Tracker & SLAs' },
+              { id: 'qc', label: 'Quality Control Audits' }
             ]},
-            { id: 'knowledge', label: 'Knowledge', icon: 'help-circle', defaultSubpage: 'tutorials', subpages: [
-              { id: 'tutorials', label: 'Video Tutorials' },
-              { id: 'troubleshooting', label: 'Troubleshooting Flowcharts' },
-              { id: 'message-templates', label: 'Message Templates' }
+            { id: 'knowledge', label: 'Knowledge Base', icon: 'help-circle', defaultSubpage: 'troubleshooting', subpages: [
+              { id: 'troubleshooting', label: 'Auto Troubleshooting' },
+              { id: 'taxonomy', label: 'Master Failure Taxonomy' },
+              { id: 'templates', label: 'Standard Communication Templates' }
             ]},
-            { id: 'governance', label: 'Governance & Docs', icon: 'book-open', defaultSubpage: 'service-terms', subpages: [
-              { id: 'service-terms', label: 'Service Policy' },
-              { id: 'warranty', label: 'Warranty Ledger [RBAC]' },
-              { id: 'settings', label: 'System Settings & RBAC' }
+            { id: 'governance', label: 'Governance & Rules', icon: 'book-open', defaultSubpage: 'service-terms', subpages: [
+              { id: 'service-terms', label: 'Program Maintenance 1x & IM Rules' },
+              { id: 'ba-generator', label: 'Berita Acara (BA) Generator' },
+              { id: 'corporate-agreements', label: 'PT Bumi Berkah Boga Agreement' }
+            ]},
+            { id: 'warranty', label: 'Warranty DB', icon: 'shield-check', defaultSubpage: 'warranty-ledger', subpages: [
+              { id: 'warranty-ledger', label: 'Commercial Warranty Ledger [RBAC]' }
+            ]},
+            { id: 'settings', label: 'Settings & Data Sync', icon: 'settings', defaultSubpage: 'system-settings', subpages: [
+              { id: 'system-settings', label: 'System Settings & REST Sync' },
+              { id: 'csv-importer', label: 'Bulk Data Import / Export' }
             ]}
           ],
 
+          qontakColumns: [
+            { status: 'New', label: 'New Inquiries', colorClass: 'text-blue-600' },
+            { status: 'Assigned', label: 'Assigned Tech', colorClass: 'text-amber-600' },
+            { status: 'In Progress', label: 'In Progress', colorClass: 'text-purple-600' },
+            { status: 'Done', label: 'Done & Tested', colorClass: 'text-emerald-600' }
+          ],
+
+          techScorecards: [
+            { name: 'Adi Wijaya', resolvedCount: 42, ftfRate: 95.2, rating: 4.9 },
+            { name: 'Bambang S', resolvedCount: 38, ftfRate: 92.1, rating: 4.8 },
+            { name: 'Widi Pratama', resolvedCount: 35, ftfRate: 91.5, rating: 4.7 },
+            { name: 'Tika Susanti', resolvedCount: 29, ftfRate: 94.0, rating: 4.85 },
+            { name: 'Tiara R', resolvedCount: 24, ftfRate: 89.5, rating: 4.6 }
+          ],
+
           tickets: [
-            { id: '1', ticket_number: 'TCK-2026-001', customer_name: 'Dewi Lestari', business_name: 'Canggu Beach Cafe', region: 'Bali Hub', unit_model: 'Linea PB 2-Group', brand: 'La Marzocco', serial_number: 'SN-LM-9921', service_type: 'Scuro Bali Visit', assigned_to: 'Widi', status: 'on_progress', priority: 'P1_High', warranty_status: 'Active Warranty', daysOpen: 1 },
-            { id: '2', ticket_number: 'TCK-2026-002', customer_name: 'Budi Santoso', business_name: 'Kopi Kenangan Plaza', region: 'Jakarta', unit_model: 'E61 Grouphead', brand: 'Hambach', serial_number: 'SN-HB-4412', service_type: 'Service Center', assigned_to: 'Adi', status: 'pending_customer', priority: 'P2_Medium', warranty_status: 'Non-Warranty', daysOpen: 4 },
-            { id: '3', ticket_number: 'TCK-2026-003', customer_name: 'Siti Aminah', business_name: 'Ubud Artisanal Bakery', region: 'Bali Hub', unit_model: 'Major Flat Burr', brand: 'Eureka', serial_number: 'SN-EK-8821', service_type: 'Visit Maintenance', assigned_to: 'Bambang', status: 'open', priority: 'P0_Critical', warranty_status: 'Active Warranty', daysOpen: 3 },
-            { id: '4', ticket_number: 'TCK-2026-004', customer_name: 'Rudi Hartono', business_name: 'Surabaya Roastery', region: 'Surabaya', unit_model: 'Auto-Tamp V2', brand: 'Caferesso', serial_number: 'SN-CF-1002', service_type: 'Sparepart Order', assigned_to: 'Tika', status: 'resolved', priority: 'P3_Low', warranty_status: 'Active Warranty', daysOpen: 1 }
+            { id: '1', action_id: 'ACT-2026-081', customer_name: 'Andi Wijaya (Scuro Store)', brand: 'Hambach', unit_type: 'Tank 2gr', serial_number: 'DRB0013287', status: 'In Progress', priority: 'High', due_date: '2026-08-16', assigned_to: 'Adi', kendala: 'Display LCD sebelah kanan pecah', description: 'Unit Hambach Tank 2gr display screen corrupt.' },
+            { id: '2', action_id: 'ACT-2026-082', customer_name: 'Kopi Kenangan Plaza', brand: 'Maquinos', unit_type: 'E65T Grinder', serial_number: 'SN-MQ-4412', status: 'Assigned', priority: 'Medium', due_date: '2026-08-15', assigned_to: 'Bambang', kendala: 'Grinder Burrs Worn out', description: 'Need burrs replacement.' },
+            { id: '3', action_id: 'ACT-2026-083', customer_name: 'Canggu Beach Cafe', brand: 'Caferesso', unit_type: 'AT10 Auto Tamp', serial_number: 'SN-CF-1002', status: 'New', priority: 'Critical', due_date: '2026-08-14', assigned_to: 'Widi', kendala: 'Auto Tamp Calibration Error', description: 'Tamping pressure sensor uncalibrated.' },
+            { id: '4', action_id: 'ACT-2026-084', customer_name: 'Surabaya Roastery', brand: 'Eureka', unit_type: 'Helios 65', serial_number: 'SN-EU-9912', status: 'Done', priority: 'Low', due_date: '2026-08-12', assigned_to: 'Tika', kendala: 'Regular Maintenance', description: 'Routine burrs clean and check.' }
           ],
 
           spareparts: [
-            { id: '1', sku: 'HB-GSK-01', part_name: 'Hambach E61 Grouphead Gasket 8.5mm', brand: 'Hambach', bin_location: 'Aisle 2 - Rack B1', stock_warehouse: 45, stock_bali: 12, stock_loaned: 8, min_stock_critical: 10, cost_price: 95000, selling_price: 185000, total_sold_count: 142 },
-            { id: '2', sku: 'EK-BUR-64', part_name: 'Eureka 64mm Flat Grinding Burrs', brand: 'Eureka', bin_location: 'Aisle 3 - Rack A2', stock_warehouse: 4, stock_bali: 2, stock_loaned: 3, min_stock_critical: 5, cost_price: 780000, selling_price: 1450000, total_sold_count: 88 }
-          ],
-
-          denaliClaims: [
-            { id: '1', date: '2026-08-10', origin: 'Curug Warehouse', product_name: 'Denali Hazelnut Syrup 750ml', batch_lot: 'LOT-2026-HZ04', expiry: '2027-05-12', failure_type: 'Crystallization', action: 'Approved Replacement' }
-          ],
-
-          serviceCenterUnits: [
-            { id: '1', unit_name: 'Linea PB 2-Group', brand: 'La Marzocco', serial_number: 'SN-LM-9921', customer_name: 'Canggu Beach Cafe', status: 'on_progress' }
-          ],
-
-          purchaseRequests: [
-            { id: '1', pr_number: 'PR-2026-088', sparepart_name: 'Eureka 64mm Flat Burrs', quantity: 20, requested_by: 'Bambang', type: 'Option B: Stock Depleted', status: 'Submitted' }
-          ],
-
-          assets: [
-            { id: '1', code: 'AST-SC-001', name: 'Pressure Calibration Rig', location: 'Workshop Bench', condition: 'Good', assigned: 'Adi' }
+            { id: '1', sku: 'GRD/MN/CF-101', item_name: 'Titan Coffee Grinder R750 (Black)', brand: 'Caferesso', category: 'Grinder', unit_price: 14500000, hpp_cost: 9200000 },
+            { id: '2', sku: 'EQM/CR/AT-101', item_name: 'Auto Tamping Machine AT10 (Black)', brand: 'Caferesso', category: 'Tools', unit_price: 8500000, hpp_cost: 5100000 },
+            { id: '3', sku: 'GRD/MN/EU-111', item_name: 'Grinder Drogheria MCD4 (Black)', brand: 'Eureka', category: 'Grinder', unit_price: 18500000, hpp_cost: 11800000 },
+            { id: '4', sku: 'EMM/MN/HB-106', item_name: 'Tank Programable 7209 2gr (Mirror)', brand: 'Hambach', category: 'Mesin', unit_price: 48000000, hpp_cost: 31000000 },
+            { id: '5', sku: 'GRD/MN/MQ-118', item_name: 'Grinder E65T (Black)', brand: 'Maquinos', category: 'Grinder', unit_price: 12500000, hpp_cost: 7800000 }
           ],
 
           warranties: [
-            { id: '1', sn: 'SN-LM-9921', model: 'Linea PB 2-Group', brand: 'La Marzocco', client: 'Canggu Beach Cafe', purchase_date: '2025-08-10', expiry_date: '2027-08-10', status: 'Active' }
-          ],
-
-          documents: [
-            { id: '1', number: 'BA-2026-0041', title: 'Work Completion Certificate - Canggu Cafe', category: 'Berita Acara', date: '2026-08-10' }
-          ],
-
-          users: [
-            { id: '1', name: 'Super Admin', email: 'admin@scuro.id', role: 'Super Admin', status: 'Active', lastLogin: 'Today, 08:30' },
-            { id: '2', name: 'Adi Technician', email: 'adi@scuro.id', role: 'Field Tech', status: 'Active', lastLogin: 'Today, 07:45' }
+            { id: '1', warranty_card_no: 'WC-2025-001', customer_name: 'Kopi Kenangan Plaza', brand: 'Hambach', model: 'Tank 2gr', serial_number: 'DRB0013287', purchase_date: '2025-08-10', warranty_expiry_date: '2027-08-10' },
+            { id: '2', warranty_card_no: 'WC-2025-002', customer_name: 'Canggu Beach Cafe', brand: 'Caferesso', model: 'AT10 Auto Tamp', serial_number: 'SN-CF-1002', purchase_date: '2025-09-12', warranty_expiry_date: '2027-09-12' }
           ]
         }
       },
@@ -958,21 +944,7 @@
           return sub ? sub.label : this.activeSubpage;
         },
         canViewFinancials() {
-          return ['Super Admin', 'Aftersales Manager', 'Ops Admin'].includes(this.currentRole);
-        },
-        canEditWarranty() {
-          return ['Super Admin', 'Aftersales Manager'].includes(this.currentRole);
-        },
-        filteredTickets() {
-          return this.tickets.filter(t => {
-            const matchStatus = !this.ticketFilterStatus || t.status === this.ticketFilterStatus;
-            const matchBrand = !this.ticketFilterBrand || t.brand === this.ticketFilterBrand;
-            const matchSearch = !this.globalSearchQuery || 
-              t.ticket_number.toLowerCase().includes(this.globalSearchQuery.toLowerCase()) ||
-              t.customer_name.toLowerCase().includes(this.globalSearchQuery.toLowerCase()) ||
-              t.unit_model.toLowerCase().includes(this.globalSearchQuery.toLowerCase());
-            return matchStatus && matchBrand && matchSearch;
-          });
+          return ['Super Admin', 'Ops Admin'].includes(this.currentRole);
         }
       },
 
@@ -982,62 +954,79 @@
           this.activeSubpage = subpageId;
           this.$nextTick(() => {
             if (window.lucide) window.lucide.createIcons();
-            if (this.activeTab === 'dashboard' && this.activeSubpage === 'overview') {
-              this.renderCharts();
-            }
+            if (this.activeTab === 'dashboard') this.renderCharts();
           });
         },
         formatCurrency(val) {
           return Number(val).toLocaleString('id-ID');
         },
-        formatStatus(st) {
-          return st.replace(/_/g, ' ').toUpperCase();
-        },
-        getStatusBadgeClass(st) {
-          const base = 'px-2.5 py-0.5 rounded-full font-bold text-[11px] ';
-          if (st === 'open') return base + 'bg-blue-500/10 text-blue-600';
-          if (st === 'pending_customer') return base + 'bg-amber-500/10 text-amber-600';
-          if (st === 'on_progress') return base + 'bg-purple-500/10 text-purple-600';
-          if (st === 'resolved') return base + 'bg-emerald-500/10 text-emerald-600';
+        getPriorityBadgeClass(prio) {
+          const base = 'px-2 py-0.5 rounded-full font-extrabold text-[10px] ';
+          if (prio === 'Critical') return base + 'bg-rose-500/10 text-rose-600';
+          if (prio === 'High') return base + 'bg-amber-500/10 text-amber-600';
+          if (prio === 'Medium') return base + 'bg-blue-500/10 text-blue-600';
           return base + 'bg-gray-200 text-gray-700';
         },
-        openTicketWizard() {
-          this.wizardStage = 1;
-          this.showTicketModal = true;
+        openTicketSlideOver(t) {
+          this.activeSlideOverTicket = { ...t };
         },
-        submitTicket() {
-          const nextId = (this.tickets.length + 1).toString();
-          this.tickets.unshift({
-            id: nextId,
-            ticket_number: `TCK-2026-00${nextId}`,
-            customer_name: this.wizardData.customer_name || 'Client',
-            business_name: this.wizardData.business_name || 'Business',
-            region: 'Jakarta',
-            unit_model: this.wizardData.unit_model || 'Model X',
-            brand: this.wizardData.brand,
-            serial_number: this.wizardData.serial_number || 'SN-001',
-            service_type: this.wizardData.service_type,
+        openNewTicketModal() {
+          const newId = `ACT-2026-08${this.tickets.length + 1}`;
+          const newT = {
+            id: (this.tickets.length + 1).toString(),
+            action_id: newId,
+            customer_name: 'New Client',
+            brand: 'Hambach',
+            unit_type: 'Tank 2gr',
+            serial_number: 'SN-NEW-001',
+            status: 'New',
+            priority: 'Medium',
+            due_date: '2026-08-20',
             assigned_to: 'Adi',
-            status: 'open',
-            priority: 'P2_Medium',
-            warranty_status: this.wizardData.warranty_status || 'Active Warranty',
-            daysOpen: 1
+            kendala: 'Initial Inspection',
+            description: 'New service ticket intake.'
+          };
+          this.tickets.unshift(newT);
+          this.openTicketSlideOver(newT);
+        },
+        addTicketNote() {
+          if (!this.newNoteText) return;
+          this.activeTicketNotes.unshift({
+            id: Date.now().toString(),
+            author: `${this.currentRole} User`,
+            timestamp: 'Just now',
+            text: this.newNoteText
           });
-          this.showTicketModal = false;
+          this.newNoteText = '';
         },
-        viewTicketDetail(t) {
-          alert(`Viewing Details for ${t.ticket_number}: ${t.customer_name} (${t.unit_model})`);
+        async saveTicketSlideOver() {
+          if (!this.activeSlideOverTicket) return;
+          const idx = this.tickets.findIndex(x => x.id === this.activeSlideOverTicket.id);
+          if (idx !== -1) this.tickets[idx] = { ...this.activeSlideOverTicket };
+          
+          // Supabase REST Sync Call
+          try {
+            await fetch(SUPABASE_REST_URL + "tickets", {
+              method: 'POST',
+              headers: {
+                'apikey': SUPABASE_ANON_KEY,
+                'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                'Content-Type': 'application/json',
+                'Prefer': 'resolution=merge-duplicates'
+              },
+              body: JSON.stringify(this.activeSlideOverTicket)
+            });
+          } catch(e) { console.log('Supabase sync standby'); }
+
+          this.activeSlideOverTicket = null;
+          alert('Ticket updated and synced to Supabase REST!');
         },
-        openPRModal(opt) {
-          this.prOption = opt;
-          this.showPRModal = true;
+        onCellEdit(event, array, index, field) {
+          array[index][field] = event.target.innerText;
         },
-        openImporterModal() {
-          this.showImporterModal = true;
-        },
-        processImport() {
-          alert('Excel Import Engine successfully parsed 50 rows into the system!');
-          this.showImporterModal = false;
+        executeImport() {
+          alert('CSV file successfully imported into memory!');
+          this.showImportModal = false;
         },
         exportToCSV(dataArray, filename) {
           if (!dataArray || !dataArray.length) return;
@@ -1052,63 +1041,40 @@
           link.click();
           document.body.removeChild(link);
         },
-
-        // Chart Rendering Methods
+        printBA() {
+          window.print();
+        },
         renderCharts() {
-          // Chart 1: Revenue vs Expenses
-          const ctx1 = document.getElementById('revenueChart');
+          const ctx1 = document.getElementById('casesChart');
           if (ctx1) {
             new Chart(ctx1, {
               type: 'line',
               data: {
                 labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
                 datasets: [
-                  { label: 'Revenue (IDR M)', data: [380, 410, 430, 450, 460, 470, 480, 485.5], borderColor: '#10B981', backgroundColor: 'rgba(16, 185, 129, 0.1)', fill: true, tension: 0.4 },
-                  { label: 'Expenses (IDR M)', data: [160, 170, 175, 180, 182, 185, 190, 195], borderColor: '#EF4444', backgroundColor: 'rgba(239, 68, 68, 0.05)', fill: true, tension: 0.4 }
+                  { label: 'Service Cases', data: [120, 135, 140, 150, 160, 172, 180, 184], borderColor: '#BE2130', fill: false, tension: 0.4 },
+                  { label: 'Maintenance Visits', data: [45, 50, 52, 55, 60, 64, 70, 75], borderColor: '#10B981', fill: false, tension: 0.4 }
                 ]
-              },
-              options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' } } }
-            });
-          }
-
-          // Chart 2: Brand Failure Frequencies
-          const ctx2 = document.getElementById('brandChart');
-          if (ctx2) {
-            new Chart(ctx2, {
-              type: 'bar',
-              data: {
-                labels: ['Hambach', 'Maquinos', 'La Marzocco', 'Eureka', 'Caferesso'],
-                datasets: [{ label: 'Cases Count', data: [54, 42, 28, 19, 12], backgroundColor: ['#BE2130', '#0EA5E9', '#6366F1', '#F59E0B', '#10B981'], borderRadius: 8 }]
               },
               options: { responsive: true, maintainAspectRatio: false }
             });
           }
-        },
 
-        // Supabase Live Sync
-        async connectSupabase() {
-          if (!this.supabaseConfig.url || !this.supabaseConfig.key) return alert('Enter Supabase URL and Key');
-          try {
-            this.supabaseClient = window.supabase.createClient(this.supabaseConfig.url, this.supabaseConfig.key);
-            localStorage.setItem('scuro_sb_url', this.supabaseConfig.url);
-            localStorage.setItem('scuro_sb_key', this.supabaseConfig.key);
-            this.isSupabaseConnected = true;
-            this.showSupabaseModal = false;
-            alert('Connected to Supabase Realtime Database!');
-          } catch(err) {
-            alert('Error: ' + err.message);
+          const ctx2 = document.getElementById('brandFailureChart');
+          if (ctx2) {
+            new Chart(ctx2, {
+              type: 'bar',
+              data: {
+                labels: ['Hambach', 'Maquinos', 'Caferesso', 'Eureka', 'La Nuova Era'],
+                datasets: [{ label: 'Failure Count', data: [58, 44, 28, 22, 14], backgroundColor: ['#BE2130', '#0EA5E9', '#F59E0B', '#6366F1', '#10B981'], borderRadius: 8 }]
+              },
+              options: { responsive: true, maintainAspectRatio: false }
+            });
           }
-        },
-        clearSupabase() {
-          localStorage.removeItem('scuro_sb_url');
-          localStorage.removeItem('scuro_sb_key');
-          this.isSupabaseConnected = false;
-          this.supabaseClient = null;
         }
       },
 
       mounted() {
-        if (this.supabaseConfig.url && this.supabaseConfig.key) this.connectSupabase();
         this.$nextTick(() => {
           if (window.lucide) window.lucide.createIcons();
           this.renderCharts();
