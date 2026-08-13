@@ -50,25 +50,33 @@
       color: #111827;
     }
     .glass-panel {
-      background: rgba(255, 255, 255, 0.82);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(255, 255, 255, 0.88);
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid rgba(255, 255, 255, 0.9);
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
       border-radius: 20px;
     }
     .glass-card {
-      background: rgba(255, 255, 255, 0.70);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.75);
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.85);
       border-radius: 16px;
     }
     .glass-header {
-      background: rgba(255, 255, 255, 0.92);
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-bottom: 1px solid rgba(229, 231, 235, 0.8);
+    }
+    .glass-dropdown {
+      background: rgba(255, 255, 255, 0.96);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
-      border-bottom: 1px solid rgba(229, 231, 235, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.95);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.03);
+      border-radius: 18px;
     }
     ::-webkit-scrollbar {
       width: 6px;
@@ -78,11 +86,11 @@
       background: rgba(0,0,0,0.02);
     }
     ::-webkit-scrollbar-thumb {
-      background: rgba(190, 33, 48, 0.25);
+      background: rgba(190, 33, 48, 0.3);
       border-radius: 10px;
     }
     ::-webkit-scrollbar-thumb:hover {
-      background: rgba(190, 33, 48, 0.5);
+      background: rgba(190, 33, 48, 0.6);
     }
     @media print {
       body * { visibility: hidden; }
@@ -95,16 +103,16 @@
 
   <div id="app" class="flex flex-col min-h-screen">
 
-    <!-- STACKED MULTI-ROW HEADER NAVIGATION -->
+    <!-- ULTRA-CLEAN STACKED HEADER NAVIGATION SYSTEM -->
     <header class="sticky top-0 z-40 glass-header shadow-sm">
       
-      <!-- ROW 1: BRAND EMBLEM LOGO + SEARCH + ROLE SWITCHER + ALERTS -->
+      <!-- ROW 1: BRAND LOGO + GLOBAL SEARCH + LIVE STATUS + ROLE SWITCHER + ALERTS -->
       <div class="border-b border-gray-200/60 px-4 sm:px-6 lg:px-8 py-3">
         <div class="max-w-[1800px] mx-auto flex items-center justify-between gap-4">
           
           <!-- Scuro Official Emblem -->
-          <div class="flex items-center space-x-3 cursor-pointer" @click="navigate('dashboard', 'overview')">
-            <div class="w-10 h-10 rounded-full bg-scuro-red flex items-center justify-center shadow-md shadow-scuro-red/20 ring-2 ring-white">
+          <div class="flex items-center space-x-3.5 cursor-pointer" @click="navigate('dashboard', 'overview')">
+            <div class="w-10 h-10 rounded-full bg-scuro-red flex items-center justify-center shadow-md shadow-scuro-red/25 ring-2 ring-white hover:scale-105 transition-transform">
               <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9 9 0 100-18 9 9 0 000 18z" />
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9.5 9.5c.5-1 1.5-1.5 2.5-1.5s2.5 1 2.5 2.5-1.5 2-2.5 3-1.5 2-1.5 3.5h4" />
@@ -113,28 +121,27 @@
             <div>
               <div class="flex items-center space-x-2">
                 <span class="font-extrabold text-sm tracking-wider text-gray-900 uppercase">Scuro Aftersales</span>
-                <span class="bg-scuro-red/10 text-scuro-red text-[10px] font-bold px-2 py-0.5 rounded-full border border-scuro-red/20">OPERATIONS PLATFORM</span>
+                <span class="bg-scuro-red/10 text-scuro-red text-[10px] font-extrabold px-2.5 py-0.5 rounded-full border border-scuro-red/20 tracking-wider">OPERATIONS PLATFORM</span>
               </div>
               <p class="text-[11px] text-gray-500 font-medium">HORECA Enterprise Servitization System — Indonesia</p>
             </div>
           </div>
 
-          <!-- Central Quick Search -->
-          <div class="hidden md:flex flex-1 max-w-md items-center relative">
+          <!-- Central Global Search Bar -->
+          <div class="hidden lg:flex flex-1 max-w-md items-center relative">
             <i data-lucide="search" class="w-4 h-4 text-gray-400 absolute left-3.5"></i>
-            <input type="text" v-model="globalSearchQuery" placeholder="Search Serial No, Ticket ID, Client, SKU, or Tech..." class="w-full bg-gray-100/80 border border-gray-200 rounded-xl pl-10 pr-4 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-scuro-red/40 focus:bg-white transition-all">
+            <input type="text" v-model="globalSearchQuery" placeholder="Search Serial No, Ticket ID, Client, SKU, or Tech..." class="w-full bg-gray-100/90 border border-gray-200 rounded-xl pl-10 pr-12 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-scuro-red/40 focus:bg-white transition-all shadow-inner">
+            <span class="absolute right-3 text-[10px] font-mono text-gray-400 border border-gray-200 px-1.5 py-0.5 rounded bg-white">Ctrl K</span>
           </div>
 
           <!-- Right Actions & Role Switcher -->
           <div class="flex items-center space-x-3">
             
-            <!-- Alert Bell Button -->
-            <button @click="showAlertPanel = !showAlertPanel" class="relative p-2 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 transition">
-              <i data-lucide="bell" class="w-4 h-4"></i>
-              <span v-if="alerts.length" class="absolute -top-1 -right-1 w-4 h-4 bg-scuro-red text-white text-[9px] font-bold rounded-full flex items-center justify-center shadow-sm">
-                {{ alerts.length }}
-              </span>
-            </button>
+            <!-- Online Status Tag -->
+            <div class="hidden sm:flex items-center space-x-1.5 text-[11px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-full">
+              <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span>Supabase Connected</span>
+            </div>
 
             <!-- Cost Calculator Quick Button -->
             <button @click="showCostCalcModal = true" class="hidden sm:flex items-center space-x-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-semibold px-3 py-2 rounded-xl transition">
@@ -142,8 +149,16 @@
               <span>Cost Calc</span>
             </button>
 
+            <!-- Alert Bell Button -->
+            <button @click="showAlertPanel = !showAlertPanel" class="relative p-2 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 transition">
+              <i data-lucide="bell" class="w-4 h-4"></i>
+              <span v-if="alerts.length" class="absolute -top-1 -right-1 w-4 h-4 bg-scuro-red text-white text-[9px] font-extrabold rounded-full flex items-center justify-center shadow-sm">
+                {{ alerts.length }}
+              </span>
+            </button>
+
             <!-- Role Selector -->
-            <div class="flex items-center space-x-2 bg-gray-100/80 border border-gray-200 rounded-xl px-3 py-1.5">
+            <div class="flex items-center space-x-2 bg-gray-100/90 border border-gray-200 rounded-xl px-3 py-1.5 shadow-sm">
               <i data-lucide="shield-check" class="w-4 h-4 text-scuro-red"></i>
               <select v-model="currentRole" class="bg-transparent text-xs font-bold text-gray-800 focus:outline-none cursor-pointer">
                 <option value="Super Admin">Role: Super Admin</option>
@@ -153,7 +168,7 @@
             </div>
 
             <!-- New Ticket Quick Button -->
-            <button @click="openNewTicketModal('external')" class="bg-scuro-red hover:bg-scuro-reddark text-white text-xs font-bold px-4 py-2 rounded-xl shadow-md shadow-scuro-red/20 transition flex items-center space-x-1.5">
+            <button @click="openNewTicketModal('external')" class="bg-scuro-red hover:bg-scuro-reddark text-white text-xs font-extrabold px-4 py-2 rounded-xl shadow-md shadow-scuro-red/20 transition hover:scale-105 flex items-center space-x-1.5">
               <i data-lucide="plus-circle" class="w-4 h-4"></i>
               <span>+ New Ticket</span>
             </button>
@@ -162,46 +177,54 @@
         </div>
       </div>
 
-      <!-- ROW 2: 9 MAIN DROPDOWN CATEGORIES (30 WORKBOOK SHEETS MAPPED) -->
-      <div class="px-4 sm:px-6 lg:px-8 bg-white/50 border-b border-gray-200/40">
-        <div class="max-w-[1800px] mx-auto flex items-center space-x-1 overflow-x-auto py-1.5 text-xs font-semibold no-scrollbar">
+      <!-- ROW 2: ELEGANT MAIN DROPDOWN CATEGORIES (SPAREPART MANAGEMENT & INVENTORY MANAGEMENT SEPARATED) -->
+      <div class="px-4 sm:px-6 lg:px-8 bg-white/60 border-b border-gray-200/50">
+        <div class="max-w-[1800px] mx-auto flex items-center space-x-2 overflow-x-auto py-2 text-xs font-semibold no-scrollbar">
           
           <div v-for="tab in mainNavTabs" :key="tab.id" class="relative group">
             <button 
               @click="navigate(tab.id, tab.subpages[0].id)"
               :class="[
-                'px-3.5 py-2 rounded-xl flex items-center space-x-1.5 transition-all whitespace-nowrap',
+                'px-4 py-2 rounded-xl flex items-center space-x-2 transition-all whitespace-nowrap shadow-sm',
                 activeTab === tab.id 
-                  ? 'bg-scuro-red text-white font-bold shadow-sm shadow-scuro-red/20' 
-                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100/80'
+                  ? 'bg-scuro-red text-white font-extrabold shadow-md shadow-scuro-red/20' 
+                  : 'bg-white/80 text-gray-700 hover:bg-white hover:text-gray-900 border border-gray-200/70 hover:border-gray-300'
               ]"
             >
               <i :data-lucide="tab.icon" class="w-4 h-4"></i>
               <span>{{ tab.label }}</span>
-              <i data-lucide="chevron-down" class="w-3 h-3 opacity-60"></i>
+              <span v-if="tab.id === 'tickets'" class="ml-1 bg-white/20 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">
+                {{ tickets.length }}
+              </span>
+              <i data-lucide="chevron-down" class="w-3.5 h-3.5 opacity-60 group-hover:rotate-180 transition-transform"></i>
             </button>
 
-            <!-- Dropdown Menu -->
-            <div class="absolute left-0 top-full hidden group-hover:block z-50 pt-1">
-              <div class="bg-white/95 backdrop-blur-md border border-gray-200/80 rounded-xl shadow-xl p-1.5 w-64 space-y-0.5">
-                <div class="px-2.5 py-1 text-[10px] font-extrabold uppercase text-gray-400 tracking-wider">
-                  Mapped Sheets ({{ tab.subpages.length }})
+            <!-- LUXURIOUS GLASSMORPHISM FLOATING DROPDOWN CARD -->
+            <div class="absolute left-0 top-full hidden group-hover:block z-50 pt-2 transition-all transform origin-top-left">
+              <div class="glass-dropdown p-2 w-72 space-y-1">
+                <div class="px-3 py-1.5 border-b border-gray-100 flex items-center justify-between">
+                  <span class="text-[10px] font-extrabold uppercase text-gray-400 tracking-wider">Subpages</span>
+                  <span class="text-[10px] font-bold text-scuro-red bg-scuro-red/10 px-2 py-0.5 rounded-full">{{ tab.subpages.length }} Sheets</span>
                 </div>
-                <button 
-                  v-for="sub in tab.subpages" 
-                  :key="sub.id"
-                  @click="navigate(tab.id, sub.id)"
-                  :class="[
-                    'w-full text-left px-3 py-2 rounded-lg text-xs font-medium flex items-center justify-between transition-colors',
-                    activeSubpage === sub.id ? 'bg-scuro-red/10 text-scuro-red font-bold' : 'text-gray-700 hover:bg-gray-100'
-                  ]"
-                >
-                  <div class="flex items-center space-x-2">
-                    <span class="w-1.5 h-1.5 rounded-full" :class="activeSubpage === sub.id ? 'bg-scuro-red' : 'bg-gray-300'"></span>
-                    <span>{{ sub.label }}</span>
-                  </div>
-                  <span class="text-[10px] text-gray-400 font-mono">{{ sub.sheet }}</span>
-                </button>
+                <div class="space-y-0.5 pt-1">
+                  <button 
+                    v-for="sub in tab.subpages" 
+                    :key="sub.id"
+                    @click="navigate(tab.id, sub.id)"
+                    :class="[
+                      'w-full text-left px-3 py-2 rounded-xl text-xs font-semibold flex items-center justify-between transition-all',
+                      activeSubpage === sub.id ? 'bg-scuro-red text-white font-bold shadow-sm' : 'text-gray-700 hover:bg-scuro-red/5 hover:text-scuro-red'
+                    ]"
+                  >
+                    <div class="flex items-center space-x-2.5 truncate">
+                      <span class="w-2 h-2 rounded-full flex-shrink-0" :class="activeSubpage === sub.id ? 'bg-white' : 'bg-scuro-red/40'"></span>
+                      <span class="truncate">{{ sub.label }}</span>
+                    </div>
+                    <span :class="['text-[10px] font-mono font-bold px-1.5 py-0.5 rounded ml-2 flex-shrink-0', activeSubpage === sub.id ? 'bg-white/20 text-white' : 'bg-gray-100 text-gray-500']">
+                      {{ sub.sheet }}
+                    </span>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -216,17 +239,17 @@
       <div class="flex items-center justify-between border-b pb-3">
         <div class="flex items-center space-x-2">
           <i data-lucide="bell" class="w-5 h-5 text-scuro-red"></i>
-          <h3 class="font-bold text-sm text-gray-900">Notifications & Alerts</h3>
+          <h3 class="font-bold text-sm text-gray-900">Notifications & Active Alerts</h3>
         </div>
         <button @click="showAlertPanel = false" class="text-gray-400 hover:text-gray-600"><i data-lucide="x" class="w-4 h-4"></i></button>
       </div>
       <div class="space-y-3">
-        <div v-for="alt in alerts" :key="alt.id" :class="['p-3 rounded-xl border text-xs space-y-1', alt.priority === 'high' ? 'bg-rose-50 border-rose-200 text-rose-800' : 'bg-amber-50 border-amber-200 text-amber-800']">
+        <div v-for="alt in alerts" :key="alt.id" :class="['p-3.5 rounded-xl border text-xs space-y-1', alt.priority === 'high' ? 'bg-rose-50 border-rose-200 text-rose-800' : 'bg-amber-50 border-amber-200 text-amber-800']">
           <div class="font-bold flex items-center justify-between">
             <span>{{ alt.title }}</span>
             <span class="text-[10px] opacity-75">{{ alt.time }}</span>
           </div>
-          <p class="text-[11px] opacity-90">{{ alt.message }}</p>
+          <p class="text-[11px] opacity-90 leading-relaxed">{{ alt.message }}</p>
         </div>
       </div>
     </div>
@@ -236,26 +259,26 @@
       
       <!-- SUBPAGE TITLE & BREADCRUMB HEADER -->
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 glass-card p-4 px-6">
-        <div class="flex items-center space-x-3">
-          <div class="w-8 h-8 rounded-lg bg-scuro-red/10 text-scuro-red flex items-center justify-center font-bold text-sm">
-            <i :data-lucide="currentTabIcon" class="w-4 h-4"></i>
+        <div class="flex items-center space-x-3.5">
+          <div class="w-9 h-9 rounded-xl bg-scuro-red/10 text-scuro-red flex items-center justify-center font-bold text-sm shadow-inner">
+            <i :data-lucide="currentTabIcon" class="w-5 h-5"></i>
           </div>
           <div>
             <div class="flex items-center space-x-2 text-xs font-semibold text-gray-500">
-              <span class="capitalize">{{ activeTab }}</span>
+              <span class="capitalize">{{ currentTabLabel }}</span>
               <span>/</span>
               <span class="text-scuro-red font-bold">{{ currentSubpageLabel }}</span>
             </div>
-            <h1 class="text-lg font-bold text-gray-900 mt-0.5">Sheet Reference: <span class="font-mono text-scuro-red">{{ currentSheetName }}</span></h1>
+            <h1 class="text-lg font-bold text-gray-900 mt-0.5">Excel Sheet Reference: <span class="font-mono text-scuro-red font-extrabold">{{ currentSheetName }}</span></h1>
           </div>
         </div>
         
         <div class="flex items-center space-x-3">
-          <button @click="showSyncMakeModal = true" class="bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 text-xs font-bold px-3 py-2 rounded-xl flex items-center space-x-1.5 transition">
+          <button @click="showSyncMakeModal = true" class="bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 text-xs font-bold px-3.5 py-2 rounded-xl flex items-center space-x-1.5 transition">
             <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
             <span>Make.com Sync</span>
           </button>
-          <button @click="exportToCSV(spareparts, currentSheetName)" class="bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold px-3 py-2 rounded-xl flex items-center space-x-1.5 transition">
+          <button @click="exportToCSV(spareparts, currentSheetName)" class="bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold px-3.5 py-2 rounded-xl flex items-center space-x-1.5 transition">
             <i data-lucide="download" class="w-3.5 h-3.5"></i>
             <span>Export CSV</span>
           </button>
@@ -283,11 +306,11 @@
             </div>
 
             <div class="glass-panel p-5 space-y-2 border-l-4 border-l-amber-500">
-              <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Pending Customer / Internal</span>
+              <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Pending Follow-up</span>
               <div class="text-3xl font-extrabold text-amber-600">
                 {{ tickets.filter(t => t.status.includes('Pending')).length }}
               </div>
-              <p class="text-xs text-gray-500">Requires follow-up</p>
+              <p class="text-xs text-gray-500">Action required</p>
             </div>
 
             <div class="glass-panel p-5 space-y-2 border-l-4 border-l-emerald-500">
@@ -299,9 +322,9 @@
             </div>
 
             <div class="glass-panel p-5 space-y-2 border-l-4 border-l-blue-500">
-              <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Service Center Units</span>
+              <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Service Center Workshop</span>
               <div class="text-3xl font-extrabold text-blue-600">{{ serviceCenter.length }}</div>
-              <p class="text-xs text-gray-500">Workshop repairs</p>
+              <p class="text-xs text-gray-500">Units on bench</p>
             </div>
 
             <div class="glass-panel p-5 space-y-2 border-l-4 border-l-rose-500">
@@ -309,7 +332,7 @@
               <div class="text-3xl font-extrabold text-rose-600">
                 {{ spareparts.filter(p => p.stock <= p.min_stock).length }}
               </div>
-              <p class="text-xs text-rose-600 font-semibold">SKUs below min threshold</p>
+              <p class="text-xs text-rose-600 font-semibold">SKUs below threshold</p>
             </div>
           </div>
 
@@ -318,8 +341,8 @@
             <div class="glass-panel p-6 space-y-4">
               <div class="flex items-center justify-between">
                 <div>
-                  <h3 class="text-sm font-bold text-gray-900">Monthly Ticket & Maintenance Volume</h3>
-                  <p class="text-xs text-gray-500">Servitization case trend (2026)</p>
+                  <h3 class="text-sm font-bold text-gray-900">Monthly Case & Maintenance Volume</h3>
+                  <p class="text-xs text-gray-500">HORECA Servitization case trend</p>
                 </div>
                 <span class="bg-scuro-red/10 text-scuro-red text-[11px] font-bold px-2.5 py-1 rounded-lg">Chart.js</span>
               </div>
@@ -331,7 +354,7 @@
             <div class="glass-panel p-6 space-y-4">
               <div class="flex items-center justify-between">
                 <div>
-                  <h3 class="text-sm font-bold text-gray-900">Brand Failure Distribution</h3>
+                  <h3 class="text-sm font-bold text-gray-900">Brand Failure Frequency</h3>
                   <p class="text-xs text-gray-500">Hambach vs Maquinos vs Caferesso vs Eureka</p>
                 </div>
                 <span class="bg-blue-50 text-blue-700 text-[11px] font-bold px-2.5 py-1 rounded-lg">Failure Mode</span>
@@ -346,7 +369,7 @@
           <div class="glass-panel p-6 space-y-4">
             <div class="flex items-center justify-between">
               <div>
-                <h3 class="text-base font-bold text-gray-900">Recent Active Tickets Ledger</h3>
+                <h3 class="text-base font-bold text-gray-900">Recent Active Tickets</h3>
                 <p class="text-xs text-gray-500">Latest cases across External and Internal pipelines</p>
               </div>
               <button @click="navigate('tickets', 'external')" class="text-xs text-scuro-red font-bold hover:underline">View All Tickets &rarr;</button>
@@ -400,39 +423,14 @@
 
         </div>
 
-        <!-- BRAND & FAILURE TRENDS SUBPAGE -->
-        <div v-if="activeSubpage === 'brand-trends'" class="glass-panel p-6 space-y-6">
-          <h2 class="text-base font-bold text-gray-900">Brand Failure Trends & Monthly Calculations</h2>
-          <p class="text-xs text-gray-500">Historical failure frequency aggregations calculated from service center repair logs.</p>
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-            <div v-for="b in ['Hambach', 'Maquinos', 'Caferesso']" :key="b" class="glass-card p-5 space-y-3">
-              <h3 class="font-bold text-sm text-gray-900">{{ b }} Diagnostics Summary</h3>
-              <div class="space-y-2 text-xs">
-                <div class="flex justify-between border-b pb-1">
-                  <span class="text-gray-500">Top Failure</span>
-                  <span class="font-bold text-scuro-red">Display / Sensor Error</span>
-                </div>
-                <div class="flex justify-between border-b pb-1">
-                  <span class="text-gray-500">Avg Repair Time</span>
-                  <span class="font-bold text-gray-800">1.8 Days</span>
-                </div>
-                <div class="flex justify-between">
-                  <span class="text-gray-500">Spareparts Replaced</span>
-                  <span class="font-bold text-emerald-600">34 Units</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
       </div>
 
       <!-- ========================================== -->
-      <!-- TAB 2: TICKETS (DEDICATED MAIN PAGE)       -->
+      <!-- TAB 2: TICKETS                             -->
       <!-- ========================================== -->
       <div v-if="activeTab === 'tickets'" class="space-y-6">
         
-        <!-- SUBPAGE: EXTERNAL TICKETS (7 PIPELINE STAGES) -->
+        <!-- SUBPAGE: EXTERNAL TICKETS -->
         <div v-if="activeSubpage === 'external'" class="space-y-6">
           <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 glass-panel p-6">
             <div>
@@ -445,7 +443,6 @@
             </button>
           </div>
 
-          <!-- KANBAN PIPELINE BOARD -->
           <div class="grid grid-cols-1 md:grid-cols-7 gap-3 overflow-x-auto pb-4">
             <div v-for="col in externalColumns" :key="col.status" class="glass-card p-3 space-y-3 min-w-[200px]">
               <div class="flex items-center justify-between border-b border-gray-200/60 pb-2">
@@ -478,7 +475,7 @@
           </div>
         </div>
 
-        <!-- SUBPAGE: INTERNAL TICKETS (6 PIPELINE STAGES) -->
+        <!-- SUBPAGE: INTERNAL TICKETS -->
         <div v-if="activeSubpage === 'internal'" class="space-y-6">
           <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 glass-panel p-6">
             <div>
@@ -491,7 +488,6 @@
             </button>
           </div>
 
-          <!-- KANBAN PIPELINE BOARD -->
           <div class="grid grid-cols-1 md:grid-cols-6 gap-3 overflow-x-auto pb-4">
             <div v-for="col in internalColumns" :key="col.status" class="glass-card p-3 space-y-3 min-w-[220px]">
               <div class="flex items-center justify-between border-b border-gray-200/60 pb-2">
@@ -530,14 +526,9 @@
       <!-- TAB 3: OPERATIONS                          -->
       <!-- ========================================== -->
       <div v-if="activeTab === 'operations'" class="space-y-6">
-        
-        <!-- SERVICE CENTER WORKSHOP -->
         <div v-if="activeSubpage === 'service-center'" class="glass-panel p-6 space-y-6">
           <div class="flex items-center justify-between">
-            <div>
-              <h2 class="text-base font-bold text-gray-900">Service Center Workshop Repairs</h2>
-              <p class="text-xs text-gray-500">Pipeline: Received &rarr; Unboxing &rarr; Inspection &rarr; QC &rarr; Pickup/Delivery</p>
-            </div>
+            <h2 class="text-base font-bold text-gray-900">Service Center Workshop Repairs</h2>
             <button @click="openNewTicketModal('external')" class="bg-scuro-red text-white text-xs font-bold px-4 py-2 rounded-xl">+ Receive Unit</button>
           </div>
 
@@ -557,7 +548,6 @@
           </div>
         </div>
 
-        <!-- VISIT IN-HOUSE -->
         <div v-if="activeSubpage === 'visit-inhouse'" class="glass-panel p-6 space-y-6">
           <div class="flex items-center justify-between">
             <h2 class="text-base font-bold text-gray-900">On-Site Service & Maintenance Dispatch</h2>
@@ -591,80 +581,35 @@
           </div>
         </div>
 
-        <!-- MAINTENANCE PACKAGES -->
-        <div v-if="activeSubpage === 'maintenance'" class="glass-panel p-6 space-y-6">
-          <div class="flex items-center justify-between">
-            <h2 class="text-base font-bold text-gray-900">Machine Maintenance Package Tracker</h2>
-            <button @click="showMaintModal = true" class="bg-scuro-red text-white text-xs font-bold px-4 py-2 rounded-xl">+ Add Maintenance</button>
+        <div v-if="!['service-center', 'visit-inhouse'].includes(activeSubpage)" class="glass-panel p-6 space-y-4">
+          <h2 class="text-base font-bold text-gray-900 capitalize">{{ currentSubpageLabel }}</h2>
+          <p class="text-xs text-gray-500">Operational ledger for <span class="font-mono text-scuro-red font-bold">{{ currentSheetName }}</span>.</p>
+        </div>
+      </div>
+
+      <!-- ========================================== -->
+      <!-- TAB 4: SPAREPART MANAGEMENT (MAIN PAGE 1)  -->
+      <!-- ========================================== -->
+      <div v-if="activeTab === 'sparepart-mgmt'" class="space-y-6">
+        
+        <!-- MASTER SPAREPART CATALOG -->
+        <div v-if="activeSubpage === 'sp-master'" class="glass-panel p-6 space-y-5">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <h2 class="text-base font-bold text-gray-900">Master Sparepart Catalog [Inline Editable]</h2>
+              <p class="text-xs text-gray-500">Mapped from <span class="font-mono text-scuro-red font-bold">SP_Master</span> sheet — SKU, selling prices, HPP costs, and stock limits.</p>
+            </div>
+            <button @click="exportToCSV(spareparts, 'SP_Master_Catalog')" class="bg-scuro-red text-white text-xs font-bold px-4 py-2 rounded-xl shadow-md">
+              Export SP Master CSV
+            </button>
           </div>
+
           <div class="overflow-x-auto">
             <table class="w-full text-left text-xs">
               <thead>
                 <tr class="border-b text-gray-500 font-bold uppercase">
-                  <th class="py-3 px-3">Serial No</th>
-                  <th class="py-3 px-3">Customer</th>
-                  <th class="py-3 px-3">Program</th>
-                  <th class="py-3 px-3">M-1 Date / Tech</th>
-                  <th class="py-3 px-3">M-2 Date / Tech</th>
-                  <th class="py-3 px-3">M-3 Date / Tech</th>
-                  <th class="py-3 px-3">Gasket / Oring</th>
-                  <th class="py-3 px-3">Status</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y">
-                <tr v-for="m in maintenance" :key="m.id" class="hover:bg-white/80">
-                  <td class="py-3 px-3 font-mono font-bold text-scuro-red">{{ m.sn }}</td>
-                  <td class="py-3 px-3 font-bold">{{ m.customer }}</td>
-                  <td class="py-3 px-3"><span class="bg-purple-100 text-purple-800 text-[10px] font-bold px-2 py-0.5 rounded-full">{{ m.program }}</span></td>
-                  <td class="py-3 px-3">{{ m.m1_date }} ({{ m.m1_tech }})</td>
-                  <td class="py-3 px-3">{{ m.m2_date || '—' }} ({{ m.m2_tech || '—' }})</td>
-                  <td class="py-3 px-3">{{ m.m3_date || '—' }} ({{ m.m3_tech || '—' }})</td>
-                  <td class="py-3 px-3 font-semibold">Gasket: {{ m.gasket_used ? '✓' : '✗' }} | Oring: {{ m.oring_used ? '✓' : '✗' }}</td>
-                  <td class="py-3 px-3"><span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full">{{ m.status }}</span></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- DEFAULT GENERIC FOR OTHER OPERATIONS SUBPAGES -->
-        <div v-if="!['service-center', 'visit-inhouse', 'maintenance'].includes(activeSubpage)" class="glass-panel p-6 space-y-4">
-          <h2 class="text-base font-bold text-gray-900 capitalize">{{ currentSubpageLabel }}</h2>
-          <p class="text-xs text-gray-500">Operational ledger for <span class="font-mono text-scuro-red font-bold">{{ currentSheetName }}</span>.</p>
-        </div>
-
-      </div>
-
-      <!-- ========================================== -->
-      <!-- TAB 4: INVENTORY                           -->
-      <!-- ========================================== -->
-      <div v-if="activeTab === 'inventory'" class="space-y-6">
-        
-        <!-- MASTER SPAREPART CATALOG (INLINE EDITABLE) -->
-        <div v-if="activeSubpage === 'master-catalog'" class="glass-panel p-6 space-y-5">
-          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div>
-              <h2 class="text-base font-bold text-gray-900">Sparepart Master Inventory Catalog [Inline Editable]</h2>
-              <p class="text-xs text-gray-500">Double-click any table cell to edit text directly in memory</p>
-            </div>
-            <div class="flex items-center space-x-3">
-              <button @click="showImportModal = true" class="bg-white border border-gray-300 text-xs font-bold px-3.5 py-2 rounded-xl flex items-center space-x-1 hover:bg-gray-50">
-                <i data-lucide="upload" class="w-3.5 h-3.5"></i>
-                <span>Import CSV/Excel</span>
-              </button>
-              <button @click="exportToCSV(spareparts, 'Sparepart_Master_Catalog')" class="bg-scuro-red text-white text-xs font-bold px-4 py-2 rounded-xl shadow-md flex items-center space-x-1.5">
-                <i data-lucide="download" class="w-4 h-4"></i>
-                <span>Export CSV</span>
-              </button>
-            </div>
-          </div>
-
-          <div class="overflow-x-auto">
-            <table class="w-full text-left text-xs">
-              <thead>
-                <tr class="border-b border-gray-200 text-gray-500 font-bold uppercase tracking-wider">
-                  <th class="py-3 px-4">SKU</th>
-                  <th class="py-3 px-4">Item Name</th>
+                  <th class="py-3 px-4">SKU Code</th>
+                  <th class="py-3 px-4">Sparepart Item Name</th>
                   <th class="py-3 px-4">Brand</th>
                   <th class="py-3 px-4">Category</th>
                   <th class="py-3 px-4">Stock</th>
@@ -672,7 +617,7 @@
                   <th class="py-3 px-4" v-if="canViewFinancials">HPP Cost (IDR)</th>
                 </tr>
               </thead>
-              <tbody class="divide-y divide-gray-100">
+              <tbody class="divide-y">
                 <tr v-for="(part, idx) in spareparts" :key="part.id" class="hover:bg-white/80">
                   <td class="py-3 px-4 font-bold text-scuro-red font-mono" contenteditable="true" @blur="onCellEdit($event, spareparts, idx, 'sku')">{{ part.sku }}</td>
                   <td class="py-3 px-4 font-bold text-gray-900" contenteditable="true" @blur="onCellEdit($event, spareparts, idx, 'item_name')">{{ part.item_name }}</td>
@@ -687,14 +632,92 @@
           </div>
         </div>
 
-        <div v-if="activeSubpage !== 'master-catalog'" class="glass-panel p-6 space-y-4">
-          <h2 class="text-base font-bold text-gray-900 capitalize">{{ currentSubpageLabel }}</h2>
-          <p class="text-xs text-gray-500">Inventory records for <span class="font-mono text-scuro-red font-bold">{{ currentSheetName }}</span>.</p>
+        <!-- SPAREPART TRACKING -->
+        <div v-if="activeSubpage === 'sp-tracking'" class="glass-panel p-6 space-y-6">
+          <h2 class="text-base font-bold text-gray-900">Sparepart Loan & Movement Tracking</h2>
+          <p class="text-xs text-gray-500">Mapped from <span class="font-mono text-scuro-red font-bold">SP_Tracking</span> sheet — Tracks spareparts loaned out to technicians or branches.</p>
         </div>
+
+        <!-- SPAREPART STOCK LEVEL -->
+        <div v-if="activeSubpage === 'sp-stock'" class="glass-panel p-6 space-y-6">
+          <h2 class="text-base font-bold text-gray-900">Sparepart Stock Opname & Multi-Location Warehouse Level</h2>
+          <p class="text-xs text-gray-500">Mapped from <span class="font-mono text-scuro-red font-bold">SP_Stock</span> sheet — Tangerang Central Workshop vs Scuro Bali Warehouse.</p>
+        </div>
+
+        <!-- REQUEST PURCHASING / SP ORDER -->
+        <div v-if="activeSubpage === 'sp-purchasing'" class="glass-panel p-6 space-y-6">
+          <div class="flex items-center justify-between">
+            <h2 class="text-base font-bold text-gray-900">Request Purchasing & Order Spareparts</h2>
+            <button @click="showCostCalcModal = true" class="bg-scuro-red text-white text-xs font-bold px-4 py-2 rounded-xl">+ Create Purchase Order</button>
+          </div>
+          <p class="text-xs text-gray-500">Mapped from <span class="font-mono text-scuro-red font-bold">SP_Order</span> sheet — Purchase requisitions for low stock SKUs.</p>
+        </div>
+
       </div>
 
       <!-- ========================================== -->
-      <!-- TAB 5: PERFORMANCE                         -->
+      <!-- TAB 5: INVENTORY MANAGEMENT (MAIN PAGE 2)  -->
+      <!-- ========================================== -->
+      <div v-if="activeTab === 'inventory-mgmt'" class="space-y-6">
+        
+        <!-- INVENTORY & ASSET STOCK -->
+        <div v-if="activeSubpage === 'inv-asset-stock'" class="glass-panel p-6 space-y-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <h2 class="text-base font-bold text-gray-900">Inventory & Asset Stock (Peralatan & Perlengkapan)</h2>
+              <p class="text-xs text-gray-500">Mapped from <span class="font-mono text-scuro-red font-bold">Inventory_Tools</span> sheet — Technician tools, multimeters, amp meters, solder sets, and workshop equipment.</p>
+            </div>
+            <button class="bg-scuro-red text-white text-xs font-bold px-4 py-2 rounded-xl">+ Add New Asset</button>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead>
+                <tr class="border-b text-gray-500 font-bold uppercase">
+                  <th class="py-3 px-4">Asset Code</th>
+                  <th class="py-3 px-4">Tool / Equipment Name</th>
+                  <th class="py-3 px-4">Category</th>
+                  <th class="py-3 px-4">Assigned Tech / PIC</th>
+                  <th class="py-3 px-4">Condition</th>
+                  <th class="py-3 px-4">Status</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y">
+                <tr v-for="t in inventoryTools" :key="t.id" class="hover:bg-white/80">
+                  <td class="py-3 px-4 font-mono font-bold text-scuro-red">{{ t.code }}</td>
+                  <td class="py-3 px-4 font-bold text-gray-900">{{ t.name }}</td>
+                  <td class="py-3 px-4 text-gray-700">{{ t.category }}</td>
+                  <td class="py-3 px-4 font-bold text-gray-800">{{ t.pic }}</td>
+                  <td class="py-3 px-4"><span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full">{{ t.condition }}</span></td>
+                  <td class="py-3 px-4"><span class="bg-blue-100 text-blue-800 text-[10px] font-bold px-2 py-0.5 rounded-full">{{ t.status }}</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- REQUEST INVENTORY -->
+        <div v-if="activeSubpage === 'req-inventory'" class="glass-panel p-6 space-y-6">
+          <div class="flex items-center justify-between">
+            <h2 class="text-base font-bold text-gray-900">Request Inventory</h2>
+            <button class="bg-scuro-red text-white text-xs font-bold px-4 py-2 rounded-xl">+ Request Inventory Item</button>
+          </div>
+          <p class="text-xs text-gray-500">Intake form for requesting technician consumable supplies, gaskets, seals, and cleaning agents.</p>
+        </div>
+
+        <!-- REQUEST ASSET -->
+        <div v-if="activeSubpage === 'req-asset'" class="glass-panel p-6 space-y-6">
+          <div class="flex items-center justify-between">
+            <h2 class="text-base font-bold text-gray-900">Request Asset & Heating Element Lifecycle</h2>
+            <button class="bg-scuro-red text-white text-xs font-bold px-4 py-2 rounded-xl">+ Request Asset / HE</button>
+          </div>
+          <p class="text-xs text-gray-500">Mapped from <span class="font-mono text-scuro-red font-bold">Heating_Element</span> sheet — High-value asset requisition and Heating Element replacement tracking.</p>
+        </div>
+
+      </div>
+
+      <!-- ========================================== -->
+      <!-- TAB 6: PERFORMANCE                         -->
       <!-- ========================================== -->
       <div v-if="activeTab === 'performance'" class="space-y-6">
         <div v-if="activeSubpage === 'capacity'" class="space-y-6">
@@ -702,158 +725,27 @@
             <div class="glass-panel p-5 space-y-2">
               <span class="text-xs font-bold text-gray-500 uppercase">Admin Intake Speed</span>
               <div class="text-3xl font-extrabold text-blue-600">8.5 Mins</div>
-              <p class="text-xs text-gray-500">Target: &lt; 15 Mins</p>
             </div>
             <div class="glass-panel p-5 space-y-2">
               <span class="text-xs font-bold text-gray-500 uppercase">First Time Fix Rate</span>
               <div class="text-3xl font-extrabold text-emerald-600">92.4%</div>
-              <p class="text-xs text-gray-500">Target: &gt; 90%</p>
             </div>
             <div class="glass-panel p-5 space-y-2">
               <span class="text-xs font-bold text-gray-500 uppercase">Bench MTTR</span>
               <div class="text-3xl font-extrabold text-amber-600">2.1 Days</div>
-              <p class="text-xs text-gray-500">Target: &le; 3 Days</p>
             </div>
             <div class="glass-panel p-5 space-y-2">
-              <span class="text-xs font-bold text-gray-500 uppercase">Customer Satisfaction</span>
+              <span class="text-xs font-bold text-gray-500 uppercase">Customer Rating</span>
               <div class="text-3xl font-extrabold text-purple-600">4.88 / 5.0</div>
-              <p class="text-xs text-gray-500">184 Ratings</p>
             </div>
           </div>
-
-          <div class="glass-panel p-6 space-y-4">
-            <h3 class="text-base font-bold text-gray-900">Technician Team Scorecards</h3>
-            <div class="overflow-x-auto">
-              <table class="w-full text-left text-xs">
-                <thead>
-                  <tr class="border-b text-gray-500 font-bold uppercase">
-                    <th class="py-3 px-4">Technician Name</th>
-                    <th class="py-3 px-4">Resolved Tickets</th>
-                    <th class="py-3 px-4">First Time Fix %</th>
-                    <th class="py-3 px-4">Rating</th>
-                  </tr>
-                </thead>
-                <tbody class="divide-y">
-                  <tr v-for="t in techScorecards" :key="t.name" class="hover:bg-white/80">
-                    <td class="py-3 px-4 font-bold text-gray-900">{{ t.name }}</td>
-                    <td class="py-3 px-4 font-bold text-blue-600">{{ t.resolvedCount }} Cases</td>
-                    <td class="py-3 px-4 font-bold text-emerald-600">{{ t.ftfRate }}%</td>
-                    <td class="py-3 px-4 font-bold text-amber-600">★ {{ t.rating }} / 5.0</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-
-        <div v-if="activeSubpage !== 'capacity'" class="glass-panel p-6 space-y-4">
-          <h2 class="text-base font-bold text-gray-900 capitalize">{{ currentSubpageLabel }}</h2>
-          <p class="text-xs text-gray-500">Performance metrics for <span class="font-mono text-scuro-red font-bold">{{ currentSheetName }}</span>.</p>
         </div>
       </div>
 
-      <!-- ========================================== -->
-      <!-- TAB 6: KNOWLEDGE                           -->
-      <!-- ========================================== -->
-      <div v-if="activeTab === 'knowledge'" class="glass-panel p-6 space-y-6">
+      <!-- OTHER TABS -->
+      <div v-if="['knowledge', 'governance', 'warranty-db', 'settings-sync'].includes(activeTab)" class="glass-panel p-6 space-y-6">
         <h2 class="text-base font-bold text-gray-900 capitalize">{{ currentSubpageLabel }}</h2>
-        <p class="text-xs text-gray-500">Technical manuals, video tutorials, and solution guides for <span class="font-mono text-scuro-red font-bold">{{ currentSheetName }}</span>.</p>
-      </div>
-
-      <!-- ========================================== -->
-      <!-- TAB 7: GOVERNANCE & RULES                  -->
-      <!-- ========================================== -->
-      <div v-if="activeTab === 'governance'" class="space-y-6">
-        <div class="glass-panel p-6 space-y-6">
-          <div class="border-b pb-4">
-            <h2 class="text-base font-bold text-gray-900">Governance & Internal Operating Rules</h2>
-            <p class="text-xs text-gray-500">Includes Program Maintenance 1x, Internal Memo SG-FORM-IM-001, Kopi Kenangan 25%/15% Discount Agreement, and Berita Acara Generator.</p>
-          </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="glass-card p-5 space-y-3">
-              <h3 class="font-bold text-sm text-gray-900">Internal Memo SG-FORM-IM-001</h3>
-              <p class="text-xs text-gray-600 leading-relaxed">
-                Rules governing warranty claims for espresso machine heating elements and boiler replacements. Mandates 100% replacement log tracking in the HE Lifecycle database.
-              </p>
-            </div>
-
-            <div class="glass-card p-5 space-y-3">
-              <h3 class="font-bold text-sm text-gray-900">Kopi Kenangan Commercial Terms</h3>
-              <ul class="text-xs text-gray-600 space-y-1.5 list-disc pl-4">
-                <li>Sparepart Discount: <strong>25% off MSRP</strong></li>
-                <li>Labor & Visit Fee Discount: <strong>15% off Standard Rate</strong></li>
-                <li>Guaranteed Emergency SLA: <strong>Within 4 Hours (Jabodetabek)</strong></li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ========================================== -->
-      <!-- TAB 8: WARRANTY DB                         -->
-      <!-- ========================================== -->
-      <div v-if="activeTab === 'warranty-db'" class="glass-panel p-6 space-y-5">
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <h2 class="text-base font-bold text-gray-900">17,000+ Serial Number Master Warranty Ledger [Inline Editable]</h2>
-            <p class="text-xs text-gray-500">Mapped from <span class="font-mono text-scuro-red font-bold">Warranty_DB</span> sheet — Instant lookup & editing</p>
-          </div>
-          <button @click="exportToCSV(warranties, 'Warranty_DB_Ledger')" class="bg-scuro-red text-white text-xs font-bold px-4 py-2 rounded-xl shadow-md">
-            Export Warranty DB CSV
-          </button>
-        </div>
-
-        <div class="overflow-x-auto">
-          <table class="w-full text-left text-xs">
-            <thead>
-              <tr class="border-b text-gray-500 font-bold uppercase">
-                <th class="py-3 px-4">Warranty Card</th>
-                <th class="py-3 px-4">Serial Number</th>
-                <th class="py-3 px-4">Customer</th>
-                <th class="py-3 px-4">Brand / Model</th>
-                <th class="py-3 px-4">Purchase Date</th>
-                <th class="py-3 px-4">Expiry Date</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y">
-              <tr v-for="(w, idx) in warranties" :key="w.id" class="hover:bg-white/80">
-                <td class="py-3 px-4 font-bold text-scuro-red font-mono" contenteditable="true" @blur="onCellEdit($event, warranties, idx, 'warranty_card_no')">{{ w.warranty_card_no }}</td>
-                <td class="py-3 px-4 font-bold font-mono text-gray-900" contenteditable="true" @blur="onCellEdit($event, warranties, idx, 'serial_number')">{{ w.serial_number }}</td>
-                <td class="py-3 px-4 font-semibold text-gray-800" contenteditable="true" @blur="onCellEdit($event, warranties, idx, 'customer_name')">{{ w.customer_name }}</td>
-                <td class="py-3 px-4 text-gray-700" contenteditable="true" @blur="onCellEdit($event, warranties, idx, 'model')">{{ w.brand }} {{ w.model }}</td>
-                <td class="py-3 px-4 font-mono text-gray-600" contenteditable="true" @blur="onCellEdit($event, warranties, idx, 'purchase_date')">{{ w.purchase_date }}</td>
-                <td class="py-3 px-4 font-mono font-bold text-emerald-600" contenteditable="true" @blur="onCellEdit($event, warranties, idx, 'warranty_expiry_date')">{{ w.warranty_expiry_date }}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- ========================================== -->
-      <!-- TAB 9: SETTINGS SYNC                       -->
-      <!-- ========================================== -->
-      <div v-if="activeTab === 'settings-sync'" class="glass-panel p-6 space-y-6">
-        <h2 class="text-base font-bold text-gray-900">Embedded Supabase & System Sync Settings</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
-          <div class="glass-card p-5 space-y-4">
-            <h3 class="font-bold text-sm text-gray-900">Supabase REST Client Credentials</h3>
-            <div class="space-y-2">
-              <label class="block font-bold text-gray-700">Supabase REST Endpoint</label>
-              <input type="text" value="https://fkzvfgugfyhmbaxljzcs.supabase.co/rest/v1/" readonly class="w-full bg-gray-100 border p-2 rounded-lg font-mono text-[11px]">
-            </div>
-            <div class="space-y-2">
-              <label class="block font-bold text-gray-700">Anon Key Token</label>
-              <input type="text" value="sb_secret_2TzyIfSWEgIJ7jdytsyOWA_L3F-YIF9" readonly class="w-full bg-gray-100 border p-2 rounded-lg font-mono text-[11px]">
-            </div>
-          </div>
-
-          <div class="glass-card p-5 space-y-4">
-            <h3 class="font-bold text-sm text-gray-900">Make.com Webhook Sync Setup</h3>
-            <p class="text-gray-600 leading-relaxed">Configure 2-way sync between Scuro Aftersales SPA and Google Sheets workbook via Make.com scenario.</p>
-            <button @click="showSyncMakeModal = true" class="bg-emerald-600 text-white font-bold px-4 py-2 rounded-xl">Open Make.com Sync Modal</button>
-          </div>
-        </div>
+        <p class="text-xs text-gray-500">Reference sheet: <span class="font-mono text-scuro-red font-bold">{{ currentSheetName }}</span>.</p>
       </div>
 
     </main>
@@ -861,8 +753,6 @@
     <!-- QONTAK-STYLE TICKET SLIDE-OVER MODAL WIZARD -->
     <div v-if="activeSlideOverTicket" class="fixed inset-0 z-50 overflow-hidden bg-black/40 backdrop-blur-sm flex justify-end">
       <div class="w-full max-w-3xl bg-white h-full shadow-2xl flex flex-col justify-between">
-        
-        <!-- Header -->
         <div class="p-6 border-b border-gray-200 bg-gray-50 flex items-center justify-between">
           <div>
             <div class="flex items-center space-x-2">
@@ -878,30 +768,20 @@
           </button>
         </div>
 
-        <!-- Body Content Tabs -->
         <div class="flex-1 overflow-y-auto p-6 space-y-6">
           <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            
-            <!-- Left 2 Cols: Notes & History -->
             <div class="md:col-span-2 space-y-4">
               <div class="border-b pb-2 flex items-center justify-between">
                 <h3 class="font-bold text-sm text-gray-900">Notes & Activity Trail</h3>
-                <span class="text-xs text-gray-400">@mention support enabled</span>
               </div>
-
-              <!-- Add Note Box -->
               <div class="space-y-2">
-                <textarea v-model="newNoteText" placeholder="Write internal note or @mention technician..." class="w-full border border-gray-200 rounded-xl p-3 text-xs focus:ring-2 focus:ring-scuro-red/40 outline-none resize-none h-20"></textarea>
+                <textarea v-model="newNoteText" placeholder="Write internal note..." class="w-full border rounded-xl p-3 text-xs focus:ring-2 focus:ring-scuro-red/40 outline-none resize-none h-20"></textarea>
                 <div class="flex justify-end">
-                  <button @click="addTicketNote" class="bg-scuro-red text-white text-xs font-bold px-3.5 py-1.5 rounded-lg shadow-sm">
-                    Post Note
-                  </button>
+                  <button @click="addTicketNote" class="bg-scuro-red text-white text-xs font-bold px-3.5 py-1.5 rounded-lg shadow-sm">Post Note</button>
                 </div>
               </div>
-
-              <!-- Notes Feed -->
               <div class="space-y-3 pt-2">
-                <div v-for="n in activeTicketNotes" :key="n.id" class="bg-gray-50 border border-gray-100 p-3 rounded-xl space-y-1 text-xs">
+                <div v-for="n in activeTicketNotes" :key="n.id" class="bg-gray-50 border p-3 rounded-xl space-y-1 text-xs">
                   <div class="flex justify-between font-bold text-gray-900">
                     <span>{{ n.author }}</span>
                     <span class="text-[10px] text-gray-400 font-normal">{{ n.timestamp }}</span>
@@ -911,10 +791,8 @@
               </div>
             </div>
 
-            <!-- Right 1 Col: Properties Editor -->
             <div class="glass-card p-4 space-y-4 text-xs">
               <h3 class="font-bold text-gray-900 border-b pb-2">Properties</h3>
-              
               <div class="space-y-1">
                 <label class="font-bold text-gray-500">Pipeline Stage</label>
                 <select v-model="activeSlideOverTicket.status" class="w-full bg-white border rounded-lg p-2 font-semibold">
@@ -926,65 +804,15 @@
                   </template>
                 </select>
               </div>
-
-              <div class="space-y-1">
-                <label class="font-bold text-gray-500">Priority</label>
-                <select v-model="activeSlideOverTicket.priority" class="w-full bg-white border rounded-lg p-2 font-semibold">
-                  <option value="Critical">Critical</option>
-                  <option value="High">High</option>
-                  <option value="Medium">Medium</option>
-                  <option value="Low">Low</option>
-                </select>
-              </div>
-
-              <div class="space-y-1">
-                <label class="font-bold text-gray-500">Assigned Technician</label>
-                <select v-model="activeSlideOverTicket.assigned_to" class="w-full bg-white border rounded-lg p-2 font-semibold">
-                  <option value="Adi">Adi Wijaya</option>
-                  <option value="Bambang">Bambang S</option>
-                  <option value="Widi">Widi Pratama</option>
-                  <option value="Tika">Tika Susanti</option>
-                  <option value="Tiara">Tiara R</option>
-                </select>
-              </div>
-
-              <div class="space-y-1">
-                <label class="font-bold text-gray-500">Serial Number</label>
-                <input type="text" v-model="activeSlideOverTicket.serial_number" class="w-full bg-white border rounded-lg p-2 font-mono font-bold">
-              </div>
             </div>
-
           </div>
         </div>
 
-        <!-- Footer Actions -->
         <div class="p-4 border-t border-gray-200 bg-gray-50 flex items-center justify-between">
-          <button @click="activeSlideOverTicket = null" class="text-xs font-bold text-gray-500 hover:text-gray-700">Cancel</button>
-          <button @click="saveTicketSlideOver" class="bg-scuro-red hover:bg-scuro-reddark text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-md">
-            Save & Sync to Supabase REST
+          <button @click="activeSlideOverTicket = null" class="text-xs font-bold text-gray-500">Cancel</button>
+          <button @click="saveTicketSlideOver" class="bg-scuro-red text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-md">
+            Save & Sync Supabase
           </button>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- MAKE.COM SYNC MODAL -->
-    <div v-if="showSyncMakeModal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
-      <div class="glass-panel w-full max-w-xl p-6 space-y-5 bg-white/95">
-        <div class="flex justify-between items-center border-b pb-3">
-          <h3 class="text-base font-bold text-gray-900">Sync Data to Google Sheets via Make.com</h3>
-          <button @click="showSyncMakeModal = false" class="text-gray-400"><i data-lucide="x" class="w-4 h-4"></i></button>
-        </div>
-        <div class="space-y-3 text-xs text-gray-600">
-          <p>This single-file SPA connects directly to your Make.com Webhook endpoint to sync modifications into Google Sheets automatically.</p>
-          <div class="space-y-1">
-            <label class="font-bold text-gray-800">Make.com Webhook URL</label>
-            <input type="text" placeholder="https://hook.eu1.make.com/your-custom-webhook-id" class="w-full border p-2.5 rounded-xl font-mono text-xs">
-          </div>
-        </div>
-        <div class="flex justify-end space-x-3 pt-3 border-t">
-          <button @click="showSyncMakeModal = false" class="bg-gray-100 text-gray-700 text-xs font-bold px-4 py-2 rounded-xl">Close</button>
-          <button @click="showSyncMakeModal = false" class="bg-emerald-600 text-white text-xs font-bold px-4 py-2 rounded-xl">Save & Test Webhook</button>
         </div>
       </div>
     </div>
@@ -997,13 +825,6 @@
           <button @click="showCostCalcModal = false" class="text-gray-400"><i data-lucide="x" class="w-4 h-4"></i></button>
         </div>
         <div class="space-y-3 text-xs">
-          <div>
-            <label class="font-bold text-gray-700">Start Point</label>
-            <select v-model="calcStartPoint" class="w-full border p-2 rounded-lg mt-1 font-semibold">
-              <option value="sc">SC Pusat — Tritonville Tangerang</option>
-              <option value="bali">Scuro Bali — Denpasar Hub</option>
-            </select>
-          </div>
           <div>
             <label class="font-bold text-gray-700">Distance (km)</label>
             <input type="number" v-model="calcDistanceKm" class="w-full border p-2 rounded-lg mt-1 font-mono font-bold" placeholder="e.g. 25.5">
@@ -1043,25 +864,21 @@
           globalSearchQuery: '',
           activeSlideOverTicket: null,
           newNoteText: '',
-          showImportModal: false,
           showSyncMakeModal: false,
           showCostCalcModal: false,
-          showMaintModal: false,
           showAlertPanel: false,
 
-          calcStartPoint: 'sc',
           calcDistanceKm: 25,
 
           alerts: [
-            { id: 1, title: 'High Priority SLA Warning', message: 'Ticket ACT-2026-081 is exceeding 48h bench turnaround limit', time: '10m ago', priority: 'high' },
-            { id: 2, title: 'Low Stock Alert', message: 'Caferesso Titan Burrs R750 stock is below min threshold (2 left)', time: '1h ago', priority: 'medium' }
+            { id: 1, title: 'High Priority SLA Warning', message: 'Ticket ACT-2026-081 is exceeding bench limit', time: '10m ago', priority: 'high' }
           ],
 
           activeTicketNotes: [
-            { id: '1', author: 'Adi Wijaya (Tech)', timestamp: '2 hours ago', text: 'Inspected LCD display logic board. Replacement part requested from WH.' },
-            { id: '2', author: 'Tika (Ops)', timestamp: '5 hours ago', text: 'Client confirmed availability for field visit tomorrow morning.' }
+            { id: '1', author: 'Adi Wijaya (Tech)', timestamp: '2 hours ago', text: 'Inspected LCD display logic board.' }
           ],
 
+          // SEPARATED MAIN NAVIGATION DROPDOWN TABS
           mainNavTabs: [
             {
               id: 'dashboard', label: 'Dashboard', icon: 'layout-dashboard',
@@ -1082,8 +899,7 @@
               subpages: [
                 { id: 'service-center', label: 'Service Center Workshop', sheet: 'Service_Center' },
                 { id: 'visit-inhouse', label: 'On-Site Visit In-House', sheet: 'Visit_InHouse' },
-                { id: 'sparepart-orders', label: 'Sparepart Orders', sheet: 'SP_Order' },
-                { id: 'bali-branch', label: 'Scuro Bali Hub', sheet: 'Scuro_Bali' },
+                { id: 'scuro-bali', label: 'Scuro Bali Hub', sheet: 'Scuro_Bali' },
                 { id: 'maintenance', label: 'Maintenance Packages', sheet: 'Maintenance' },
                 { id: 'installation', label: 'Pre-Installation Readiness', sheet: 'Installation' },
                 { id: 'denali-claims', label: 'Denali Defect Claims', sheet: 'Denali_Claim' },
@@ -1093,13 +909,22 @@
               ]
             },
             {
-              id: 'inventory', label: 'Inventory', icon: 'boxes',
+              // DEDICATED MAIN PAGE 1: SPAREPART MANAGEMENT
+              id: 'sparepart-mgmt', label: 'Sparepart Management', icon: 'database',
               subpages: [
-                { id: 'master-catalog', label: 'Master Sparepart Catalog', sheet: 'SP_Master' },
-                { id: 'tracking', label: 'SP Movement Tracking', sheet: 'SP_Tracking' },
-                { id: 'stock', label: 'Multi-Location Stock Level', sheet: 'SP_Stock' },
-                { id: 'heating-elements', label: 'Heating Element Units', sheet: 'Heating_Element' },
-                { id: 'tools', label: 'Tools & Equipment Inventory', sheet: 'Inventory_Tools' }
+                { id: 'sp-master', label: 'Master Sparepart Catalog', sheet: 'SP_Master' },
+                { id: 'sp-tracking', label: 'Sparepart Movement Tracking', sheet: 'SP_Tracking' },
+                { id: 'sp-stock', label: 'Sparepart Stock Level', sheet: 'SP_Stock' },
+                { id: 'sp-purchasing', label: 'Request Purchasing & Orders', sheet: 'SP_Order' }
+              ]
+            },
+            {
+              // DEDICATED MAIN PAGE 2: INVENTORY MANAGEMENT
+              id: 'inventory-mgmt', label: 'Inventory Management', icon: 'boxes',
+              subpages: [
+                { id: 'inv-asset-stock', label: 'Inventory & Asset Stock', sheet: 'Inventory_Tools' },
+                { id: 'req-inventory', label: 'Request Inventory', sheet: 'Request Inventory' },
+                { id: 'req-asset', label: 'Request Asset & Heating Element', sheet: 'Heating_Element' }
               ]
             },
             {
@@ -1160,50 +985,28 @@
             { status: 'Cancelled', label: 'Cancelled', colorClass: 'text-gray-500' }
           ],
 
-          techScorecards: [
-            { name: 'Adi Wijaya', resolvedCount: 42, ftfRate: 95.2, rating: 4.9 },
-            { name: 'Bambang S', resolvedCount: 38, ftfRate: 92.1, rating: 4.8 },
-            { name: 'Widi Pratama', resolvedCount: 35, ftfRate: 91.5, rating: 4.7 },
-            { name: 'Tika Susanti', resolvedCount: 29, ftfRate: 94.0, rating: 4.85 },
-            { name: 'Tiara R', resolvedCount: 24, ftfRate: 89.5, rating: 4.6 }
-          ],
-
           tickets: [
             { id: '1', action_id: 'ACT-2026-081', ticket_category: 'external', customer_name: 'Andi Wijaya (Scuro Store)', brand: 'Hambach', unit_type: 'Tank 2gr', serial_number: 'DRB0013287', status: 'On Process', priority: 'High', due_date: '2026-08-16', assigned_to: 'Adi', kendala: 'Display LCD sebelah kanan pecah', description: 'Unit Hambach Tank 2gr display screen corrupt.' },
-            { id: '2', action_id: 'ACT-2026-082', ticket_category: 'external', customer_name: 'Kopi Kenangan Plaza', brand: 'Maquinos', unit_type: 'E65T Grinder', serial_number: 'SN-MQ-4412', status: 'Pending Customer', priority: 'Medium', due_date: '2026-08-15', assigned_to: 'Bambang', kendala: 'Grinder Burrs Worn out', description: 'Need burrs replacement, quotation sent.' },
-            { id: '3', action_id: 'ACT-2026-083', ticket_category: 'external', customer_name: 'Canggu Beach Cafe', brand: 'Caferesso', unit_type: 'AT10 Auto Tamp', serial_number: 'SN-CF-1002', status: 'New', priority: 'Critical', due_date: '2026-08-14', assigned_to: 'Widi', kendala: 'Auto Tamp Calibration Error', description: 'Tamping pressure sensor uncalibrated.' },
-            { id: '4', action_id: 'ACT-2026-084', ticket_category: 'external', customer_name: 'Surabaya Roastery', brand: 'Eureka', unit_type: 'Helios 65', serial_number: 'SN-EU-9912', status: 'Done', priority: 'Low', due_date: '2026-08-12', assigned_to: 'Tika', kendala: 'Regular Maintenance', description: 'Routine burrs clean and check.' },
-            { id: '5', action_id: 'ACT-2026-085', ticket_category: 'external', customer_name: 'Bali Sunset Hotel', brand: 'La Nuova Era', unit_type: 'Cuadra 1gr', serial_number: 'SN-LNE-551', status: 'Half Finish', priority: 'Medium', due_date: '2026-08-18', assigned_to: 'Adi', kendala: 'Heating Element Leak', description: 'Heating element replaced, bench testing in progress.' },
-
-            { id: '6', action_id: 'INT-2026-010', ticket_category: 'internal', customer_name: 'Shop Bench Refurbishment', requested_by: 'Workshop Manager', brand: 'Hambach', unit_type: 'Demo Unit 2gr', serial_number: 'INT-DEMO-01', status: 'On Process', priority: 'High', due_date: '2026-08-17', assigned_to: 'Bambang', kendala: 'Overhaul Service', description: 'Complete descaling and Gasket replacement for exhibition unit.' },
-            { id: '7', action_id: 'INT-2026-011', ticket_category: 'internal', customer_name: 'Scuro Bali Stock Opname', requested_by: 'Bali Branch Admin', brand: 'Caferesso', unit_type: 'All Spareparts', serial_number: 'N/A', status: 'Open', priority: 'Medium', due_date: '2026-08-20', assigned_to: 'Tika', kendala: 'Inventory Audit', description: 'Physical bin count verification for Bali warehouse.' }
+            { id: '2', action_id: 'ACT-2026-082', ticket_category: 'external', customer_name: 'Kopi Kenangan Plaza', brand: 'Maquinos', unit_type: 'E65T Grinder', serial_number: 'SN-MQ-4412', status: 'Pending Customer', priority: 'Medium', due_date: '2026-08-15', assigned_to: 'Bambang', kendala: 'Grinder Burrs Worn out', description: 'Need burrs replacement, quotation sent.' }
           ],
 
           serviceCenter: [
-            { id: '1', ticket_id: 'ACT-2026-081', sn: 'DRB0013287', customer: 'Scuro Store', brand: 'Hambach', unit: 'Tank 2gr', stage: 'on_repair', teknisi: 'Adi', entry_date: '2026-08-10', sla_days: 2 },
-            { id: '2', ticket_id: 'ACT-2026-085', sn: 'SN-LNE-551', customer: 'Bali Sunset Hotel', brand: 'La Nuova Era', unit: 'Cuadra 1gr', stage: 'testing', teknisi: 'Bambang', entry_date: '2026-08-11', sla_days: 1 }
+            { id: '1', ticket_id: 'ACT-2026-081', sn: 'DRB0013287', customer: 'Scuro Store', brand: 'Hambach', unit: 'Tank 2gr', stage: 'on_repair', teknisi: 'Adi', entry_date: '2026-08-10', sla_days: 2 }
           ],
 
           visitInHouse: [
-            { id: '1', ticket_id: 'ACT-2026-082', visit_date: '2026-08-14', customer: 'Kopi Kenangan Plaza', location: 'Jakarta Selatan', unit: 'Maquinos E65T', teknisi: 'Bambang', transport_fee: 125000, status: 'Scheduled' },
-            { id: '2', ticket_id: 'ACT-2026-083', visit_date: '2026-08-15', customer: 'Canggu Beach Cafe', location: 'Canggu, Bali', unit: 'Caferesso AT10', teknisi: 'Widi', transport_fee: 85000, status: 'Confirmed' }
+            { id: '1', ticket_id: 'ACT-2026-082', visit_date: '2026-08-14', customer: 'Kopi Kenangan Plaza', location: 'Jakarta Selatan', unit: 'Maquinos E65T', teknisi: 'Bambang', transport_fee: 125000, status: 'Scheduled' }
           ],
 
-          maintenance: [
-            { id: '1', sn: 'DRB0013287', customer: 'Andi Wijaya', brand: 'Hambach', unit_type: 'Tank 2gr', program: 'Paket 3x', m1_date: '2026-02-10', m1_tech: 'Adi', m2_date: '2026-06-10', m2_tech: 'Bambang', m3_date: '', m3_tech: '', gasket_used: true, oring_used: true, status: 'Active (2/3)' }
+          inventoryTools: [
+            { id: '1', code: 'TLS-001', name: 'Digital Multimeter Fluke 117', category: 'Peralatan Measuring', pic: 'Adi Wijaya', condition: 'Bagus', status: 'In Use' },
+            { id: '2', code: 'TLS-002', name: 'Digital Ampere Clamp Meter Uni-T', category: 'Peralatan Measuring', pic: 'Bambang S', condition: 'Bagus', status: 'In Use' },
+            { id: '3', code: 'PRL-010', name: 'Grouphead Gasket Seal 73mm', category: 'Perlengkapan Consumable', pic: 'Central Stock', condition: 'Baru', status: 'Available' }
           ],
 
           spareparts: [
             { id: '1', sku: 'GRD/MN/CF-101', item_name: 'Titan Coffee Grinder R750 (Black)', brand: 'Caferesso', category: 'Grinder', unit_price: 14500000, hpp_cost: 9200000, stock: 4, min_stock: 2 },
-            { id: '2', sku: 'EQM/CR/AT-101', item_name: 'Auto Tamping Machine AT10 (Black)', brand: 'Caferesso', category: 'Tools', unit_price: 8500000, hpp_cost: 5100000, stock: 1, min_stock: 3 },
-            { id: '3', sku: 'GRD/MN/EU-111', item_name: 'Grinder Drogheria MCD4 (Black)', brand: 'Eureka', category: 'Grinder', unit_price: 18500000, hpp_cost: 11800000, stock: 8, min_stock: 2 },
-            { id: '4', sku: 'EMM/MN/HB-106', item_name: 'Tank Programable 7209 2gr (Mirror)', brand: 'Hambach', category: 'Mesin', unit_price: 48000000, hpp_cost: 31000000, stock: 2, min_stock: 1 },
-            { id: '5', sku: 'GRD/MN/MQ-118', item_name: 'Grinder E65T (Black)', brand: 'Maquinos', category: 'Grinder', unit_price: 12500000, hpp_cost: 7800000, stock: 6, min_stock: 2 }
-          ],
-
-          warranties: [
-            { id: '1', warranty_card_no: 'WC-2025-001', customer_name: 'Kopi Kenangan Plaza', brand: 'Hambach', model: 'Tank 2gr', serial_number: 'DRB0013287', purchase_date: '2025-08-10', warranty_expiry_date: '2027-08-10' },
-            { id: '2', warranty_card_no: 'WC-2025-002', customer_name: 'Canggu Beach Cafe', brand: 'Caferesso', model: 'AT10 Auto Tamp', serial_number: 'SN-CF-1002', purchase_date: '2025-09-12', warranty_expiry_date: '2027-09-12' }
+            { id: '2', sku: 'EQM/CR/AT-101', item_name: 'Auto Tamping Machine AT10 (Black)', brand: 'Caferesso', category: 'Tools', unit_price: 8500000, hpp_cost: 5100000, stock: 1, min_stock: 3 }
           ]
         }
       },
@@ -1215,9 +1018,14 @@
         filteredInternalTickets() {
           return this.tickets.filter(t => t.ticket_category === 'internal');
         },
+        currentTabObj() {
+          return this.mainNavTabs.find(t => t.id === this.activeTab) || this.mainNavTabs[0];
+        },
+        currentTabLabel() {
+          return this.currentTabObj.label;
+        },
         currentTabSubpages() {
-          const tab = this.mainNavTabs.find(t => t.id === this.activeTab);
-          return tab ? tab.subpages : [];
+          return this.currentTabObj.subpages || [];
         },
         currentSubpageLabel() {
           const sub = this.currentTabSubpages.find(s => s.id === this.activeSubpage);
@@ -1228,8 +1036,7 @@
           return sub ? sub.sheet : 'Sheet';
         },
         currentTabIcon() {
-          const tab = this.mainNavTabs.find(t => t.id === this.activeTab);
-          return tab ? tab.icon : 'folder';
+          return this.currentTabObj.icon || 'folder';
         },
         canViewFinancials() {
           return ['Super Admin', 'Ops Admin'].includes(this.currentRole);
