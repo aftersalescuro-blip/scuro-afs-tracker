@@ -929,55 +929,59 @@
             keterangan: 'Pada tanggal 8 November 2025 telah diterima unit service Hambach Tank 2gr SN: DRB0013287 dari customer an Andi Wijaya dengan kendala tampilan layar sebelah kanan pecah. Kendala sudah dicek teknisi dan dikonfirmasi penggantian sparepart LCD.'
           },
 
-          // 9 MAIN NAVIGATION DROPDOWN TABS INCLUDING DEDICATED TICKETS TAB
+          // 9 MAIN NAVIGATION DROPDOWN TABS COVERING ALL 30 WORKBOOK SHEETS
           mainNavTabs: [
             { id: 'dashboard', label: 'Dashboard', icon: 'layout-dashboard', defaultSubpage: 'overview', subpages: [
-              { id: 'overview', label: 'Executive Overview' },
-              { id: 'trouble-trends', label: 'Brand Trouble Trends' },
-              { id: 'service-center-hub', label: 'Service Center Hub' },
-              { id: 'bali-hub-summary', label: 'Bali Hub Summary' }
+              { id: 'overview', label: 'Executive Overview (Dashboard)' },
+              { id: 'brand-trends', label: 'Failure Mode Aggregations (_Calc_Trend)' },
+              { id: 'service-center-hub', label: 'Service Center Hub Overview' },
+              { id: 'bali-hub-summary', label: 'Bali Hub Overview' }
             ]},
             { id: 'tickets', label: 'Tickets', icon: 'ticket', defaultSubpage: 'external', subpages: [
-              { id: 'external', label: 'External Customer Tickets' },
-              { id: 'internal', label: 'Internal Operations Tasks' }
+              { id: 'external', label: 'External Customer Tickets (Ticket)' },
+              { id: 'internal', label: 'Internal Operations Tasks (Internal_Tasks)' }
             ]},
             { id: 'operations', label: 'Operations', icon: 'wrench', defaultSubpage: 'service-center', subpages: [
-              { id: 'service-center', label: 'Service Center Bench' },
-              { id: 'visit-inhouse', label: 'Visit In-House' },
-              { id: 'installation', label: 'Installation Tracking' },
-              { id: 'maintenance', label: 'Maintenance Packages' },
-              { id: 'partner-network', label: 'Partner Tech Network' },
-              { id: 'bali-branch', label: 'Scuro Bali Operations' },
-              { id: 'denali-claims', label: 'Denali Claims & Returns' },
-              { id: 'sparepart-orders', label: 'Sparepart Sales Orders' },
-              { id: 'recap-schedule', label: 'Recap Visit Schedule' }
+              { id: 'service-center', label: 'Service Center Bench (Service_Center)' },
+              { id: 'visit-inhouse', label: 'Visit In-House Dispatch (Visit_InHouse)' },
+              { id: 'installation', label: 'Installation Readiness (Installation)' },
+              { id: 'maintenance', label: 'Maintenance Packages (Maintenance)' },
+              { id: 'visit-schedule', label: 'Technician Calendar (Visit Schedule)' },
+              { id: 'partner-network', label: 'Partner Tech Network (Partner_Technician)' },
+              { id: 'bali-branch', label: 'Scuro Bali Operations (Scuro_Bali)' },
+              { id: 'denali-claims', label: 'Denali Defect Claims (Denali_Claim)' },
+              { id: 'sparepart-orders', label: 'Sparepart Sales Orders (SP_Order)' },
+              { id: 'recap-schedule', label: 'Multi-Team Timeline (Recap Visit)' }
             ]},
             { id: 'inventory', label: 'Inventory', icon: 'boxes', defaultSubpage: 'master-catalog', subpages: [
-              { id: 'master-catalog', label: 'Sparepart Master Catalog [RBAC]' },
-              { id: 'stock', label: 'Warehouse Stock & Bin' },
-              { id: 'tracking', label: 'Sparepart Tracking' },
-              { id: 'purchasing', label: 'Purchasing Requisition Hub' },
-              { id: 'heating-elements', label: 'Heating Element Lifecycle' },
-              { id: 'tools', label: 'Inventory Tools & Equipment' }
+              { id: 'master-catalog', label: 'Sparepart Catalog [RBAC] (SP_Master)' },
+              { id: 'stock', label: 'Warehouse Stock & Bin (SP_Stock)' },
+              { id: 'tracking', label: 'Sparepart Tracking Ledger (SP_Tracking)' },
+              { id: 'purchasing', label: 'Purchasing Requisitions Hub' },
+              { id: 'heating-elements', label: 'Heating Element Lifecycle (Heating_Element)' },
+              { id: 'tools', label: 'Inventory Tools Equipment (Inventory_Tools)' }
             ]},
             { id: 'performance', label: 'Performance & SLA', icon: 'bar-chart-3', defaultSubpage: 'capacity', subpages: [
-              { id: 'capacity', label: 'Technician Capacity & Overlap' },
-              { id: 'daily-tech', label: 'Tech Daily Tracker & SLAs' },
-              { id: 'daily-admin', label: 'Admin Daily Tracker & SLAs' },
-              { id: 'qc', label: 'Quality Control Audits' }
+              { id: 'capacity', label: 'Technician Capacity Monitor (Technician_Capacity)' },
+              { id: 'daily-tech', label: 'Tech Work Hours & Shifts (_Technicians)' },
+              { id: 'daily-admin', label: 'Admin Intake Speed & SLAs' },
+              { id: 'qc', label: 'Pre-Delivery Quality Control (QC)' }
             ]},
             { id: 'knowledge', label: 'Knowledge Base', icon: 'help-circle', defaultSubpage: 'troubleshooting', subpages: [
-              { id: 'troubleshooting', label: 'Auto Troubleshooting' },
-              { id: 'taxonomy', label: 'Master Failure Taxonomy' },
+              { id: 'troubleshooting', label: 'Auto Solutions (Knowledge_Base)' },
+              { id: 'taxonomy', label: 'Master Failure Taxonomy (_Lists)' },
               { id: 'templates', label: 'Standard Communication Templates' }
             ]},
             { id: 'governance', label: 'Governance & Rules', icon: 'book-open', defaultSubpage: 'home-resources', subpages: [
-              { id: 'home-resources', label: 'Program Maintenance 1x & IM Rules' },
-              { id: 'ba-generator', label: 'Berita Acara (BA) Generator' },
-              { id: 'corporate-agreements', label: 'PT Bumi Berkah Boga Agreement' }
+              { id: 'home-resources', label: 'Asset & Resource Hub (Home)' },
+              { id: 'sessions', label: 'Active Sessions & Logins (Sessions)' },
+              { id: 'users', label: 'User Provisioning & Roles (Users)' },
+              { id: 'audit-log', label: 'System Audit Trail (Audit_Log)' },
+              { id: 'config', label: 'System Configuration (_Config)' },
+              { id: 'ba-generator', label: 'Berita Acara (BA) Generator' }
             ]},
             { id: 'warranty', label: 'Warranty DB', icon: 'shield-check', defaultSubpage: 'warranty-ledger', subpages: [
-              { id: 'warranty-ledger', label: 'Commercial Warranty Ledger [RBAC]' }
+              { id: 'warranty-ledger', label: '17,000+ Warranty Ledger (Warranty_DB)' }
             ]},
             { id: 'settings', label: 'Settings Sync', icon: 'settings', defaultSubpage: 'system-settings', subpages: [
               { id: 'system-settings', label: 'System Settings & REST Sync' },
