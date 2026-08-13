@@ -1276,442 +1276,7 @@
 
         </div>
 
-        <!-- REQUEST INVENTORY — STOCK REQUEST DETAIL (REVISED MATCHING USER SCREENSHOT) -->
-        <div v-if="activeSubpage === 'req-inventory'" class="space-y-6">
-          
-          <!-- BREADCRUMB -->
-          <div class="flex items-center space-x-2 text-xs text-gray-500 font-medium">
-            <span>Home</span>
-            <span>/</span>
-            <span>Inventory Report</span>
-            <span>/</span>
-            <span class="font-bold text-gray-900">Stock Request Detail</span>
-          </div>
 
-          <!-- TOP CONTROL & FILTER PANEL (MATCHING ANNOTATIONS 1, 2, 3, 4, 5, 6, 7) -->
-          <div class="glass-panel p-6 space-y-4">
-            
-            <!-- FILTERS ROW (1, 2, 3, 4) -->
-            <div class="grid grid-cols-1 md:grid-cols-5 gap-4 items-end text-xs">
-              
-              <!-- 1. STORE -->
-              <div>
-                <label class="font-bold text-gray-700 block mb-1">Store</label>
-                <select v-model="reqInventoryStoreFilter" class="w-full border p-2 rounded-xl bg-white font-medium">
-                  <option value="All Stores">All Stores</option>
-                  <option value="WORKSHOP TEKAN">WORKSHOP TEKAN</option>
-                  <option value="SCURO BALI HUB">SCURO BALI HUB</option>
-                  <option value="CENTRAL WH">CENTRAL WH</option>
-                </select>
-              </div>
-
-              <!-- 2. DATE PERIOD -->
-              <div>
-                <label class="font-bold text-gray-700 block mb-1">Date Period</label>
-                <input type="text" v-model="reqInventoryDatePeriod" class="w-full border p-2 rounded-xl bg-white font-mono" placeholder="YYYY/MM/DD - YYYY/MM/DD">
-              </div>
-
-              <!-- 3. CATEGORY -->
-              <div>
-                <label class="font-bold text-gray-700 block mb-1">Category</label>
-                <select v-model="reqInventoryCategoryFilter" class="w-full border p-2 rounded-xl bg-white font-medium">
-                  <option value="All Categories">All Categories</option>
-                  <option value="Kebersihan">Kebersihan</option>
-                  <option value="Spareparts">Spareparts</option>
-                  <option value="Consumable">Consumable</option>
-                  <option value="Packaging">Packaging</option>
-                  <option value="Tools">Tools</option>
-                </select>
-              </div>
-
-              <!-- 4. ITEM NAME -->
-              <div>
-                <label class="font-bold text-gray-700 block mb-1">Item Name</label>
-                <input type="text" v-model="reqInventoryItemFilter" placeholder="Nama item..." class="w-full border p-2 rounded-xl bg-white font-medium">
-              </div>
-
-              <!-- SUBMIT BUTTON & ADD NEW -->
-              <div class="flex items-center space-x-2">
-                <button class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-5 py-2.5 rounded-xl shadow text-xs transition">
-                  Submit
-                </button>
-                <button @click="openAddReqInventoryModal" class="bg-scuro-red hover:bg-scuro-reddark text-white font-bold px-3.5 py-2.5 rounded-xl shadow text-xs transition shrink-0">
-                  + New Request
-                </button>
-              </div>
-            </div>
-
-            <div class="border-t pt-4 flex flex-col md:flex-row md:items-center justify-between gap-4 text-xs">
-              
-              <!-- LEFT ACTION CONTROLS (5, 6) -->
-              <div class="flex items-center space-x-3">
-                <span class="text-gray-500 font-medium">Show <select class="border p-1 rounded font-bold bg-white"><option>10</option><option>25</option><option>50</option></select> entries</span>
-                
-                <!-- 5. COLUMN SETTINGS -->
-                <button class="px-3 py-1.5 border rounded-xl bg-white font-bold text-gray-700 hover:bg-gray-50 transition">
-                  Column Settings
-                </button>
-
-                <!-- 6. EXPORT BUTTONS: CSV, EXCEL, PDF & IMPOR -->
-                <div class="flex items-center space-x-1 border p-1 rounded-xl bg-gray-50">
-                  <button @click="exportReqInventoryCsv" class="px-2.5 py-1 font-bold text-gray-700 hover:bg-white rounded transition">CSV</button>
-                  <button @click="exportReqInventoryExcel" class="px-2.5 py-1 font-bold text-emerald-700 hover:bg-white rounded transition">Excel</button>
-                  <button @click="exportReqInventoryPdf" class="px-2.5 py-1 font-bold text-rose-700 hover:bg-white rounded transition">PDF</button>
-                </div>
-
-                <label class="bg-blue-50 text-blue-700 border border-blue-200 font-bold px-3 py-1.5 rounded-xl hover:bg-blue-100 transition cursor-pointer">
-                  Impor Excel
-                  <input type="file" @change="importReqInventoryFromExcel" accept=".xlsx, .xls, .csv" class="hidden">
-                </label>
-              </div>
-
-              <!-- 7. SEARCH -->
-              <div class="flex items-center space-x-2">
-                <span class="font-bold text-gray-700">Search:</span>
-                <input type="text" v-model="reqInventorySearchQuery" placeholder="Cari store, req no, item..." class="border p-2 rounded-xl bg-white w-52 font-medium">
-              </div>
-
-            </div>
-
-          </div>
-
-          <!-- MAIN STOCK REQUEST DETAIL TABLE (EXACT MATCHING SCREENSHOT) -->
-          <div class="glass-panel p-6 space-y-4">
-            <div class="overflow-x-auto">
-              <table class="w-full text-left text-xs whitespace-nowrap">
-                <thead>
-                  <tr class="border-b text-gray-700 font-bold bg-gray-50/70">
-                    <th class="py-3.5 px-4">Store</th>
-                    <th class="py-3.5 px-4">Date</th>
-                    <th class="py-3.5 px-4">Stock Request No.</th>
-                    <th class="py-3.5 px-4 text-center">Line No.</th>
-                    <th class="py-3.5 px-4">Item Name</th>
-                    <th class="py-3.5 px-4 text-right">Qty</th>
-                    <th class="py-3.5 px-4">UoM</th>
-                    <th class="py-3.5 px-4">Aksi</th>
-                  </tr>
-                </thead>
-                <tbody class="divide-y">
-                  <tr v-for="(item, idx) in filteredRequestInventory" :key="item.id" class="hover:bg-gray-50/80 transition">
-                    <td class="py-3.5 px-4 font-bold text-gray-900" contenteditable="true" @blur="onCellEdit($event, requestInventoryData, idx, 'store')">{{ item.store }}</td>
-                    <td class="py-3.5 px-4 font-mono text-gray-600" contenteditable="true" @blur="onCellEdit($event, requestInventoryData, idx, 'date')">{{ item.date }}</td>
-                    <td class="py-3.5 px-4 font-mono text-blue-700 font-bold" contenteditable="true" @blur="onCellEdit($event, requestInventoryData, idx, 'reqNo')">{{ item.reqNo }}</td>
-                    <td class="py-3.5 px-4 font-mono text-center font-bold text-gray-700" contenteditable="true" @blur="onCellEdit($event, requestInventoryData, idx, 'lineNo')">{{ item.lineNo }}</td>
-                    <td class="py-3.5 px-4 font-bold text-gray-900" contenteditable="true" @blur="onCellEdit($event, requestInventoryData, idx, 'itemName')">{{ item.itemName }}</td>
-                    <td class="py-3.5 px-4 font-mono text-right font-black text-gray-900 text-sm" contenteditable="true" @blur="onCellEdit($event, requestInventoryData, idx, 'qty')">{{ item.qty }}</td>
-                    <td class="py-3.5 px-4 font-mono text-gray-600" contenteditable="true" @blur="onCellEdit($event, requestInventoryData, idx, 'uom')">{{ item.uom }}</td>
-                    <td class="py-3.5 px-4">
-                      <div class="flex items-center space-x-1">
-                        <button @click="editReqInventoryModal(item)" class="p-1 rounded bg-gray-100 hover:bg-gray-200 text-gray-600">
-                          <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
-                        </button>
-                        <button @click="deleteReqInventoryItem(idx)" class="p-1 rounded bg-rose-50 hover:bg-rose-100 text-rose-600">
-                          <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                </tbody>
-                <!-- TOTAL QUANTITY ROW (EXACT MATCHING USER SCREENSHOT) -->
-                <tfoot>
-                  <tr class="bg-gray-100/80 font-black border-t-2 border-gray-300">
-                    <td colspan="5" class="py-3.5 px-4 text-right uppercase tracking-wider text-gray-900 text-xs">Total Quantity</td>
-                    <td class="py-3.5 px-4 text-right font-mono text-base text-scuro-red">{{ totalRequestQty }}</td>
-                    <td colspan="2" class="py-3.5 px-4"></td>
-                  </tr>
-                </tfoot>
-              </table>
-            </div>
-          </div>
-
-        </div>
-
-        <!-- REQUEST ASSET — ASSET REQUEST DETAIL (REVISED MATCHING USER SCREENSHOT) -->
-        <div v-if="activeSubpage === 'req-asset'" class="space-y-6">
-          
-          <!-- BREADCRUMB -->
-          <div class="flex items-center space-x-2 text-xs text-gray-500 font-medium">
-            <span>Home</span>
-            <span>/</span>
-            <span>Inventory Report</span>
-            <span>/</span>
-            <span class="font-bold text-gray-900">Asset Request Detail</span>
-          </div>
-
-          <!-- TOP CONTROL & FILTER PANEL (MATCHING ANNOTATIONS 1, 2, 3, 4, 5, 6, 7) -->
-          <div class="glass-panel p-6 space-y-4">
-            
-            <!-- FILTERS ROW (1, 2, 3, 4) -->
-            <div class="grid grid-cols-1 md:grid-cols-5 gap-4 items-end text-xs">
-              
-              <!-- 1. STORE -->
-              <div>
-                <label class="font-bold text-gray-700 block mb-1">Store</label>
-                <select v-model="reqAssetStoreFilter" class="w-full border p-2 rounded-xl bg-white font-medium">
-                  <option value="All Stores">All Stores</option>
-                  <option value="WORKSHOP TEKAN">WORKSHOP TEKAN</option>
-                  <option value="SCURO BALI HUB">SCURO BALI HUB</option>
-                  <option value="CENTRAL WH">CENTRAL WH</option>
-                </select>
-              </div>
-
-              <!-- 2. DATE PERIOD -->
-              <div>
-                <label class="font-bold text-gray-700 block mb-1">Date Period</label>
-                <input type="text" v-model="reqAssetDatePeriod" class="w-full border p-2 rounded-xl bg-white font-mono" placeholder="YYYY/MM/DD - YYYY/MM/DD">
-              </div>
-
-              <!-- 3. CATEGORY -->
-              <div>
-                <label class="font-bold text-gray-700 block mb-1">Category</label>
-                <select v-model="reqAssetCategoryFilter" class="w-full border p-2 rounded-xl bg-white font-medium">
-                  <option value="All Categories">All Categories</option>
-                  <option value="Peralatan Measurements">Peralatan Measurements</option>
-                  <option value="Peralatan Service">Peralatan Service</option>
-                  <option value="Power Tools">Power Tools</option>
-                  <option value="Bench Repair Asset">Bench Repair Asset</option>
-                </select>
-              </div>
-
-              <!-- 4. ITEM NAME -->
-              <div>
-                <label class="font-bold text-gray-700 block mb-1">Item Name</label>
-                <input type="text" v-model="reqAssetItemFilter" placeholder="Nama asset..." class="w-full border p-2 rounded-xl bg-white font-medium">
-              </div>
-
-              <!-- SUBMIT BUTTON & ADD NEW -->
-              <div class="flex items-center space-x-2">
-                <button class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-5 py-2.5 rounded-xl shadow text-xs transition">
-                  Submit
-                </button>
-                <button @click="openAddReqAssetModal" class="bg-scuro-red hover:bg-scuro-reddark text-white font-bold px-3.5 py-2.5 rounded-xl shadow text-xs transition shrink-0">
-                  + New Request
-                </button>
-              </div>
-            </div>
-
-            <div class="border-t pt-4 flex flex-col md:flex-row md:items-center justify-between gap-4 text-xs">
-              
-              <!-- LEFT ACTION CONTROLS (5, 6) -->
-              <div class="flex items-center space-x-3">
-                <span class="text-gray-500 font-medium">Show <select class="border p-1 rounded font-bold bg-white"><option>10</option><option>25</option><option>50</option></select> entries</span>
-                
-                <!-- 5. COLUMN SETTINGS -->
-                <button class="px-3 py-1.5 border rounded-xl bg-white font-bold text-gray-700 hover:bg-gray-50 transition">
-                  Column Settings
-                </button>
-
-                <!-- 6. EXPORT BUTTONS: CSV, EXCEL, PDF & IMPOR -->
-                <div class="flex items-center space-x-1 border p-1 rounded-xl bg-gray-50">
-                  <button @click="exportReqAssetCsv" class="px-2.5 py-1 font-bold text-gray-700 hover:bg-white rounded transition">CSV</button>
-                  <button @click="exportReqAssetExcel" class="px-2.5 py-1 font-bold text-emerald-700 hover:bg-white rounded transition">Excel</button>
-                  <button @click="exportReqAssetPdf" class="px-2.5 py-1 font-bold text-rose-700 hover:bg-white rounded transition">PDF</button>
-                </div>
-
-                <label class="bg-blue-50 text-blue-700 border border-blue-200 font-bold px-3 py-1.5 rounded-xl hover:bg-blue-100 transition cursor-pointer">
-                  Impor Excel
-                  <input type="file" @change="importReqAssetFromExcel" accept=".xlsx, .xls, .csv" class="hidden">
-                </label>
-              </div>
-
-              <!-- 7. SEARCH -->
-              <div class="flex items-center space-x-2">
-                <span class="font-bold text-gray-700">Search:</span>
-                <input type="text" v-model="reqAssetSearchQuery" placeholder="Cari store, req no, asset..." class="border p-2 rounded-xl bg-white w-52 font-medium">
-              </div>
-
-            </div>
-
-          </div>
-
-          <!-- MAIN ASSET REQUEST DETAIL TABLE (EXACT MATCHING SCREENSHOT) -->
-          <div class="glass-panel p-6 space-y-4">
-            <div class="overflow-x-auto">
-              <table class="w-full text-left text-xs whitespace-nowrap">
-                <thead>
-                  <tr class="border-b text-gray-700 font-bold bg-gray-50/70">
-                    <th class="py-3.5 px-4">Store</th>
-                    <th class="py-3.5 px-4">Date</th>
-                    <th class="py-3.5 px-4">Asset Request No.</th>
-                    <th class="py-3.5 px-4 text-center">Line No.</th>
-                    <th class="py-3.5 px-4">Item Name</th>
-                    <th class="py-3.5 px-4 text-right">Qty</th>
-                    <th class="py-3.5 px-4">UoM</th>
-                    <th class="py-3.5 px-4">Aksi</th>
-                  </tr>
-                </thead>
-                <tbody class="divide-y">
-                  <tr v-for="(item, idx) in filteredRequestAsset" :key="item.id" class="hover:bg-gray-50/80 transition">
-                    <td class="py-3.5 px-4 font-bold text-gray-900" contenteditable="true" @blur="onCellEdit($event, requestAssetData, idx, 'store')">{{ item.store }}</td>
-                    <td class="py-3.5 px-4 font-mono text-gray-600" contenteditable="true" @blur="onCellEdit($event, requestAssetData, idx, 'date')">{{ item.date }}</td>
-                    <td class="py-3.5 px-4 font-mono text-indigo-700 font-bold" contenteditable="true" @blur="onCellEdit($event, requestAssetData, idx, 'reqNo')">{{ item.reqNo }}</td>
-                    <td class="py-3.5 px-4 font-mono text-center font-bold text-gray-700" contenteditable="true" @blur="onCellEdit($event, requestAssetData, idx, 'lineNo')">{{ item.lineNo }}</td>
-                    <td class="py-3.5 px-4 font-bold text-gray-900" contenteditable="true" @blur="onCellEdit($event, requestAssetData, idx, 'itemName')">{{ item.itemName }}</td>
-                    <td class="py-3.5 px-4 font-mono text-right font-black text-gray-900 text-sm" contenteditable="true" @blur="onCellEdit($event, requestAssetData, idx, 'qty')">{{ item.qty }}</td>
-                    <td class="py-3.5 px-4 font-mono text-gray-600" contenteditable="true" @blur="onCellEdit($event, requestAssetData, idx, 'uom')">{{ item.uom }}</td>
-                    <td class="py-3.5 px-4">
-                      <div class="flex items-center space-x-1">
-                        <button @click="editReqAssetModal(item)" class="p-1 rounded bg-gray-100 hover:bg-gray-200 text-gray-600">
-                          <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
-                        </button>
-                        <button @click="deleteReqAssetItem(idx)" class="p-1 rounded bg-rose-50 hover:bg-rose-100 text-rose-600">
-                          <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                </tbody>
-                <!-- TOTAL QUANTITY ROW (EXACT MATCHING USER SCREENSHOT) -->
-                <tfoot>
-                  <tr class="bg-gray-100/80 font-black border-t-2 border-gray-300">
-                    <td colspan="5" class="py-3.5 px-4 text-right uppercase tracking-wider text-gray-900 text-xs">Total Quantity</td>
-                    <td class="py-3.5 px-4 text-right font-mono text-base text-scuro-red">{{ totalAssetReqQty }}</td>
-                    <td colspan="2" class="py-3.5 px-4"></td>
-                  </tr>
-                </tfoot>
-              </table>
-            </div>
-          </div>
-
-        </div>
-
-        <!-- INVENTORY TEKNISI — INVENTORY & ASSET STOCK (REVISED MATCHING USER SCREENSHOT) -->
-        <div v-if="activeSubpage === 'inv-asset-stock'" class="space-y-6">
-          
-          <!-- TOP PAGE HEADER BANNER -->
-          <div class="glass-card p-4 px-6 flex flex-col md:flex-row md:items-center justify-between gap-4 border-b">
-            <div>
-              <div class="flex items-center space-x-2">
-                <h2 class="text-lg font-extrabold text-gray-900">Inventory Teknisi</h2>
-                <span class="bg-purple-100 text-purple-800 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full border border-purple-200">
-                  Perlengkapan & Peralatan Workload Stock
-                </span>
-              </div>
-              <p class="text-xs text-gray-500 font-medium mt-0.5">Manajemen perlengkapan, alat service & stok opname peralatan teknisi aftersales</p>
-            </div>
-            
-            <div class="flex items-center space-x-2">
-              <label class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow flex items-center space-x-1.5 transition cursor-pointer">
-                <i data-lucide="file-up" class="w-4 h-4"></i>
-                <span>Impor Excel</span>
-                <input type="file" @change="importInventoryFromExcel" accept=".xlsx, .xls, .csv" class="hidden">
-              </label>
-
-              <button @click="exportInventoryToExcel" class="bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow flex items-center space-x-1.5 transition">
-                <i data-lucide="file-down" class="w-4 h-4"></i>
-                <span>Ekspor Excel</span>
-              </button>
-
-              <button @click="openAddInventoryModal" class="bg-scuro-red hover:bg-scuro-reddark text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow flex items-center space-x-1.5 transition">
-                <i data-lucide="plus-circle" class="w-4 h-4"></i>
-                <span>+ Tambah Item</span>
-              </button>
-            </div>
-          </div>
-
-          <!-- CATEGORY SUB-TABS: PERLENGKAPAN & PERALATAN -->
-          <div class="flex items-center space-x-2 border-b pb-2 text-xs font-bold">
-            <button 
-              @click="activeInventoryCategoryTab = 'Perlengkapan'"
-              :class="activeInventoryCategoryTab === 'Perlengkapan' ? 'bg-scuro-red text-white shadow-sm' : 'bg-white text-gray-700 hover:bg-gray-100'"
-              class="px-5 py-2 rounded-xl transition"
-            >
-              🛠️ Perlengkapan
-            </button>
-            <button 
-              @click="activeInventoryCategoryTab = 'Peralatan'"
-              :class="activeInventoryCategoryTab === 'Peralatan' ? 'bg-scuro-red text-white shadow-sm' : 'bg-white text-gray-700 hover:bg-gray-100'"
-              class="px-5 py-2 rounded-xl transition"
-            >
-              🧰 Peralatan
-            </button>
-          </div>
-
-          <!-- TOP 3 SUMMARY METRIC CARDS (EXACT MATCHING USER SCREENSHOT) -->
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <!-- CARD 1: TOTAL ITEM -->
-            <div class="glass-card p-5 space-y-2 border">
-              <span class="text-xs text-gray-500 font-bold">Total Item</span>
-              <div class="text-3xl font-black text-gray-900 font-mono">{{ filteredInventoryItems.length }}</div>
-            </div>
-
-            <!-- CARD 2: STOK TIPIS (QTY <= 1) -->
-            <div class="glass-card p-5 space-y-2 border border-rose-200 bg-rose-50/40">
-              <span class="text-xs text-rose-800 font-bold">Stok Tipis (qty &lt;= 1)</span>
-              <div class="text-3xl font-black text-rose-700 font-mono">
-                {{ filteredInventoryItems.filter(i => parseInt(i.qty) <= 1).length }}
-              </div>
-            </div>
-
-            <!-- CARD 3: STOK KOSONG -->
-            <div class="glass-card p-5 space-y-2 border border-amber-200 bg-amber-50/40">
-              <span class="text-xs text-amber-800 font-bold">Stok Kosong</span>
-              <div class="text-3xl font-black text-amber-700 font-mono">
-                {{ filteredInventoryItems.filter(i => parseInt(i.qty) === 0).length }}
-              </div>
-            </div>
-          </div>
-
-          <!-- MAIN INVENTORY TABLE CARD (EXACT MATCHING SCREENSHOT) -->
-          <div class="glass-panel p-6 space-y-4">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b pb-3">
-              <h3 class="text-base font-extrabold text-gray-900">{{ activeInventoryCategoryTab }} Teknisi</h3>
-              
-              <div class="flex items-center space-x-2 text-xs">
-                <input type="text" v-model="inventorySearchQuery" placeholder="Cari Kode, Nama Item, Kategori..." class="border p-2 rounded-xl bg-white/80 w-64">
-                <button @click="openAddInventoryModal" class="bg-emerald-600 text-white font-bold px-3 py-2 rounded-xl text-xs flex items-center space-x-1">
-                  <i data-lucide="plus" class="w-3.5 h-3.5"></i>
-                  <span>+ Tambah</span>
-                </button>
-              </div>
-            </div>
-
-            <div class="overflow-x-auto">
-              <table class="w-full text-left text-xs whitespace-nowrap">
-                <thead>
-                  <tr class="border-b text-gray-400 font-semibold bg-gray-50/50">
-                    <th class="py-3 px-3">Kode / ID</th>
-                    <th class="py-3 px-3">Nama</th>
-                    <th class="py-3 px-3">Kategori</th>
-                    <th class="py-3 px-3">Peruntukan / Satuan</th>
-                    <th class="py-3 px-3 text-center">Qty</th>
-                    <th class="py-3 px-3">Harga SO / Estimasi</th>
-                    <th class="py-3 px-3">SO Terakhir</th>
-                    <th class="py-3 px-3">Status</th>
-                    <th class="py-3 px-3">Aksi</th>
-                  </tr>
-                </thead>
-                <tbody class="divide-y">
-                  <tr v-for="(item, idx) in filteredInventoryItems" :key="item.id" class="hover:bg-gray-50/80 transition">
-                    <td class="py-3.5 px-3 font-mono font-medium text-gray-500" contenteditable="true" @blur="onCellEdit($event, inventoryAssetData, idx, 'code')">{{ item.code }}</td>
-                    <td class="py-3.5 px-3 font-bold text-gray-900" contenteditable="true" @blur="onCellEdit($event, inventoryAssetData, idx, 'name')">{{ item.name }}</td>
-                    <td class="py-3.5 px-3 text-gray-600 font-medium" contenteditable="true" @blur="onCellEdit($event, inventoryAssetData, idx, 'category')">{{ item.category }}</td>
-                    <td class="py-3.5 px-3 text-gray-600 font-medium" contenteditable="true" @blur="onCellEdit($event, inventoryAssetData, idx, 'usage')">{{ item.usage }}</td>
-                    <td class="py-3.5 px-3 font-mono text-center font-bold text-gray-900" contenteditable="true" @blur="onCellEdit($event, inventoryAssetData, idx, 'qty')">{{ item.qty }}</td>
-                    <td class="py-3.5 px-3 font-mono text-emerald-700 font-medium" contenteditable="true" @blur="onCellEdit($event, inventoryAssetData, idx, 'estPrice')">{{ item.estPrice }}</td>
-                    <td class="py-3.5 px-3 font-mono text-gray-500" contenteditable="true" @blur="onCellEdit($event, inventoryAssetData, idx, 'lastSo')">{{ item.lastSo }}</td>
-                    <td class="py-3.5 px-3 font-medium">
-                      <span class="bg-gray-100 text-gray-700 px-2.5 py-1 rounded text-[11px] font-semibold border">
-                        {{ item.status }}
-                      </span>
-                    </td>
-                    <td class="py-3.5 px-3">
-                      <div class="flex items-center space-x-1">
-                        <button @click="editInventoryModal(item)" class="p-1 rounded bg-gray-100 hover:bg-gray-200 text-gray-600">
-                          <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
-                        </button>
-                        <button @click="deleteInventoryItem(idx)" class="p-1 rounded bg-rose-50 hover:bg-rose-100 text-rose-600">
-                          <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-        </div>
 
         <!-- AGENDA VISIT & ONLINE MEETING (RECAP VISIT MODULE REVISED MATCHING USER SCREENSHOT) -->
         <div v-if="activeSubpage === 'recap-visit' || activeSubpage === 'recap-schedule'" class="space-y-6">
@@ -1874,9 +1439,13 @@
               </div>
             </div>
 
-          </div>
-
         </div>
+      </div>
+
+      <!-- ========================================== -->
+      <!-- TAB 6: PERFORMANCE & TASKS                 -->
+      <!-- ========================================== -->
+      <div v-if="activeTab === 'performance'" class="space-y-6">
         
         <!-- ADMIN TASK JOB TRACKER MODULE (REVISED MATCHING USER SCREENSHOT TEMPLATE) -->
         <div v-if="activeSubpage === 'admin-task'" class="space-y-6">
@@ -2300,7 +1869,13 @@
           </div>
 
         </div>
+      </div>
 
+      <!-- ========================================== -->
+      <!-- TAB 7: INSIGHT                             -->
+      <!-- ========================================== -->
+      <div v-if="activeTab === 'insight'" class="space-y-6">
+        
         <!-- TREND TROUBLE - HAMBACH MODULE (REVISED MATCHING USER SCREENSHOT) -->
         <div v-if="activeSubpage === 'trend' || activeSubpage === 'taxonomy'" class="space-y-6">
           
@@ -2462,7 +2037,13 @@
           </div>
 
         </div>
+      </div>
 
+      <!-- ========================================== -->
+      <!-- TAB 8: KNOWLEDGE BASE                      -->
+      <!-- ========================================== -->
+      <div v-if="activeTab === 'knowledge'" class="space-y-6">
+        
         <!-- TREND TROUBLE - MAQUINOS MODULE (REVISED MATCHING USER SCREENSHOT) -->
         <div v-if="activeSubpage === 'trend-maquinos' || (activeSubpage === 'trend' && activeTrendBrandTab === 'Maquinos')" class="space-y-6">
           
@@ -2624,7 +2205,13 @@
           </div>
 
         </div>
+      </div>
 
+      <!-- ========================================== -->
+      <!-- TAB 9: GOVERNANCE & RULES                  -->
+      <!-- ========================================== -->
+      <div v-if="activeTab === 'governance'" class="space-y-6">
+        
         <!-- MOU KOPI KENANGAN / PT. BBB MODULE (REVISED MATCHING USER SCREENSHOT & MULTI-BRAND) -->
         <div v-if="activeSubpage === 'mou-kenangan'" class="space-y-6">
           
@@ -3913,195 +3500,364 @@
       <!-- TAB 5: INVENTORY MANAGEMENT                -->
       <!-- ========================================== -->
       <div v-if="activeTab === 'inventory-mgmt'" class="space-y-6">
-        <div v-if="activeSubpage === 'inv-asset-stock'" class="glass-panel p-6 space-y-6">
-          <div class="flex items-center justify-between">
-            <div>
-              <h2 class="text-base font-bold text-gray-900">Inventory & Asset Stock (Peralatan & Perlengkapan)</h2>
-              <p class="text-xs text-gray-500">Mapped from <span class="font-mono text-scuro-red font-bold">Inventory_Tools</span> sheet — Technician tools, multimeters, amp meters, solder sets, and workshop equipment.</p>
-            </div>
-            <button class="bg-scuro-red text-white text-xs font-bold px-4 py-2 rounded-xl">+ Add New Asset</button>
-          </div>
-
-          <div class="overflow-x-auto">
-            <table class="w-full text-left text-xs">
-              <thead>
-                <tr class="border-b text-gray-500 font-bold uppercase">
-                  <th class="py-3 px-4">Asset Code</th>
-                  <th class="py-3 px-4">Tool / Equipment Name</th>
-                  <th class="py-3 px-4">Category</th>
-                  <th class="py-3 px-4">Assigned Tech / PIC</th>
-                  <th class="py-3 px-4">Condition</th>
-                  <th class="py-3 px-4">Status</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y">
-                <tr v-for="t in inventoryTools" :key="t.id" class="hover:bg-white/80">
-                  <td class="py-3 px-4 font-mono font-bold text-scuro-red">{{ t.code }}</td>
-                  <td class="py-3 px-4 font-bold text-gray-900">{{ t.name }}</td>
-                  <td class="py-3 px-4 text-gray-700">{{ t.category }}</td>
-                  <td class="py-3 px-4 font-bold text-gray-800">{{ t.pic }}</td>
-                  <td class="py-3 px-4"><span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full">{{ t.condition }}</span></td>
-                  <td class="py-3 px-4"><span class="bg-blue-100 text-blue-800 text-[10px] font-bold px-2 py-0.5 rounded-full">{{ t.status }}</span></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <!-- ========================================== -->
-      <!-- TAB 6: PERFORMANCE & OVERLOAD MONITOR      -->
-      <!-- ========================================== -->
-      <div v-if="activeTab === 'performance'" class="space-y-6">
         
-        <!-- TECHNICIAN CAPACITY & OVERLOAD MONITOR -->
-        <div v-if="activeSubpage === 'capacity'" class="glass-panel p-6 space-y-6">
-          <div class="flex justify-between items-center border-b pb-3">
+        <!-- INVENTORY TEKNISI — INVENTORY & ASSET STOCK (REVISED MATCHING USER SCREENSHOT) -->
+        <div v-if="activeSubpage === 'inv-asset-stock'" class="space-y-6">
+          
+          <!-- TOP PAGE HEADER BANNER -->
+          <div class="glass-card p-4 px-6 flex flex-col md:flex-row md:items-center justify-between gap-4 border-b">
             <div>
-              <h2 class="text-base font-bold text-gray-900">Technician Daily Capacity & Overlap Math Monitor</h2>
-              <p class="text-xs text-gray-500">1-2 tasks/day = Normal | 3+ tasks/day = OVERLOAD Alert</p>
-            </div>
-            <span class="bg-rose-100 text-rose-800 text-xs font-bold px-3 py-1 rounded-full">SLA Overload Prevention</span>
-          </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div v-for="c in techCapacities" :key="c.tech" class="glass-card p-4 space-y-2 border-l-4" :class="c.total_tasks >= 3 ? 'border-l-rose-600' : 'border-l-emerald-500'">
-              <div class="flex justify-between font-bold text-xs">
-                <span>{{ c.tech }}</span>
-                <span :class="c.total_tasks >= 3 ? 'text-rose-600 font-extrabold' : 'text-emerald-600'">{{ c.status }}</span>
+              <div class="flex items-center space-x-2">
+                <h2 class="text-lg font-extrabold text-gray-900">Inventory Teknisi</h2>
+                <span class="bg-purple-100 text-purple-800 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full border border-purple-200">
+                  Perlengkapan & Peralatan Workload Stock
+                </span>
               </div>
-              <div class="text-2xl font-extrabold text-gray-900">{{ c.total_tasks }} Tasks Today</div>
-              <div class="text-[11px] text-gray-500 space-y-0.5 pt-1">
-                <div>Bench SC: {{ c.sc_tasks }} | Visit IH: {{ c.visit_tasks }}</div>
-                <div>Maintenance: {{ c.maint_tasks }} | Inst: {{ c.inst_tasks }}</div>
-              </div>
+              <p class="text-xs text-gray-500 font-medium mt-0.5">Manajemen perlengkapan, alat service & stok opname peralatan teknisi aftersales</p>
             </div>
-          </div>
-        </div>
+            
+            <div class="flex items-center space-x-2">
+              <label class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow flex items-center space-x-1.5 transition cursor-pointer">
+                <i data-lucide="file-up" class="w-4 h-4"></i>
+                <span>Impor Excel</span>
+                <input type="file" @change="importInventoryFromExcel" accept=".xlsx, .xls, .csv" class="hidden">
+              </label>
 
-      </div>
+              <button @click="exportInventoryToExcel" class="bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow flex items-center space-x-1.5 transition">
+                <i data-lucide="file-down" class="w-4 h-4"></i>
+                <span>Ekspor Excel</span>
+              </button>
 
-      <!-- ========================================== -->
-      <!-- TAB 7: GOVERNANCE & BERITA ACARA (BA) TREE -->
-      <!-- ========================================== -->
-      <div v-if="activeTab === 'governance'" class="space-y-6">
-        
-        <!-- INTERACTIVE SOP & DECISION TREE -->
-        <div v-if="activeSubpage === 'home-resources'" class="glass-panel p-6 space-y-6">
-          <div class="flex justify-between items-center border-b pb-3">
-            <h2 class="text-base font-bold text-gray-900">Scuro Operational Policy & SOP Interactive Tree</h2>
-            <div class="flex space-x-2 text-xs font-bold">
-              <button @click="activeGovTab = 'memo'" :class="['px-3 py-1.5 rounded-lg transition', activeGovTab === 'memo' ? 'bg-scuro-red text-white' : 'bg-gray-100']">Memo SG-FORM-IM-001</button>
-              <button @click="activeGovTab = 'bbb'" :class="['px-3 py-1.5 rounded-lg transition', activeGovTab === 'bbb' ? 'bg-scuro-red text-white' : 'bg-gray-100']">PT BBB (Kopi Kenangan)</button>
-              <button @click="activeGovTab = 'rates'" :class="['px-3 py-1.5 rounded-lg transition', activeGovTab === 'rates' ? 'bg-scuro-red text-white' : 'bg-gray-100']">Service Rates</button>
+              <button @click="openAddInventoryModal" class="bg-scuro-red hover:bg-scuro-reddark text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow flex items-center space-x-1.5 transition">
+                <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                <span>+ Tambah Item</span>
+              </button>
             </div>
           </div>
 
-          <div v-if="activeGovTab === 'memo'" class="space-y-4 text-xs">
-            <div class="p-4 bg-white rounded-xl border space-y-2">
-              <h3 class="font-bold text-sm text-scuro-red">Internal Memo SG-FORM-IM-001 Distance & Transport Rules</h3>
-              <ul class="list-disc pl-5 space-y-1 text-gray-700">
-                <li><strong>TRITON Purchase &lt; 15M:</strong> Max 25km free transport (Rp 400,000 fee if exceeding).</li>
-                <li><strong>TRITON Purchase &gt; 15M:</strong> Max 50km free transport (Rp 600,000 fee for 25-50km).</li>
-                <li><strong>TRITON Purchase &gt; 75M:</strong> Free transport up to 200km (Bandung regional coverage).</li>
-              </ul>
-            </div>
-          </div>
-
-          <div v-if="activeGovTab === 'bbb'" class="space-y-4 text-xs">
-            <div class="p-4 bg-emerald-50 border border-emerald-200 rounded-xl space-y-2 text-emerald-900">
-              <h3 class="font-bold text-sm">PT. Bumi Berkah Boga (Kopi Kenangan) Agreement Rules</h3>
-              <ul class="list-disc pl-5 space-y-1">
-                <li><strong>Service & Transport:</strong> 25% Special Discount on all technician visits.</li>
-                <li><strong>AT-10 Auto Tamping Spareparts:</strong> 15% Special Discount on replacement parts.</li>
-              </ul>
-            </div>
-          </div>
-
-          <div v-if="activeGovTab === 'rates'" class="space-y-4 text-xs">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div class="p-4 bg-white rounded-xl border space-y-1">
-                <div class="font-bold text-gray-900">Hambach 1gr & 2gr Service</div>
-                <div class="text-lg font-extrabold text-scuro-red">IDR 300,000</div>
-              </div>
-              <div class="p-4 bg-white rounded-xl border space-y-1">
-                <div class="font-bold text-gray-900">Grinders & Blenders Service</div>
-                <div class="text-lg font-extrabold text-scuro-red">IDR 200,000</div>
-              </div>
-              <div class="p-4 bg-white rounded-xl border space-y-1">
-                <div class="font-bold text-gray-900">1x Maintenance Visit</div>
-                <div class="text-lg font-extrabold text-scuro-red">IDR 600,000 (1gr) / IDR 800,000 (2gr)</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- BERITA ACARA (BA) FORM GENERATOR -->
-        <div v-if="activeSubpage === 'ba'" class="glass-panel p-6 space-y-6">
-          <div class="flex justify-between items-center border-b pb-3">
-            <h2 class="text-base font-bold text-gray-900">Berita Acara (BA) Generator [SG-FORM-BA-001]</h2>
-            <button @click="printBA" class="bg-scuro-red text-white text-xs font-bold px-4 py-2 rounded-xl flex items-center space-x-1">
-              <i data-lucide="printer" class="w-3.5 h-3.5"></i>
-              <span>Print Official BA</span>
+          <!-- CATEGORY SUB-TABS: PERLENGKAPAN & PERALATAN -->
+          <div class="flex items-center space-x-2 border-b pb-2 text-xs font-bold">
+            <button 
+              @click="activeInventoryCategoryTab = 'Perlengkapan'"
+              :class="activeInventoryCategoryTab === 'Perlengkapan' ? 'bg-scuro-red text-white shadow-sm' : 'bg-white text-gray-700 hover:bg-gray-100'"
+              class="px-5 py-2 rounded-xl transition"
+            >
+              🛠️ Perlengkapan
+            </button>
+            <button 
+              @click="activeInventoryCategoryTab = 'Peralatan'"
+              :class="activeInventoryCategoryTab === 'Peralatan' ? 'bg-scuro-red text-white shadow-sm' : 'bg-white text-gray-700 hover:bg-gray-100'"
+              class="px-5 py-2 rounded-xl transition"
+            >
+              🧰 Peralatan
             </button>
           </div>
 
-          <div id="printable-ba" class="p-6 bg-white border rounded-2xl space-y-6 text-xs text-gray-900">
-            <div class="flex justify-between items-center border-b pb-4">
+          <!-- TOP 3 SUMMARY METRIC CARDS -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="glass-card p-5 space-y-2 border">
+              <span class="text-xs text-gray-500 font-bold">Total Item</span>
+              <div class="text-3xl font-black text-gray-900 font-mono">{{ filteredInventoryItems.length }}</div>
+            </div>
+
+            <div class="glass-card p-5 space-y-2 border border-rose-200 bg-rose-50/40">
+              <span class="text-xs text-rose-800 font-bold">Stok Tipis (qty &lt;= 1)</span>
+              <div class="text-3xl font-black text-rose-700 font-mono">
+                {{ filteredInventoryItems.filter(i => parseInt(i.qty) <= 1).length }}
+              </div>
+            </div>
+
+            <div class="glass-card p-5 space-y-2 border border-amber-200 bg-amber-50/40">
+              <span class="text-xs text-amber-800 font-bold">Stok Kosong</span>
+              <div class="text-3xl font-black text-amber-700 font-mono">
+                {{ filteredInventoryItems.filter(i => parseInt(i.qty) === 0).length }}
+              </div>
+            </div>
+          </div>
+
+          <!-- MAIN INVENTORY TABLE CARD -->
+          <div class="glass-panel p-6 space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b pb-3">
+              <h3 class="text-base font-extrabold text-gray-900">{{ activeInventoryCategoryTab }} Teknisi</h3>
+              
+              <div class="flex items-center space-x-2 text-xs">
+                <input type="text" v-model="inventorySearchQuery" placeholder="Cari Kode, Nama Item, Kategori..." class="border p-2 rounded-xl bg-white/80 w-64">
+                <button @click="openAddInventoryModal" class="bg-emerald-600 text-white font-bold px-3 py-2 rounded-xl text-xs flex items-center space-x-1">
+                  <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                  <span>+ Tambah</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs whitespace-nowrap">
+                <thead>
+                  <tr class="border-b text-gray-400 font-semibold bg-gray-50/50">
+                    <th class="py-3 px-3">Kode / ID</th>
+                    <th class="py-3 px-3">Nama</th>
+                    <th class="py-3 px-3">Kategori</th>
+                    <th class="py-3 px-3">Peruntukan / Satuan</th>
+                    <th class="py-3 px-3 text-center">Qty</th>
+                    <th class="py-3 px-3">Harga SO / Estimasi</th>
+                    <th class="py-3 px-3">SO Terakhir</th>
+                    <th class="py-3 px-3">Status</th>
+                    <th class="py-3 px-3">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y">
+                  <tr v-for="(item, idx) in filteredInventoryItems" :key="item.id" class="hover:bg-gray-50/80 transition">
+                    <td class="py-3.5 px-3 font-mono font-medium text-gray-500" contenteditable="true" @blur="onCellEdit($event, inventoryAssetData, idx, 'code')">{{ item.code }}</td>
+                    <td class="py-3.5 px-3 font-bold text-gray-900" contenteditable="true" @blur="onCellEdit($event, inventoryAssetData, idx, 'name')">{{ item.name }}</td>
+                    <td class="py-3.5 px-3 text-gray-600 font-medium" contenteditable="true" @blur="onCellEdit($event, inventoryAssetData, idx, 'category')">{{ item.category }}</td>
+                    <td class="py-3.5 px-3 text-gray-600 font-medium" contenteditable="true" @blur="onCellEdit($event, inventoryAssetData, idx, 'usage')">{{ item.usage }}</td>
+                    <td class="py-3.5 px-3 font-mono text-center font-bold text-gray-900" contenteditable="true" @blur="onCellEdit($event, inventoryAssetData, idx, 'qty')">{{ item.qty }}</td>
+                    <td class="py-3.5 px-3 font-mono text-emerald-700 font-medium" contenteditable="true" @blur="onCellEdit($event, inventoryAssetData, idx, 'estPrice')">{{ item.estPrice }}</td>
+                    <td class="py-3.5 px-3 font-mono text-gray-500" contenteditable="true" @blur="onCellEdit($event, inventoryAssetData, idx, 'lastSo')">{{ item.lastSo }}</td>
+                    <td class="py-3.5 px-3 font-medium">
+                      <span class="bg-gray-100 text-gray-700 px-2.5 py-1 rounded text-[11px] font-semibold border">
+                        {{ item.status }}
+                      </span>
+                    </td>
+                    <td class="py-3.5 px-3">
+                      <div class="flex items-center space-x-1">
+                        <button @click="editInventoryModal(item)" class="p-1 rounded bg-gray-100 hover:bg-gray-200 text-gray-600">
+                          <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+                        </button>
+                        <button @click="deleteInventoryItem(idx)" class="p-1 rounded bg-rose-50 hover:bg-rose-100 text-rose-600">
+                          <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- REQUEST INVENTORY — STOCK REQUEST DETAIL -->
+        <div v-if="activeSubpage === 'req-inventory'" class="space-y-6">
+          <div class="flex items-center space-x-2 text-xs text-gray-500 font-medium">
+            <span>Home</span><span>/</span><span>Inventory Report</span><span>/</span><span class="font-bold text-gray-900">Stock Request Detail</span>
+          </div>
+
+          <div class="glass-panel p-6 space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-4 items-end text-xs">
               <div>
-                <h2 class="text-lg font-extrabold text-scuro-red">PT SCURO GROUP INDONESIA</h2>
-                <p class="text-[11px] text-gray-500">Official Operational Berita Acara Document</p>
+                <label class="font-bold text-gray-700 block mb-1">Store</label>
+                <select v-model="reqInventoryStoreFilter" class="w-full border p-2 rounded-xl bg-white font-medium">
+                  <option value="All Stores">All Stores</option>
+                  <option value="WORKSHOP TEKAN">WORKSHOP TEKAN</option>
+                  <option value="SCURO BALI HUB">SCURO BALI HUB</option>
+                  <option value="CENTRAL WH">CENTRAL WH</option>
+                </select>
               </div>
-              <div class="text-right">
-                <div class="font-mono font-bold">No: SG-FORM-BA-001/2026/08</div>
-                <div class="text-gray-500">Date: 13 August 2026</div>
+
+              <div>
+                <label class="font-bold text-gray-700 block mb-1">Date Period</label>
+                <input type="text" v-model="reqInventoryDatePeriod" class="w-full border p-2 rounded-xl bg-white font-mono" placeholder="YYYY/MM/DD - YYYY/MM/DD">
+              </div>
+
+              <div>
+                <label class="font-bold text-gray-700 block mb-1">Category</label>
+                <select v-model="reqInventoryCategoryFilter" class="w-full border p-2 rounded-xl bg-white font-medium">
+                  <option value="All Categories">All Categories</option>
+                  <option value="Kebersihan">Kebersihan</option>
+                  <option value="Spareparts">Spareparts</option>
+                  <option value="Consumable">Consumable</option>
+                  <option value="Packaging">Packaging</option>
+                  <option value="Tools">Tools</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="font-bold text-gray-700 block mb-1">Item Name</label>
+                <input type="text" v-model="reqInventoryItemFilter" placeholder="Nama item..." class="w-full border p-2 rounded-xl bg-white font-medium">
+              </div>
+
+              <div class="flex items-center space-x-2">
+                <button class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-5 py-2.5 rounded-xl shadow text-xs transition">Submit</button>
+                <button @click="openAddReqInventoryModal" class="bg-scuro-red hover:bg-scuro-reddark text-white font-bold px-3.5 py-2.5 rounded-xl shadow text-xs transition shrink-0">+ New Request</button>
               </div>
             </div>
 
-            <div class="space-y-2">
-              <div class="font-bold">Subject: Berita Acara Pelepasan & Replacement Sparepart Unit</div>
-              <p class="leading-relaxed">Bahwa pada hari ini telah dilakukan penggantian dan perbaikan sparepart unit espresso machine milik customer dengan rincian berikut:</p>
+            <div class="border-t pt-4 flex flex-col md:flex-row md:items-center justify-between gap-4 text-xs">
+              <div class="flex items-center space-x-3">
+                <div class="flex items-center space-x-1 border p-1 rounded-xl bg-gray-50">
+                  <button @click="exportReqInventoryCsv" class="px-2.5 py-1 font-bold text-gray-700 hover:bg-white rounded transition">CSV</button>
+                  <button @click="exportReqInventoryExcel" class="px-2.5 py-1 font-bold text-emerald-700 hover:bg-white rounded transition">Excel</button>
+                  <button @click="exportReqInventoryPdf" class="px-2.5 py-1 font-bold text-rose-700 hover:bg-white rounded transition">PDF</button>
+                </div>
+                <label class="bg-blue-50 text-blue-700 border border-blue-200 font-bold px-3 py-1.5 rounded-xl hover:bg-blue-100 transition cursor-pointer">
+                  Impor Excel
+                  <input type="file" @change="importReqInventoryFromExcel" accept=".xlsx, .xls, .csv" class="hidden">
+                </label>
+              </div>
+
+              <div class="flex items-center space-x-2">
+                <span class="font-bold text-gray-700">Search:</span>
+                <input type="text" v-model="reqInventorySearchQuery" placeholder="Cari store, req no, item..." class="border p-2 rounded-xl bg-white w-52 font-medium">
+              </div>
+            </div>
+          </div>
+
+          <div class="glass-panel p-6 space-y-4">
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs whitespace-nowrap">
+                <thead>
+                  <tr class="border-b text-gray-700 font-bold bg-gray-50/70">
+                    <th class="py-3.5 px-4">Store</th>
+                    <th class="py-3.5 px-4">Date</th>
+                    <th class="py-3.5 px-4">Stock Request No.</th>
+                    <th class="py-3.5 px-4 text-center">Line No.</th>
+                    <th class="py-3.5 px-4">Item Name</th>
+                    <th class="py-3.5 px-4 text-right">Qty</th>
+                    <th class="py-3.5 px-4">UoM</th>
+                    <th class="py-3.5 px-4">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y">
+                  <tr v-for="(item, idx) in filteredRequestInventory" :key="item.id" class="hover:bg-gray-50/80 transition">
+                    <td class="py-3.5 px-4 font-bold text-gray-900" contenteditable="true" @blur="onCellEdit($event, requestInventoryData, idx, 'store')">{{ item.store }}</td>
+                    <td class="py-3.5 px-4 font-mono text-gray-600" contenteditable="true" @blur="onCellEdit($event, requestInventoryData, idx, 'date')">{{ item.date }}</td>
+                    <td class="py-3.5 px-4 font-mono text-blue-700 font-bold" contenteditable="true" @blur="onCellEdit($event, requestInventoryData, idx, 'reqNo')">{{ item.reqNo }}</td>
+                    <td class="py-3.5 px-4 font-mono text-center font-bold text-gray-700" contenteditable="true" @blur="onCellEdit($event, requestInventoryData, idx, 'lineNo')">{{ item.lineNo }}</td>
+                    <td class="py-3.5 px-4 font-bold text-gray-900" contenteditable="true" @blur="onCellEdit($event, requestInventoryData, idx, 'itemName')">{{ item.itemName }}</td>
+                    <td class="py-3.5 px-4 font-mono text-right font-black text-gray-900 text-sm" contenteditable="true" @blur="onCellEdit($event, requestInventoryData, idx, 'qty')">{{ item.qty }}</td>
+                    <td class="py-3.5 px-4 font-mono text-gray-600" contenteditable="true" @blur="onCellEdit($event, requestInventoryData, idx, 'uom')">{{ item.uom }}</td>
+                    <td class="py-3.5 px-4">
+                      <div class="flex items-center space-x-1">
+                        <button @click="editReqInventoryModal(item)" class="p-1 rounded bg-gray-100 hover:bg-gray-200 text-gray-600"><i data-lucide="edit-3" class="w-3.5 h-3.5"></i></button>
+                        <button @click="deleteReqInventoryItem(idx)" class="p-1 rounded bg-rose-50 hover:bg-rose-100 text-rose-600"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+                <tfoot>
+                  <tr class="bg-gray-100/80 font-black border-t-2 border-gray-300">
+                    <td colspan="5" class="py-3.5 px-4 text-right uppercase tracking-wider text-gray-900 text-xs">Total Quantity</td>
+                    <td class="py-3.5 px-4 text-right font-mono text-base text-scuro-red">{{ totalRequestQty }}</td>
+                    <td colspan="2" class="py-3.5 px-4"></td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- REQUEST ASSET — ASSET REQUEST DETAIL -->
+        <div v-if="activeSubpage === 'req-asset'" class="space-y-6">
+          <div class="flex items-center space-x-2 text-xs text-gray-500 font-medium">
+            <span>Home</span><span>/</span><span>Inventory Report</span><span>/</span><span class="font-bold text-gray-900">Asset Request Detail</span>
+          </div>
+
+          <div class="glass-panel p-6 space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-4 items-end text-xs">
+              <div>
+                <label class="font-bold text-gray-700 block mb-1">Store</label>
+                <select v-model="reqAssetStoreFilter" class="w-full border p-2 rounded-xl bg-white font-medium">
+                  <option value="All Stores">All Stores</option>
+                  <option value="WORKSHOP TEKAN">WORKSHOP TEKAN</option>
+                  <option value="SCURO BALI HUB">SCURO BALI HUB</option>
+                  <option value="CENTRAL WH">CENTRAL WH</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="font-bold text-gray-700 block mb-1">Date Period</label>
+                <input type="text" v-model="reqAssetDatePeriod" class="w-full border p-2 rounded-xl bg-white font-mono" placeholder="YYYY/MM/DD - YYYY/MM/DD">
+              </div>
+
+              <div>
+                <label class="font-bold text-gray-700 block mb-1">Category</label>
+                <select v-model="reqAssetCategoryFilter" class="w-full border p-2 rounded-xl bg-white font-medium">
+                  <option value="All Categories">All Categories</option>
+                  <option value="Peralatan Measurements">Peralatan Measurements</option>
+                  <option value="Peralatan Service">Peralatan Service</option>
+                  <option value="Power Tools">Power Tools</option>
+                  <option value="Bench Repair Asset">Bench Repair Asset</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="font-bold text-gray-700 block mb-1">Item Name</label>
+                <input type="text" v-model="reqAssetItemFilter" placeholder="Nama asset..." class="w-full border p-2 rounded-xl bg-white font-medium">
+              </div>
+
+              <div class="flex items-center space-x-2">
+                <button class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-5 py-2.5 rounded-xl shadow text-xs transition">Submit</button>
+                <button @click="openAddReqAssetModal" class="bg-scuro-red hover:bg-scuro-reddark text-white font-bold px-3.5 py-2.5 rounded-xl shadow text-xs transition shrink-0">+ New Request</button>
+              </div>
             </div>
 
-            <table class="w-full text-left border">
-              <thead class="bg-gray-100 border-b">
-                <tr>
-                  <th class="p-2 border">SKU</th>
-                  <th class="p-2 border">Nama Component</th>
-                  <th class="p-2 border">Qty</th>
-                  <th class="p-2 border">Keterangan</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td class="p-2 border font-mono">LCD-HM-001</td>
-                  <td class="p-2 border">Display LCD Screen Hambach Tank 2gr</td>
-                  <td class="p-2 border font-bold">1 Unit</td>
-                  <td class="p-2 border">Replacement due to corrupt display</td>
-                </tr>
-              </tbody>
-            </table>
+            <div class="border-t pt-4 flex flex-col md:flex-row md:items-center justify-between gap-4 text-xs">
+              <div class="flex items-center space-x-3">
+                <div class="flex items-center space-x-1 border p-1 rounded-xl bg-gray-50">
+                  <button @click="exportReqAssetCsv" class="px-2.5 py-1 font-bold text-gray-700 hover:bg-white rounded transition">CSV</button>
+                  <button @click="exportReqAssetExcel" class="px-2.5 py-1 font-bold text-emerald-700 hover:bg-white rounded transition">Excel</button>
+                  <button @click="exportReqAssetPdf" class="px-2.5 py-1 font-bold text-rose-700 hover:bg-white rounded transition">PDF</button>
+                </div>
+                <label class="bg-blue-50 text-blue-700 border border-blue-200 font-bold px-3 py-1.5 rounded-xl hover:bg-blue-100 transition cursor-pointer">
+                  Impor Excel
+                  <input type="file" @change="importReqAssetFromExcel" accept=".xlsx, .xls, .csv" class="hidden">
+                </label>
+              </div>
 
-            <div class="grid grid-cols-2 gap-8 pt-8 text-center">
-              <div class="space-y-12">
-                <div>Diserahkan Oleh (Technician),</div>
-                <div class="font-bold underline">( Adi Wijaya )</div>
+              <div class="flex items-center space-x-2">
+                <span class="font-bold text-gray-700">Search:</span>
+                <input type="text" v-model="reqAssetSearchQuery" placeholder="Cari store, req no, asset..." class="border p-2 rounded-xl bg-white w-52 font-medium">
               </div>
-              <div class="space-y-12">
-                <div>Disetujui Oleh (Customer / PIC),</div>
-                <div class="font-bold underline">( Andi Wijaya )</div>
-              </div>
+            </div>
+          </div>
+
+          <div class="glass-panel p-6 space-y-4">
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs whitespace-nowrap">
+                <thead>
+                  <tr class="border-b text-gray-700 font-bold bg-gray-50/70">
+                    <th class="py-3.5 px-4">Store</th>
+                    <th class="py-3.5 px-4">Date</th>
+                    <th class="py-3.5 px-4">Asset Request No.</th>
+                    <th class="py-3.5 px-4 text-center">Line No.</th>
+                    <th class="py-3.5 px-4">Item Name</th>
+                    <th class="py-3.5 px-4 text-right">Qty</th>
+                    <th class="py-3.5 px-4">UoM</th>
+                    <th class="py-3.5 px-4">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y">
+                  <tr v-for="(item, idx) in filteredRequestAsset" :key="item.id" class="hover:bg-gray-50/80 transition">
+                    <td class="py-3.5 px-4 font-bold text-gray-900" contenteditable="true" @blur="onCellEdit($event, requestAssetData, idx, 'store')">{{ item.store }}</td>
+                    <td class="py-3.5 px-4 font-mono text-gray-600" contenteditable="true" @blur="onCellEdit($event, requestAssetData, idx, 'date')">{{ item.date }}</td>
+                    <td class="py-3.5 px-4 font-mono text-indigo-700 font-bold" contenteditable="true" @blur="onCellEdit($event, requestAssetData, idx, 'reqNo')">{{ item.reqNo }}</td>
+                    <td class="py-3.5 px-4 font-mono text-center font-bold text-gray-700" contenteditable="true" @blur="onCellEdit($event, requestAssetData, idx, 'lineNo')">{{ item.lineNo }}</td>
+                    <td class="py-3.5 px-4 font-bold text-gray-900" contenteditable="true" @blur="onCellEdit($event, requestAssetData, idx, 'itemName')">{{ item.itemName }}</td>
+                    <td class="py-3.5 px-4 font-mono text-right font-black text-gray-900 text-sm" contenteditable="true" @blur="onCellEdit($event, requestAssetData, idx, 'qty')">{{ item.qty }}</td>
+                    <td class="py-3.5 px-4 font-mono text-gray-600" contenteditable="true" @blur="onCellEdit($event, requestAssetData, idx, 'uom')">{{ item.uom }}</td>
+                    <td class="py-3.5 px-4">
+                      <div class="flex items-center space-x-1">
+                        <button @click="editReqAssetModal(item)" class="p-1 rounded bg-gray-100 hover:bg-gray-200 text-gray-600"><i data-lucide="edit-3" class="w-3.5 h-3.5"></i></button>
+                        <button @click="deleteReqAssetItem(idx)" class="p-1 rounded bg-rose-50 hover:bg-rose-100 text-rose-600"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+                <tfoot>
+                  <tr class="bg-gray-100/80 font-black border-t-2 border-gray-300">
+                    <td colspan="5" class="py-3.5 px-4 text-right uppercase tracking-wider text-gray-900 text-xs">Total Quantity</td>
+                    <td class="py-3.5 px-4 text-right font-mono text-base text-scuro-red">{{ totalAssetReqQty }}</td>
+                    <td colspan="2" class="py-3.5 px-4"></td>
+                  </tr>
+                </tfoot>
+              </table>
             </div>
           </div>
         </div>
 
       </div>
 
-      <!-- OTHER SUBPAGES -->
-      <div v-if="['warranty-db', 'settings-sync', 'knowledge'].includes(activeTab)" class="glass-panel p-6 space-y-6">
-        <h2 class="text-base font-bold text-gray-900 capitalize">{{ currentSubpageLabel }}</h2>
-        <p class="text-xs text-gray-500">Reference sheet: <span class="font-mono text-scuro-red font-bold">{{ currentSheetName }}</span>.</p>
-      </div>
+
 
     </main>
 
