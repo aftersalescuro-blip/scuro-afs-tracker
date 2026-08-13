@@ -65,17 +65,19 @@
       border-radius: 16px;
     }
     .glass-header {
-      background: rgba(255, 255, 255, 0.96);
+      background: rgba(255, 255, 255, 0.98);
       backdrop-filter: blur(24px);
       -webkit-backdrop-filter: blur(24px);
       border-bottom: 1px solid rgba(229, 231, 235, 0.8);
+      position: relative;
+      z-index: 50;
     }
     
-    /* HIGH-END DRIBBBLE MEGA DROPDOWN STYLING */
+    /* HIGH-END DRIBBBLE MEGA DROPDOWN STYLING - NO OVERFLOW CLIPPING */
     .mega-dropdown-card {
       background: #FFFFFF;
-      border: 1px solid rgba(229, 231, 235, 0.9);
-      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.14), 0 10px 20px -5px rgba(0, 0, 0, 0.04);
+      border: 1px solid rgba(229, 231, 235, 0.95);
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.16), 0 10px 20px -5px rgba(0, 0, 0, 0.06);
       border-radius: 24px;
     }
     .caret-pointer {
@@ -89,9 +91,18 @@
       border-left: 1px solid rgba(229, 231, 235, 0.9);
       border-top: 1px solid rgba(229, 231, 235, 0.9);
     }
-
-    .no-scrollbar::-webkit-scrollbar { display: none; }
-    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    .caret-pointer-right {
+      position: absolute;
+      top: -7px;
+      right: 28px;
+      left: auto;
+      width: 14px;
+      height: 14px;
+      background: #FFFFFF;
+      transform: rotate(45deg);
+      border-left: 1px solid rgba(229, 231, 235, 0.9);
+      border-top: 1px solid rgba(229, 231, 235, 0.9);
+    }
 
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: rgba(0,0,0,0.02); }
@@ -109,8 +120,8 @@
 
   <div id="app" class="flex flex-col min-h-screen">
 
-    <!-- ULTRA-CLEAN 2-ROW HEADER NAVIGATION SYSTEM (PRESERVED UI/UX) -->
-    <header class="sticky top-0 z-40 glass-header shadow-sm">
+    <!-- ULTRA-CLEAN 2-ROW HEADER NAVIGATION SYSTEM (FULLY VISIBLE & UNCLIPPED) -->
+    <header class="sticky top-0 z-50 glass-header shadow-sm">
       
       <!-- ROW 1: BRAND LOGO + GLOBAL SEARCH + LIVE STATUS + ROLE SWITCHER + ALERTS -->
       <div class="border-b border-gray-200/60 px-4 sm:px-6 lg:px-8 py-3">
@@ -129,12 +140,12 @@
                 <span class="font-extrabold text-sm tracking-wider text-gray-900 uppercase">Scuro Aftersales</span>
                 <span class="bg-scuro-red/10 text-scuro-red text-[10px] font-extrabold px-2.5 py-0.5 rounded-full border border-scuro-red/20 tracking-wider">OPERATIONS</span>
               </div>
-              <p class="text-[11px] text-gray-500 font-medium">HORECA Servitization & Blueprint System</p>
+              <p class="text-[11px] text-gray-500 font-medium">HORECA Servitization Platform</p>
             </div>
           </div>
 
           <!-- Central Global Search Bar -->
-          <div class="hidden lg:flex flex-1 max-w-md items-center relative">
+          <div class="hidden sm:flex flex-1 max-w-md items-center relative">
             <i data-lucide="search" class="w-4 h-4 text-gray-400 absolute left-3.5"></i>
             <input type="text" v-model="globalSearchQuery" placeholder="Search Serial No, Ticket ID, Client, SKU, or Tech..." class="w-full bg-gray-100/90 border border-gray-200 rounded-xl pl-10 pr-12 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-scuro-red/40 focus:bg-white transition-all shadow-inner">
             <span class="absolute right-3 text-[10px] font-mono text-gray-400 border border-gray-200 px-1.5 py-0.5 rounded bg-white">Ctrl K</span>
@@ -144,7 +155,7 @@
           <div class="flex items-center space-x-3">
             
             <!-- Online Status Tag -->
-            <div class="hidden sm:flex items-center space-x-1.5 text-[11px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-full">
+            <div class="hidden md:flex items-center space-x-1.5 text-[11px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-full">
               <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
               <span>Supabase REST Connected</span>
             </div>
@@ -152,7 +163,7 @@
             <!-- Cost Calculator Quick Button -->
             <button @click="showCostCalcModal = true" class="hidden sm:flex items-center space-x-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-semibold px-3 py-2 rounded-xl transition">
               <i data-lucide="calculator" class="w-3.5 h-3.5 text-scuro-red"></i>
-              <span>Cost & Distance</span>
+              <span>Cost Calc</span>
             </button>
 
             <!-- Alert Bell Button -->
@@ -183,11 +194,11 @@
         </div>
       </div>
 
-      <!-- ROW 2: DEDICATED NAVIGATION SUB-BAR (FULL BLUEPRINT MAPPING) -->
-      <div class="px-4 sm:px-6 lg:px-8 bg-white/70">
-        <div class="max-w-[1800px] mx-auto flex items-center space-x-1 overflow-x-auto py-2 text-xs font-semibold no-scrollbar">
+      <!-- ROW 2: DEDICATED NAVIGATION BAR (100% VISIBLE & NO OVERFLOW CLIPPING) -->
+      <div class="px-4 sm:px-6 lg:px-8 bg-white/80 border-t border-gray-200/50">
+        <div class="max-w-[1800px] mx-auto flex items-center flex-wrap gap-1.5 py-2 text-xs font-semibold">
           
-          <div v-for="tab in mainNavTabs" :key="tab.id" class="relative group">
+          <div v-for="(tab, idx) in mainNavTabs" :key="tab.id" class="relative group">
             
             <button 
               @click="navigate(tab.id, tab.subpages[0].id)"
@@ -195,7 +206,7 @@
                 'px-3.5 py-2 rounded-xl flex items-center space-x-1.5 transition-all cursor-pointer whitespace-nowrap',
                 activeTab === tab.id 
                   ? 'bg-scuro-red text-white font-extrabold shadow-md shadow-scuro-red/20' 
-                  : 'text-gray-700 hover:text-gray-900 hover:bg-gray-100/80'
+                  : 'text-gray-700 hover:text-gray-900 hover:bg-gray-100'
               ]"
             >
               <i :data-lucide="tab.icon" class="w-4 h-4"></i>
@@ -203,19 +214,23 @@
               <i data-lucide="chevron-down" class="w-3.5 h-3.5 opacity-60 group-hover:rotate-180 transition-transform"></i>
             </button>
 
-            <!-- HIGH-END DRIBBBLE MEGA DROPDOWN MENU CARD -->
-            <div class="absolute left-0 top-full hidden group-hover:block z-50 pt-2 transition-all transform origin-top-left">
-              
-              <div class="mega-dropdown-card p-6 w-[580px] relative">
+            <!-- HIGH-END DRIBBBLE MEGA DROPDOWN MENU CARD (SMOOTH POPUP WITHOUT CUTOFF) -->
+            <div 
+              :class="[
+                'absolute top-full hidden group-hover:block z-50 pt-2 transition-all transform origin-top',
+                idx >= mainNavTabs.length - 2 ? 'right-0 left-auto' : 'left-0'
+              ]"
+            >
+              <div class="mega-dropdown-card p-5 w-[560px] relative">
                 <!-- Top Pointer Caret Notch -->
-                <div class="caret-pointer"></div>
+                <div :class="idx >= mainNavTabs.length - 2 ? 'caret-pointer-right' : 'caret-pointer'"></div>
 
                 <!-- 2-COLUMN MEGA DROPDOWN GRID -->
-                <div class="grid grid-cols-2 gap-6">
+                <div class="grid grid-cols-2 gap-5">
                   
                   <!-- Left Column: Primary Modules -->
-                  <div class="space-y-3">
-                    <h4 class="text-[10px] font-extrabold uppercase text-gray-400 tracking-wider border-b border-gray-100 pb-2">
+                  <div class="space-y-2.5">
+                    <h4 class="text-[10px] font-extrabold uppercase text-gray-400 tracking-wider border-b border-gray-100 pb-1.5">
                       {{ tab.label }} Modules
                     </h4>
 
@@ -225,12 +240,12 @@
                         :key="sub.id"
                         @click="navigate(tab.id, sub.id)"
                         :class="[
-                          'p-2.5 rounded-xl flex items-start space-x-3 cursor-pointer transition-all group/item',
+                          'p-2 rounded-xl flex items-start space-x-3 cursor-pointer transition-all group/item',
                           activeSubpage === sub.id ? 'bg-scuro-red/5 ring-1 ring-scuro-red/20' : 'hover:bg-gray-50'
                         ]"
                       >
                         <!-- Round Colorful Icon Badge -->
-                        <div :class="['w-9 h-9 rounded-full flex items-center justify-center text-white flex-shrink-0 shadow-sm transition-transform group-hover/item:scale-110', sub.iconBg || 'bg-gray-900']">
+                        <div :class="['w-8 h-8 rounded-full flex items-center justify-center text-white flex-shrink-0 shadow-sm transition-transform group-hover/item:scale-110', sub.iconBg || 'bg-gray-900']">
                           <i :data-lucide="sub.icon || 'layers'" class="w-4 h-4"></i>
                         </div>
                         <div class="flex-1 min-w-0">
@@ -244,9 +259,9 @@
                     </div>
                   </div>
 
-                  <!-- Right Column: Secondary Modules & Sheets -->
-                  <div class="space-y-3">
-                    <h4 class="text-[10px] font-extrabold uppercase text-gray-400 tracking-wider border-b border-gray-100 pb-2">
+                  <!-- Right Column: Secondary Modules -->
+                  <div class="space-y-2.5">
+                    <h4 class="text-[10px] font-extrabold uppercase text-gray-400 tracking-wider border-b border-gray-100 pb-1.5">
                       Reference & Tools
                     </h4>
 
@@ -256,12 +271,12 @@
                         :key="sub.id"
                         @click="navigate(tab.id, sub.id)"
                         :class="[
-                          'p-2.5 rounded-xl flex items-start space-x-3 cursor-pointer transition-all group/item',
+                          'p-2 rounded-xl flex items-start space-x-3 cursor-pointer transition-all group/item',
                           activeSubpage === sub.id ? 'bg-scuro-red/5 ring-1 ring-scuro-red/20' : 'hover:bg-gray-50'
                         ]"
                       >
                         <!-- Round Colorful Icon Badge -->
-                        <div :class="['w-9 h-9 rounded-full flex items-center justify-center text-white flex-shrink-0 shadow-sm transition-transform group-hover/item:scale-110', sub.iconBg || 'bg-scuro-red']">
+                        <div :class="['w-8 h-8 rounded-full flex items-center justify-center text-white flex-shrink-0 shadow-sm transition-transform group-hover/item:scale-110', sub.iconBg || 'bg-scuro-red']">
                           <i :data-lucide="sub.icon || 'file-text'" class="w-4 h-4"></i>
                         </div>
                         <div class="flex-1 min-w-0">
@@ -278,10 +293,10 @@
                 </div>
 
                 <!-- Footer Bar -->
-                <div class="border-t border-gray-100 pt-3 mt-4 flex items-center justify-between text-xs text-gray-500 font-semibold">
+                <div class="border-t border-gray-100 pt-2.5 mt-3 flex items-center justify-between text-xs text-gray-500 font-semibold">
                   <span class="flex items-center space-x-1.5">
                     <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                    <span>Blueprint Schema Active</span>
+                    <span>Live Supabase Connected</span>
                   </span>
                   <button @click="navigate(tab.id, tab.subpages[0].id)" class="text-scuro-red font-bold hover:underline flex items-center space-x-1">
                     <span>Open Module View</span>
@@ -461,7 +476,7 @@
       </div>
 
       <!-- ========================================== -->
-      <!-- TAB 2: TICKETS (BLUEPRINT SPECIFICATION)   -->
+      <!-- TAB 2: TICKETS                             -->
       <!-- ========================================== -->
       <div v-if="activeTab === 'tickets'" class="space-y-6">
         
