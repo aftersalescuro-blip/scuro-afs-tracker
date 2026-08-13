@@ -50,22 +50,22 @@
       color: #111827;
     }
     .glass-panel {
-      background: rgba(255, 255, 255, 0.9);
+      background: rgba(255, 255, 255, 0.92);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(229, 231, 235, 0.8);
+      border: 1px solid rgba(229, 231, 235, 0.85);
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
       border-radius: 20px;
     }
     .glass-card {
-      background: rgba(255, 255, 255, 0.82);
+      background: rgba(255, 255, 255, 0.85);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.95);
       border-radius: 16px;
     }
     .glass-header {
-      background: rgba(255, 255, 255, 0.95);
+      background: rgba(255, 255, 255, 0.96);
       backdrop-filter: blur(24px);
       -webkit-backdrop-filter: blur(24px);
       border-bottom: 1px solid rgba(229, 231, 235, 0.8);
@@ -75,7 +75,7 @@
     .mega-dropdown-card {
       background: #FFFFFF;
       border: 1px solid rgba(229, 231, 235, 0.9);
-      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.12), 0 10px 20px -5px rgba(0, 0, 0, 0.04);
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.14), 0 10px 20px -5px rgba(0, 0, 0, 0.04);
       border-radius: 24px;
     }
     .caret-pointer {
@@ -90,20 +90,14 @@
       border-top: 1px solid rgba(229, 231, 235, 0.9);
     }
 
-    ::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
-    }
-    ::-webkit-scrollbar-track {
-      background: rgba(0,0,0,0.02);
-    }
-    ::-webkit-scrollbar-thumb {
-      background: rgba(190, 33, 48, 0.3);
-      border-radius: 10px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: rgba(190, 33, 48, 0.6);
-    }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: rgba(0,0,0,0.02); }
+    ::-webkit-scrollbar-thumb { background: rgba(190, 33, 48, 0.3); border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(190, 33, 48, 0.6); }
+
     @media print {
       body * { visibility: hidden; }
       #printable-ba, #printable-ba * { visibility: visible; }
@@ -115,56 +109,111 @@
 
   <div id="app" class="flex flex-col min-h-screen">
 
-    <!-- ULTRA-CLEAN DRIBBBLE-STYLE HEADER NAVIGATION SYSTEM -->
-    <header class="sticky top-0 z-40 glass-header">
-      <div class="max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between gap-6">
-        
-        <!-- Left: Scuro Official Emblem Brand -->
-        <div class="flex items-center space-x-3.5 cursor-pointer flex-shrink-0" @click="navigate('dashboard', 'overview')">
-          <div class="w-10 h-10 rounded-full bg-scuro-red flex items-center justify-center shadow-md shadow-scuro-red/25 ring-2 ring-white hover:scale-105 transition-transform">
-            <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9 9 0 100-18 9 9 0 000 18z" />
-              <path stroke-linecap="round" stroke-linejoin="round" d="M9.5 9.5c.5-1 1.5-1.5 2.5-1.5s2.5 1 2.5 2.5-1.5 2-2.5 3-1.5 2-1.5 3.5h4" />
-            </svg>
-          </div>
-          <div>
-            <div class="flex items-center space-x-2">
-              <span class="font-extrabold text-sm tracking-wider text-gray-900 uppercase">Scuro Aftersales</span>
-              <span class="bg-scuro-red/10 text-scuro-red text-[10px] font-extrabold px-2.5 py-0.5 rounded-full border border-scuro-red/20 tracking-wider">OPERATIONS</span>
+    <!-- ULTRA-CLEAN 2-ROW HEADER NAVIGATION SYSTEM (PRESERVED UI/UX) -->
+    <header class="sticky top-0 z-40 glass-header shadow-sm">
+      
+      <!-- ROW 1: BRAND LOGO + GLOBAL SEARCH + LIVE STATUS + ROLE SWITCHER + ALERTS -->
+      <div class="border-b border-gray-200/60 px-4 sm:px-6 lg:px-8 py-3">
+        <div class="max-w-[1800px] mx-auto flex items-center justify-between gap-4">
+          
+          <!-- Scuro Official Emblem Brand -->
+          <div class="flex items-center space-x-3.5 cursor-pointer flex-shrink-0" @click="navigate('dashboard', 'overview')">
+            <div class="w-10 h-10 rounded-full bg-scuro-red flex items-center justify-center shadow-md shadow-scuro-red/25 ring-2 ring-white hover:scale-105 transition-transform">
+              <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9 9 0 100-18 9 9 0 000 18z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9.5 9.5c.5-1 1.5-1.5 2.5-1.5s2.5 1 2.5 2.5-1.5 2-2.5 3-1.5 2-1.5 3.5h4" />
+              </svg>
             </div>
-            <p class="text-[11px] text-gray-500 font-medium">HORECA Servitization Platform</p>
+            <div>
+              <div class="flex items-center space-x-2">
+                <span class="font-extrabold text-sm tracking-wider text-gray-900 uppercase">Scuro Aftersales</span>
+                <span class="bg-scuro-red/10 text-scuro-red text-[10px] font-extrabold px-2.5 py-0.5 rounded-full border border-scuro-red/20 tracking-wider">OPERATIONS</span>
+              </div>
+              <p class="text-[11px] text-gray-500 font-medium">HORECA Servitization & Blueprint System</p>
+            </div>
           </div>
-        </div>
 
-        <!-- Center: Elegant Top Links with Clean Chevron Triggers -->
-        <nav class="hidden lg:flex items-center space-x-1 font-semibold text-xs text-gray-700">
+          <!-- Central Global Search Bar -->
+          <div class="hidden lg:flex flex-1 max-w-md items-center relative">
+            <i data-lucide="search" class="w-4 h-4 text-gray-400 absolute left-3.5"></i>
+            <input type="text" v-model="globalSearchQuery" placeholder="Search Serial No, Ticket ID, Client, SKU, or Tech..." class="w-full bg-gray-100/90 border border-gray-200 rounded-xl pl-10 pr-12 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-scuro-red/40 focus:bg-white transition-all shadow-inner">
+            <span class="absolute right-3 text-[10px] font-mono text-gray-400 border border-gray-200 px-1.5 py-0.5 rounded bg-white">Ctrl K</span>
+          </div>
+
+          <!-- Right Actions & Role Switcher -->
+          <div class="flex items-center space-x-3">
+            
+            <!-- Online Status Tag -->
+            <div class="hidden sm:flex items-center space-x-1.5 text-[11px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-full">
+              <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span>Supabase REST Connected</span>
+            </div>
+
+            <!-- Cost Calculator Quick Button -->
+            <button @click="showCostCalcModal = true" class="hidden sm:flex items-center space-x-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-semibold px-3 py-2 rounded-xl transition">
+              <i data-lucide="calculator" class="w-3.5 h-3.5 text-scuro-red"></i>
+              <span>Cost & Distance</span>
+            </button>
+
+            <!-- Alert Bell Button -->
+            <button @click="showAlertPanel = !showAlertPanel" class="relative p-2 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 transition">
+              <i data-lucide="bell" class="w-4 h-4"></i>
+              <span v-if="alerts.length" class="absolute -top-1 -right-1 w-4 h-4 bg-scuro-red text-white text-[9px] font-extrabold rounded-full flex items-center justify-center shadow-sm">
+                {{ alerts.length }}
+              </span>
+            </button>
+
+            <!-- Role Selector -->
+            <div class="flex items-center space-x-2 bg-gray-100/90 border border-gray-200 rounded-xl px-3 py-1.5 shadow-sm">
+              <i data-lucide="shield-check" class="w-4 h-4 text-scuro-red"></i>
+              <select v-model="currentRole" class="bg-transparent text-xs font-bold text-gray-800 focus:outline-none cursor-pointer">
+                <option value="Super Admin">Role: Super Admin</option>
+                <option value="Ops Admin">Role: Ops Admin</option>
+                <option value="Technician">Role: Field Technician</option>
+              </select>
+            </div>
+
+            <!-- New Ticket Quick Button -->
+            <button @click="openNewTicketModal('external')" class="bg-scuro-red hover:bg-scuro-reddark text-white text-xs font-extrabold px-4 py-2 rounded-xl shadow-md shadow-scuro-red/20 transition hover:scale-105 flex items-center space-x-1.5">
+              <i data-lucide="plus-circle" class="w-4 h-4"></i>
+              <span>+ New Ticket</span>
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ROW 2: DEDICATED NAVIGATION SUB-BAR (FULL BLUEPRINT MAPPING) -->
+      <div class="px-4 sm:px-6 lg:px-8 bg-white/70">
+        <div class="max-w-[1800px] mx-auto flex items-center space-x-1 overflow-x-auto py-2 text-xs font-semibold no-scrollbar">
           
           <div v-for="tab in mainNavTabs" :key="tab.id" class="relative group">
             
             <button 
               @click="navigate(tab.id, tab.subpages[0].id)"
               :class="[
-                'px-3.5 py-2 rounded-xl flex items-center space-x-1.5 transition-all cursor-pointer',
+                'px-3.5 py-2 rounded-xl flex items-center space-x-1.5 transition-all cursor-pointer whitespace-nowrap',
                 activeTab === tab.id 
-                  ? 'text-scuro-red font-extrabold bg-scuro-red/5' 
-                  : 'hover:text-gray-900 hover:bg-gray-100/70'
+                  ? 'bg-scuro-red text-white font-extrabold shadow-md shadow-scuro-red/20' 
+                  : 'text-gray-700 hover:text-gray-900 hover:bg-gray-100/80'
               ]"
             >
+              <i :data-lucide="tab.icon" class="w-4 h-4"></i>
               <span>{{ tab.label }}</span>
-              <i data-lucide="chevron-down" class="w-3.5 h-3.5 opacity-50 group-hover:rotate-180 group-hover:opacity-100 transition-transform"></i>
+              <i data-lucide="chevron-down" class="w-3.5 h-3.5 opacity-60 group-hover:rotate-180 transition-transform"></i>
             </button>
 
-            <!-- HIGH-END DRIBBBLE MEGA DROPDOWN MENU CARD (EXACT MATCH TO REFERENCE IMAGE) -->
-            <div class="absolute left-0 top-full hidden group-hover:block z-50 pt-3 transition-all transform origin-top-left">
+            <!-- HIGH-END DRIBBBLE MEGA DROPDOWN MENU CARD -->
+            <div class="absolute left-0 top-full hidden group-hover:block z-50 pt-2 transition-all transform origin-top-left">
               
-              <div class="mega-dropdown-card p-6 w-[560px] relative">
+              <div class="mega-dropdown-card p-6 w-[580px] relative">
                 <!-- Top Pointer Caret Notch -->
                 <div class="caret-pointer"></div>
 
                 <!-- 2-COLUMN MEGA DROPDOWN GRID -->
                 <div class="grid grid-cols-2 gap-6">
                   
-                  <!-- Left Column: Primary Subpages -->
+                  <!-- Left Column: Primary Modules -->
                   <div class="space-y-3">
                     <h4 class="text-[10px] font-extrabold uppercase text-gray-400 tracking-wider border-b border-gray-100 pb-2">
                       {{ tab.label }} Modules
@@ -195,10 +244,10 @@
                     </div>
                   </div>
 
-                  <!-- Right Column: Secondary Subpages / Related Tools -->
+                  <!-- Right Column: Secondary Modules & Sheets -->
                   <div class="space-y-3">
                     <h4 class="text-[10px] font-extrabold uppercase text-gray-400 tracking-wider border-b border-gray-100 pb-2">
-                      Reference Sheets
+                      Reference & Tools
                     </h4>
 
                     <div class="space-y-1">
@@ -232,10 +281,10 @@
                 <div class="border-t border-gray-100 pt-3 mt-4 flex items-center justify-between text-xs text-gray-500 font-semibold">
                   <span class="flex items-center space-x-1.5">
                     <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                    <span>Live Supabase Connected</span>
+                    <span>Blueprint Schema Active</span>
                   </span>
                   <button @click="navigate(tab.id, tab.subpages[0].id)" class="text-scuro-red font-bold hover:underline flex items-center space-x-1">
-                    <span>View All {{ tab.label }} Modules</span>
+                    <span>Open Module View</span>
                     <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
                   </button>
                 </div>
@@ -246,43 +295,9 @@
 
           </div>
 
-        </nav>
-
-        <!-- Right Header Tools -->
-        <div class="flex items-center space-x-3">
-          
-          <!-- Cost Calculator Quick Button -->
-          <button @click="showCostCalcModal = true" class="hidden sm:flex items-center space-x-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-semibold px-3 py-2 rounded-xl transition">
-            <i data-lucide="calculator" class="w-3.5 h-3.5 text-scuro-red"></i>
-            <span>Cost Calc</span>
-          </button>
-
-          <!-- Alert Bell Button -->
-          <button @click="showAlertPanel = !showAlertPanel" class="relative p-2 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 transition">
-            <i data-lucide="bell" class="w-4 h-4"></i>
-            <span v-if="alerts.length" class="absolute -top-1 -right-1 w-4 h-4 bg-scuro-red text-white text-[9px] font-extrabold rounded-full flex items-center justify-center shadow-sm">
-              {{ alerts.length }}
-            </span>
-          </button>
-
-          <!-- Role Selector -->
-          <div class="flex items-center space-x-2 bg-gray-100/90 border border-gray-200 rounded-xl px-3 py-1.5 shadow-sm">
-            <i data-lucide="shield-check" class="w-4 h-4 text-scuro-red"></i>
-            <select v-model="currentRole" class="bg-transparent text-xs font-bold text-gray-800 focus:outline-none cursor-pointer">
-              <option value="Super Admin">Role: Super Admin</option>
-              <option value="Ops Admin">Role: Ops Admin</option>
-              <option value="Technician">Role: Field Technician</option>
-            </select>
-          </div>
-
-          <!-- New Ticket Quick Button -->
-          <button @click="openNewTicketModal('external')" class="bg-scuro-red hover:bg-scuro-reddark text-white text-xs font-extrabold px-4 py-2 rounded-xl shadow-md shadow-scuro-red/20 transition hover:scale-105 flex items-center space-x-1.5">
-            <i data-lucide="plus-circle" class="w-4 h-4"></i>
-            <span>+ New Ticket</span>
-          </button>
         </div>
-
       </div>
+
     </header>
 
     <!-- ALERT SLIDE-OVER PANEL -->
@@ -290,7 +305,7 @@
       <div class="flex items-center justify-between border-b pb-3">
         <div class="flex items-center space-x-2">
           <i data-lucide="bell" class="w-5 h-5 text-scuro-red"></i>
-          <h3 class="font-bold text-sm text-gray-900">Notifications & Active Alerts</h3>
+          <h3 class="font-bold text-sm text-gray-900">Notifications & SLA Alerts</h3>
         </div>
         <button @click="showAlertPanel = false" class="text-gray-400 hover:text-gray-600"><i data-lucide="x" class="w-4 h-4"></i></button>
       </div>
@@ -320,14 +335,14 @@
               <span>/</span>
               <span class="text-scuro-red font-bold">{{ currentSubpageLabel }}</span>
             </div>
-            <h1 class="text-lg font-bold text-gray-900 mt-0.5">Excel Sheet Reference: <span class="font-mono text-scuro-red font-extrabold">{{ currentSheetName }}</span></h1>
+            <h1 class="text-lg font-bold text-gray-900 mt-0.5">Blueprint Sheet Reference: <span class="font-mono text-scuro-red font-extrabold">{{ currentSheetName }}</span></h1>
           </div>
         </div>
         
         <div class="flex items-center space-x-3">
           <button @click="showSyncMakeModal = true" class="bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 text-xs font-bold px-3.5 py-2 rounded-xl flex items-center space-x-1.5 transition">
             <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
-            <span>Make.com Sync</span>
+            <span>Supabase Sync</span>
           </button>
           <button @click="exportToCSV(spareparts, currentSheetName)" class="bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold px-3.5 py-2 rounded-xl flex items-center space-x-1.5 transition">
             <i data-lucide="download" class="w-3.5 h-3.5"></i>
@@ -340,50 +355,80 @@
       <!-- TAB 1: DASHBOARD                           -->
       <!-- ========================================== -->
       <div v-if="activeTab === 'dashboard'" class="space-y-6">
-        
-        <!-- DASHBOARD OVERVIEW SUBPAGE -->
         <div v-if="activeSubpage === 'overview'" class="space-y-6">
           
-          <!-- 5 TOP KPI SUMMARY METRIC CARDS -->
+          <!-- KPI SUMMARY HEADER CARDS -->
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
             <div class="glass-panel p-5 space-y-2 border-l-4 border-l-scuro-red">
-              <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Total Active Tickets</span>
+              <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Total Monthly Inquiries</span>
               <div class="text-3xl font-extrabold text-gray-900">{{ tickets.length }}</div>
               <div class="flex items-center space-x-2 text-xs text-gray-500 font-semibold">
-                <span class="text-emerald-600 font-bold">External: {{ filteredExternalTickets.length }}</span>
+                <span class="text-emerald-600 font-bold">Ext: {{ filteredExternalTickets.length }}</span>
                 <span>•</span>
-                <span class="text-blue-600 font-bold">Internal: {{ filteredInternalTickets.length }}</span>
+                <span class="text-blue-600 font-bold">Int: {{ filteredInternalTickets.length }}</span>
               </div>
             </div>
 
             <div class="glass-panel p-5 space-y-2 border-l-4 border-l-amber-500">
-              <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Pending Follow-up</span>
+              <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Pending Customer</span>
               <div class="text-3xl font-extrabold text-amber-600">
-                {{ tickets.filter(t => t.status.includes('Pending')).length }}
+                {{ tickets.filter(t => t.status.includes('Customer')).length }}
               </div>
-              <p class="text-xs text-gray-500">Action required</p>
+              <p class="text-xs text-gray-500">Awaiting client response</p>
+            </div>
+
+            <div class="glass-panel p-5 space-y-2 border-l-4 border-l-orange-500">
+              <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Pending Internal</span>
+              <div class="text-3xl font-extrabold text-orange-600">
+                {{ tickets.filter(t => t.status.includes('Internal')).length }}
+              </div>
+              <p class="text-xs text-gray-500">Awaiting internal action</p>
             </div>
 
             <div class="glass-panel p-5 space-y-2 border-l-4 border-l-emerald-500">
-              <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Completed This Month</span>
-              <div class="text-3xl font-extrabold text-emerald-600">
-                {{ tickets.filter(t => ['Done', 'Resolved'].includes(t.status)).length }}
-              </div>
-              <p class="text-xs text-emerald-700 font-bold">94.2% Resolution SLA</p>
+              <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">SLA Compliance %</span>
+              <div class="text-3xl font-extrabold text-emerald-600">94.8%</div>
+              <p class="text-xs text-emerald-700 font-bold">Resolution SLA &lt; 3 Days</p>
             </div>
 
-            <div class="glass-panel p-5 space-y-2 border-l-4 border-l-blue-500">
-              <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Service Center Workshop</span>
-              <div class="text-3xl font-extrabold text-blue-600">{{ serviceCenter.length }}</div>
-              <p class="text-xs text-gray-500">Units on bench</p>
+            <div class="glass-panel p-5 space-y-2 border-l-4 border-l-purple-500">
+              <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Total Service Revenue</span>
+              <div class="text-2xl font-extrabold text-purple-700 font-mono">IDR 48.5M</div>
+              <p class="text-xs text-gray-500">Monthly billing total</p>
             </div>
+          </div>
 
-            <div class="glass-panel p-5 space-y-2 border-l-4 border-l-rose-500">
-              <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Low Stock SP Alerts</span>
-              <div class="text-3xl font-extrabold text-rose-600">
-                {{ spareparts.filter(p => p.stock <= p.min_stock).length }}
+          <!-- ALERT & REMINDER PANEL -->
+          <div class="glass-panel p-6 space-y-4">
+            <h3 class="text-sm font-bold text-gray-900 flex items-center space-x-2">
+              <i data-lucide="alert-triangle" class="w-4 h-4 text-scuro-red"></i>
+              <span>Operations Alert & Reminder Panel</span>
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-3 text-xs">
+              <div class="p-3 bg-rose-50 border border-rose-200 rounded-xl space-y-1">
+                <span class="font-bold text-rose-800">Tickets Idle &gt; 2 Days</span>
+                <div class="text-lg font-extrabold text-rose-700">2 Cases</div>
               </div>
-              <p class="text-xs text-rose-600 font-semibold">SKUs below threshold</p>
+              <div class="p-3 bg-amber-50 border border-amber-200 rounded-xl space-y-1">
+                <span class="font-bold text-amber-800">Low Stock SP Alerts</span>
+                <div class="text-lg font-extrabold text-amber-700">413 SKUs</div>
+              </div>
+              <div class="p-3 bg-purple-50 border border-purple-200 rounded-xl space-y-1">
+                <span class="font-bold text-purple-800">Unreturned Field Loaned</span>
+                <div class="text-lg font-extrabold text-purple-700">3 Items</div>
+              </div>
+              <div class="p-3 bg-blue-50 border border-blue-200 rounded-xl space-y-1">
+                <span class="font-bold text-blue-800">Scuro Bali Hub Stock</span>
+                <div class="text-lg font-extrabold text-blue-700">12 Units</div>
+              </div>
+              <div class="p-3 bg-indigo-50 border border-indigo-200 rounded-xl space-y-1">
+                <span class="font-bold text-indigo-800">Unpaid Partner Fees</span>
+                <div class="text-lg font-extrabold text-indigo-700">IDR 1.2M</div>
+              </div>
+              <div class="p-3 bg-teal-50 border border-teal-200 rounded-xl space-y-1">
+                <span class="font-bold text-teal-800">Unprocessed Quotations</span>
+                <div class="text-lg font-extrabold text-teal-700">4 SQ Pending</div>
+              </div>
             </div>
           </div>
 
@@ -392,105 +437,43 @@
             <div class="glass-panel p-6 space-y-4">
               <div class="flex items-center justify-between">
                 <div>
-                  <h3 class="text-sm font-bold text-gray-900">Monthly Case & Maintenance Volume</h3>
-                  <p class="text-xs text-gray-500">HORECA Servitization case trend</p>
+                  <h3 class="text-sm font-bold text-gray-900">Monthly Inquiries & SLA Trend</h3>
+                  <p class="text-xs text-gray-500">Servitization case trajectory</p>
                 </div>
                 <span class="bg-scuro-red/10 text-scuro-red text-[11px] font-bold px-2.5 py-1 rounded-lg">Chart.js</span>
               </div>
-              <div class="h-64">
-                <canvas id="casesChart"></canvas>
-              </div>
+              <div class="h-64"><canvas id="casesChart"></canvas></div>
             </div>
 
             <div class="glass-panel p-6 space-y-4">
               <div class="flex items-center justify-between">
                 <div>
-                  <h3 class="text-sm font-bold text-gray-900">Brand Failure Frequency</h3>
+                  <h3 class="text-sm font-bold text-gray-900">Multi-Brand Failure Frequency</h3>
                   <p class="text-xs text-gray-500">Hambach vs Maquinos vs Caferesso vs Eureka</p>
                 </div>
-                <span class="bg-blue-50 text-blue-700 text-[11px] font-bold px-2.5 py-1 rounded-lg">Failure Mode</span>
+                <span class="bg-blue-50 text-blue-700 text-[11px] font-bold px-2.5 py-1 rounded-lg">RCM Domains</span>
               </div>
-              <div class="h-64">
-                <canvas id="brandFailureChart"></canvas>
-              </div>
-            </div>
-          </div>
-
-          <!-- RECENT ACTIVE TICKETS TABLE -->
-          <div class="glass-panel p-6 space-y-4">
-            <div class="flex items-center justify-between">
-              <div>
-                <h3 class="text-base font-bold text-gray-900">Recent Active Tickets</h3>
-                <p class="text-xs text-gray-500">Latest cases across External and Internal pipelines</p>
-              </div>
-              <button @click="navigate('tickets', 'external')" class="text-xs text-scuro-red font-bold hover:underline">View All Tickets &rarr;</button>
-            </div>
-            
-            <div class="overflow-x-auto">
-              <table class="w-full text-left text-xs">
-                <thead>
-                  <tr class="border-b border-gray-200 text-gray-500 font-bold uppercase tracking-wider">
-                    <th class="py-3 px-4">Ticket ID</th>
-                    <th class="py-3 px-4">Category</th>
-                    <th class="py-3 px-4">Customer / Task</th>
-                    <th class="py-3 px-4">Brand / Unit</th>
-                    <th class="py-3 px-4">Serial Number</th>
-                    <th class="py-3 px-4">Status</th>
-                    <th class="py-3 px-4">Priority</th>
-                    <th class="py-3 px-4">Assigned Tech</th>
-                    <th class="py-3 px-4 text-right">Action</th>
-                  </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-100">
-                  <tr v-for="t in tickets.slice(0, 5)" :key="t.id" class="hover:bg-white/80 transition-colors">
-                    <td class="py-3 px-4 font-bold text-scuro-red font-mono">{{ t.action_id }}</td>
-                    <td class="py-3 px-4">
-                      <span :class="['px-2 py-0.5 rounded-full text-[10px] font-bold capitalize', t.ticket_category === 'external' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700']">
-                        {{ t.ticket_category }}
-                      </span>
-                    </td>
-                    <td class="py-3 px-4 font-bold text-gray-900">{{ t.customer_name }}</td>
-                    <td class="py-3 px-4 text-gray-700">{{ t.brand }} - {{ t.unit_type }}</td>
-                    <td class="py-3 px-4 font-mono text-gray-600">{{ t.serial_number }}</td>
-                    <td class="py-3 px-4">
-                      <span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-500/10 text-amber-600">
-                        {{ t.status }}
-                      </span>
-                    </td>
-                    <td class="py-3 px-4">
-                      <span :class="getPriorityBadgeClass(t.priority)">{{ t.priority }}</span>
-                    </td>
-                    <td class="py-3 px-4 font-semibold text-gray-700">{{ t.assigned_to }}</td>
-                    <td class="py-3 px-4 text-right">
-                      <button @click="openTicketSlideOver(t)" class="bg-gray-100 hover:bg-gray-200 text-gray-800 text-[11px] font-bold px-3 py-1.5 rounded-lg transition">
-                        Inspect
-                      </button>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+              <div class="h-64"><canvas id="brandFailureChart"></canvas></div>
             </div>
           </div>
 
         </div>
-
       </div>
 
       <!-- ========================================== -->
-      <!-- TAB 2: TICKETS                             -->
+      <!-- TAB 2: TICKETS (BLUEPRINT SPECIFICATION)   -->
       <!-- ========================================== -->
       <div v-if="activeTab === 'tickets'" class="space-y-6">
         
-        <!-- SUBPAGE: EXTERNAL TICKETS -->
+        <!-- EXTERNAL TICKETS PIPELINE -->
         <div v-if="activeSubpage === 'external'" class="space-y-6">
           <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 glass-panel p-6">
             <div>
               <h2 class="text-base font-bold text-gray-900">External Customer Case Pipeline</h2>
               <p class="text-xs text-gray-500">Mapped from <span class="font-mono text-scuro-red font-bold">Ticket</span> sheet — 7 Stages: New &rarr; Pending Customer &rarr; Pending Internal &rarr; On Process &rarr; Half Finish &rarr; Done &rarr; Lost</p>
             </div>
-            <button @click="openNewTicketModal('external')" class="bg-scuro-red hover:bg-scuro-reddark text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-md flex items-center space-x-1.5">
-              <i data-lucide="plus-circle" class="w-4 h-4"></i>
-              <span>+ New External Ticket</span>
+            <button @click="openNewTicketModal('external')" class="bg-scuro-red text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-md">
+              + New External Ticket
             </button>
           </div>
 
@@ -526,16 +509,15 @@
           </div>
         </div>
 
-        <!-- SUBPAGE: INTERNAL TICKETS -->
+        <!-- INTERNAL TASKS PIPELINE -->
         <div v-if="activeSubpage === 'internal'" class="space-y-6">
           <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 glass-panel p-6">
             <div>
               <h2 class="text-base font-bold text-gray-900">Internal Operations Task Pipeline</h2>
               <p class="text-xs text-gray-500">Mapped from <span class="font-mono text-scuro-red font-bold">Internal_Tasks</span> sheet — 6 Stages: Open &rarr; Pending External &rarr; Pending Internal &rarr; On Process &rarr; Resolved &rarr; Cancelled</p>
             </div>
-            <button @click="openNewTicketModal('internal')" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-md flex items-center space-x-1.5">
-              <i data-lucide="plus-circle" class="w-4 h-4"></i>
-              <span>+ New Internal Task</span>
+            <button @click="openNewTicketModal('internal')" class="bg-blue-600 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-md">
+              + New Internal Task
             </button>
           </div>
 
@@ -577,12 +559,13 @@
       <!-- TAB 3: OPERATIONS                          -->
       <!-- ========================================== -->
       <div v-if="activeTab === 'operations'" class="space-y-6">
+        
+        <!-- SERVICE CENTER WORKSHOP -->
         <div v-if="activeSubpage === 'service-center'" class="glass-panel p-6 space-y-6">
-          <div class="flex items-center justify-between">
-            <h2 class="text-base font-bold text-gray-900">Service Center Workshop Repairs</h2>
-            <button @click="openNewTicketModal('external')" class="bg-scuro-red text-white text-xs font-bold px-4 py-2 rounded-xl">+ Receive Unit</button>
+          <div class="flex items-center justify-between border-b pb-3">
+            <h2 class="text-base font-bold text-gray-900">Workshop Service Center Bench Pipeline</h2>
+            <span class="bg-scuro-red/10 text-scuro-red text-xs font-bold px-3 py-1 rounded-full">New/Perjalanan → Unboxing → Diagnosis → On Repair → Testing → Resolved</span>
           </div>
-
           <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div v-for="sc in serviceCenter" :key="sc.id" class="glass-card p-4 space-y-2 border-l-4 border-l-scuro-red">
               <div class="flex justify-between items-center text-xs">
@@ -593,49 +576,121 @@
               <p class="text-xs text-gray-600">{{ sc.brand }} {{ sc.unit }} (SN: {{ sc.sn }})</p>
               <div class="flex justify-between items-center text-[11px] text-gray-500 border-t pt-2">
                 <span>Tech: <strong>{{ sc.teknisi }}</strong></span>
-                <span>SLA: <strong>{{ sc.sla_days }}d</strong></span>
+                <span>Bench SLA: <strong>{{ sc.sla_days }}d</strong></span>
               </div>
             </div>
           </div>
         </div>
 
-        <div v-if="activeSubpage === 'visit-inhouse'" class="glass-panel p-6 space-y-6">
-          <div class="flex items-center justify-between">
-            <h2 class="text-base font-bold text-gray-900">On-Site Service & Maintenance Dispatch</h2>
-            <button @click="showCostCalcModal = true" class="bg-scuro-red text-white text-xs font-bold px-4 py-2 rounded-xl">Distance Calculator</button>
+        <!-- PRE-INSTALLATION READINESS -->
+        <div v-if="activeSubpage === 'installation'" class="glass-panel p-6 space-y-6">
+          <div class="flex justify-between items-center border-b pb-3">
+            <h2 class="text-base font-bold text-gray-900">Pre-Installation Site Readiness Tracker</h2>
+            <button class="bg-scuro-red text-white text-xs font-bold px-4 py-2 rounded-xl">+ Request Installation</button>
           </div>
           <div class="overflow-x-auto">
             <table class="w-full text-left text-xs">
               <thead>
                 <tr class="border-b text-gray-500 font-bold uppercase">
-                  <th class="py-3 px-3">Ticket</th>
-                  <th class="py-3 px-3">Visit Date</th>
-                  <th class="py-3 px-3">Customer & Location</th>
+                  <th class="py-3 px-3">Req ID</th>
+                  <th class="py-3 px-3">Customer</th>
                   <th class="py-3 px-3">Unit</th>
-                  <th class="py-3 px-3">Tech</th>
-                  <th class="py-3 px-3">Transport Fee</th>
+                  <th class="py-3 px-3">Stabilizer Check</th>
+                  <th class="py-3 px-3">Ampere Check</th>
+                  <th class="py-3 px-3">Water Check</th>
                   <th class="py-3 px-3">Status</th>
                 </tr>
               </thead>
               <tbody class="divide-y">
-                <tr v-for="v in visitInHouse" :key="v.id" class="hover:bg-white/80">
-                  <td class="py-3 px-3 font-mono font-bold text-scuro-red">{{ v.ticket_id }}</td>
-                  <td class="py-3 px-3 font-semibold">{{ v.visit_date }}</td>
-                  <td class="py-3 px-3"><strong>{{ v.customer }}</strong><br><span class="text-gray-500 text-[11px]">{{ v.location }}</span></td>
-                  <td class="py-3 px-3">{{ v.unit }}</td>
-                  <td class="py-3 px-3 font-bold">{{ v.teknisi }}</td>
-                  <td class="py-3 px-3 font-mono font-bold text-emerald-600">IDR {{ formatCurrency(v.transport_fee) }}</td>
-                  <td class="py-3 px-3"><span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full">{{ v.status }}</span></td>
+                <tr v-for="ins in installations" :key="ins.id" class="hover:bg-white/80">
+                  <td class="py-3 px-3 font-mono font-bold text-scuro-red">{{ ins.id }}</td>
+                  <td class="py-3 px-3 font-bold">{{ ins.customer }}</td>
+                  <td class="py-3 px-3">{{ ins.unit }}</td>
+                  <td class="py-3 px-3"><span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full">{{ ins.stabilizer }}</span></td>
+                  <td class="py-3 px-3 font-mono font-bold text-blue-700">{{ ins.ampere }}</td>
+                  <td class="py-3 px-3"><span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full">{{ ins.water }}</span></td>
+                  <td class="py-3 px-3"><span class="bg-blue-100 text-blue-800 text-[10px] font-bold px-2 py-0.5 rounded-full">{{ ins.status }}</span></td>
                 </tr>
               </tbody>
             </table>
           </div>
         </div>
 
-        <div v-if="!['service-center', 'visit-inhouse'].includes(activeSubpage)" class="glass-panel p-6 space-y-4">
-          <h2 class="text-base font-bold text-gray-900 capitalize">{{ currentSubpageLabel }}</h2>
-          <p class="text-xs text-gray-500">Operational ledger for <span class="font-mono text-scuro-red font-bold">{{ currentSheetName }}</span>.</p>
+        <!-- MAINTENANCE PACKAGES -->
+        <div v-if="activeSubpage === 'maintenance'" class="glass-panel p-6 space-y-6">
+          <div class="flex justify-between items-center border-b pb-3">
+            <h2 class="text-base font-bold text-gray-900">Maintenance Packages Ledger (1x vs 3x Visit)</h2>
+            <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-3 py-1 rounded-full">Free Gasket & O-Ring Included</span>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead>
+                <tr class="border-b text-gray-500 font-bold uppercase">
+                  <th class="py-3 px-3">Serial No</th>
+                  <th class="py-3 px-3">Customer</th>
+                  <th class="py-3 px-3">Unit</th>
+                  <th class="py-3 px-3">Program</th>
+                  <th class="py-3 px-3">Month 1</th>
+                  <th class="py-3 px-3">Month 2</th>
+                  <th class="py-3 px-3">Month 3</th>
+                  <th class="py-3 px-3">Status</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y">
+                <tr v-for="m in maintenancePkgs" :key="m.id" class="hover:bg-white/80">
+                  <td class="py-3 px-3 font-mono font-bold text-scuro-red">{{ m.sn }}</td>
+                  <td class="py-3 px-3 font-bold">{{ m.customer }}</td>
+                  <td class="py-3 px-3">{{ m.unit }}</td>
+                  <td class="py-3 px-3"><span class="bg-purple-100 text-purple-800 text-[10px] font-bold px-2 py-0.5 rounded-full">{{ m.program }}</span></td>
+                  <td class="py-3 px-3 font-mono text-gray-600">{{ m.m1 }}</td>
+                  <td class="py-3 px-3 font-mono text-gray-600">{{ m.m2 }}</td>
+                  <td class="py-3 px-3 font-mono text-gray-600">{{ m.m3 }}</td>
+                  <td class="py-3 px-3"><span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full">{{ m.status }}</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
+
+        <!-- RECAP SCHEDULE CALENDAR -->
+        <div v-if="activeSubpage === 'recap-schedule'" class="glass-panel p-6 space-y-6">
+          <div class="flex justify-between items-center border-b pb-3">
+            <h2 class="text-base font-bold text-gray-900">Weekly Technician Visit & Dispatch Schedule</h2>
+            <div class="flex items-center space-x-2 text-xs font-semibold">
+              <span class="bg-blue-100 text-blue-800 px-2.5 py-0.5 rounded-full">Visit Service</span>
+              <span class="bg-amber-100 text-amber-800 px-2.5 py-0.5 rounded-full">Instalasi</span>
+              <span class="bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full">Online Meeting</span>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div v-for="tech in ['Adi Wijaya', 'Bambang S', 'Widi P', 'Unassigned']" :key="tech" class="glass-card p-4 space-y-3">
+              <div class="font-bold text-xs text-gray-900 border-b pb-2 flex justify-between">
+                <span>{{ tech }}</span>
+                <span class="bg-gray-100 px-2 py-0.5 rounded text-[10px]">4 Dispatches</span>
+              </div>
+              <div class="space-y-2 text-xs">
+                <div class="p-2.5 bg-blue-50 border border-blue-200 rounded-xl space-y-1">
+                  <div class="font-bold text-blue-900">Kopi Kenangan (ACT-082)</div>
+                  <div class="text-[11px] text-blue-700">Mon, 14 Aug • Service Visit</div>
+                </div>
+                <div class="p-2.5 bg-amber-50 border border-amber-200 rounded-xl space-y-1">
+                  <div class="font-bold text-amber-900">Scuro Bali Hub (INS-011)</div>
+                  <div class="text-[11px] text-amber-700">Wed, 16 Aug • Pre-Instalasi</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- DENALI DEFECT CLAIMS -->
+        <div v-if="activeSubpage === 'denali-claims'" class="glass-panel p-6 space-y-6">
+          <div class="flex justify-between items-center border-b pb-3">
+            <h2 class="text-base font-bold text-gray-900">Denali Product Defect Claims Ledger</h2>
+            <button class="bg-scuro-red text-white text-xs font-bold px-4 py-2 rounded-xl">+ Submit Claim</button>
+          </div>
+          <p class="text-xs text-gray-500">Retail &lt; 30 Days | Reseller &lt; 60 Days claim window validation.</p>
+        </div>
+
       </div>
 
       <!-- ========================================== -->
@@ -650,9 +705,14 @@
               <h2 class="text-base font-bold text-gray-900">Master Sparepart Catalog [Inline Editable]</h2>
               <p class="text-xs text-gray-500">Mapped from <span class="font-mono text-scuro-red font-bold">SP_Master</span> sheet — SKU, selling prices, HPP costs, and stock limits.</p>
             </div>
-            <button @click="exportToCSV(spareparts, 'SP_Master_Catalog')" class="bg-scuro-red text-white text-xs font-bold px-4 py-2 rounded-xl shadow-md">
-              Export SP Master CSV
-            </button>
+            <div class="flex items-center space-x-2">
+              <button @click="showImportModal = true" class="bg-gray-100 hover:bg-gray-200 text-gray-800 text-xs font-bold px-4 py-2 rounded-xl">
+                Import Excel
+              </button>
+              <button @click="exportToCSV(spareparts, 'SP_Master_Catalog')" class="bg-scuro-red text-white text-xs font-bold px-4 py-2 rounded-xl shadow-md">
+                Export SP Master CSV
+              </button>
+            </div>
           </div>
 
           <div class="overflow-x-auto">
@@ -683,9 +743,39 @@
           </div>
         </div>
 
-        <div v-if="activeSubpage !== 'sp-master'" class="glass-panel p-6 space-y-4">
-          <h2 class="text-base font-bold text-gray-900 capitalize">{{ currentSubpageLabel }}</h2>
-          <p class="text-xs text-gray-500">Sparepart ledger for <span class="font-mono text-scuro-red font-bold">{{ currentSheetName }}</span>.</p>
+        <!-- PURCHASING REQUISITIONS AUTOMATED HUB -->
+        <div v-if="activeSubpage === 'sp-purchasing'" class="glass-panel p-6 space-y-6">
+          <div class="flex justify-between items-center border-b pb-3">
+            <div>
+              <h2 class="text-base font-bold text-gray-900">Purchasing Requisition Hub (Auto-Triggered Stock = 0)</h2>
+              <p class="text-xs text-gray-500">Automatically ingests low stock SKUs for PO approval.</p>
+            </div>
+            <button class="bg-scuro-red text-white text-xs font-bold px-4 py-2 rounded-xl">+ Manual Requisition</button>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead>
+                <tr class="border-b text-gray-500 font-bold uppercase">
+                  <th class="py-3 px-3">Req ID</th>
+                  <th class="py-3 px-3">Ticket Ref</th>
+                  <th class="py-3 px-3">SKU</th>
+                  <th class="py-3 px-3">Item Name</th>
+                  <th class="py-3 px-3">Qty</th>
+                  <th class="py-3 px-3">Status</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y">
+                <tr v-for="req in requisitions" :key="req.id" class="hover:bg-white/80">
+                  <td class="py-3 px-3 font-mono font-bold text-scuro-red">{{ req.id }}</td>
+                  <td class="py-3 px-3 font-mono">{{ req.ticket_id }}</td>
+                  <td class="py-3 px-3 font-mono font-bold">{{ req.sku }}</td>
+                  <td class="py-3 px-3 font-bold text-gray-900">{{ req.item_name }}</td>
+                  <td class="py-3 px-3 font-bold">{{ req.qty }}</td>
+                  <td class="py-3 px-3"><span class="bg-amber-100 text-amber-800 text-[10px] font-bold px-2 py-0.5 rounded-full">{{ req.status }}</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
 
       </div>
@@ -694,7 +784,6 @@
       <!-- TAB 5: INVENTORY MANAGEMENT                -->
       <!-- ========================================== -->
       <div v-if="activeTab === 'inventory-mgmt'" class="space-y-6">
-        
         <div v-if="activeSubpage === 'inv-asset-stock'" class="glass-panel p-6 space-y-6">
           <div class="flex items-center justify-between">
             <div>
@@ -729,16 +818,158 @@
             </table>
           </div>
         </div>
+      </div>
 
-        <div v-if="activeSubpage !== 'inv-asset-stock'" class="glass-panel p-6 space-y-4">
-          <h2 class="text-base font-bold text-gray-900 capitalize">{{ currentSubpageLabel }}</h2>
-          <p class="text-xs text-gray-500">Inventory records for <span class="font-mono text-scuro-red font-bold">{{ currentSheetName }}</span>.</p>
+      <!-- ========================================== -->
+      <!-- TAB 6: PERFORMANCE & OVERLOAD MONITOR      -->
+      <!-- ========================================== -->
+      <div v-if="activeTab === 'performance'" class="space-y-6">
+        
+        <!-- TECHNICIAN CAPACITY & OVERLOAD MONITOR -->
+        <div v-if="activeSubpage === 'capacity'" class="glass-panel p-6 space-y-6">
+          <div class="flex justify-between items-center border-b pb-3">
+            <div>
+              <h2 class="text-base font-bold text-gray-900">Technician Daily Capacity & Overlap Math Monitor</h2>
+              <p class="text-xs text-gray-500">1-2 tasks/day = Normal | 3+ tasks/day = OVERLOAD Alert</p>
+            </div>
+            <span class="bg-rose-100 text-rose-800 text-xs font-bold px-3 py-1 rounded-full">SLA Overload Prevention</span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div v-for="c in techCapacities" :key="c.tech" class="glass-card p-4 space-y-2 border-l-4" :class="c.total_tasks >= 3 ? 'border-l-rose-600' : 'border-l-emerald-500'">
+              <div class="flex justify-between font-bold text-xs">
+                <span>{{ c.tech }}</span>
+                <span :class="c.total_tasks >= 3 ? 'text-rose-600 font-extrabold' : 'text-emerald-600'">{{ c.status }}</span>
+              </div>
+              <div class="text-2xl font-extrabold text-gray-900">{{ c.total_tasks }} Tasks Today</div>
+              <div class="text-[11px] text-gray-500 space-y-0.5 pt-1">
+                <div>Bench SC: {{ c.sc_tasks }} | Visit IH: {{ c.visit_tasks }}</div>
+                <div>Maintenance: {{ c.maint_tasks }} | Inst: {{ c.inst_tasks }}</div>
+              </div>
+            </div>
+          </div>
         </div>
 
       </div>
 
-      <!-- OTHER TABS -->
-      <div v-if="['performance', 'knowledge', 'governance', 'warranty-db', 'settings-sync'].includes(activeTab)" class="glass-panel p-6 space-y-6">
+      <!-- ========================================== -->
+      <!-- TAB 7: GOVERNANCE & BERITA ACARA (BA) TREE -->
+      <!-- ========================================== -->
+      <div v-if="activeTab === 'governance'" class="space-y-6">
+        
+        <!-- INTERACTIVE SOP & DECISION TREE -->
+        <div v-if="activeSubpage === 'home-resources'" class="glass-panel p-6 space-y-6">
+          <div class="flex justify-between items-center border-b pb-3">
+            <h2 class="text-base font-bold text-gray-900">Scuro Operational Policy & SOP Interactive Tree</h2>
+            <div class="flex space-x-2 text-xs font-bold">
+              <button @click="activeGovTab = 'memo'" :class="['px-3 py-1.5 rounded-lg transition', activeGovTab === 'memo' ? 'bg-scuro-red text-white' : 'bg-gray-100']">Memo SG-FORM-IM-001</button>
+              <button @click="activeGovTab = 'bbb'" :class="['px-3 py-1.5 rounded-lg transition', activeGovTab === 'bbb' ? 'bg-scuro-red text-white' : 'bg-gray-100']">PT BBB (Kopi Kenangan)</button>
+              <button @click="activeGovTab = 'rates'" :class="['px-3 py-1.5 rounded-lg transition', activeGovTab === 'rates' ? 'bg-scuro-red text-white' : 'bg-gray-100']">Service Rates</button>
+            </div>
+          </div>
+
+          <div v-if="activeGovTab === 'memo'" class="space-y-4 text-xs">
+            <div class="p-4 bg-white rounded-xl border space-y-2">
+              <h3 class="font-bold text-sm text-scuro-red">Internal Memo SG-FORM-IM-001 Distance & Transport Rules</h3>
+              <ul class="list-disc pl-5 space-y-1 text-gray-700">
+                <li><strong>TRITON Purchase &lt; 15M:</strong> Max 25km free transport (Rp 400,000 fee if exceeding).</li>
+                <li><strong>TRITON Purchase &gt; 15M:</strong> Max 50km free transport (Rp 600,000 fee for 25-50km).</li>
+                <li><strong>TRITON Purchase &gt; 75M:</strong> Free transport up to 200km (Bandung regional coverage).</li>
+              </ul>
+            </div>
+          </div>
+
+          <div v-if="activeGovTab === 'bbb'" class="space-y-4 text-xs">
+            <div class="p-4 bg-emerald-50 border border-emerald-200 rounded-xl space-y-2 text-emerald-900">
+              <h3 class="font-bold text-sm">PT. Bumi Berkah Boga (Kopi Kenangan) Agreement Rules</h3>
+              <ul class="list-disc pl-5 space-y-1">
+                <li><strong>Service & Transport:</strong> 25% Special Discount on all technician visits.</li>
+                <li><strong>AT-10 Auto Tamping Spareparts:</strong> 15% Special Discount on replacement parts.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div v-if="activeGovTab === 'rates'" class="space-y-4 text-xs">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div class="p-4 bg-white rounded-xl border space-y-1">
+                <div class="font-bold text-gray-900">Hambach 1gr & 2gr Service</div>
+                <div class="text-lg font-extrabold text-scuro-red">IDR 300,000</div>
+              </div>
+              <div class="p-4 bg-white rounded-xl border space-y-1">
+                <div class="font-bold text-gray-900">Grinders & Blenders Service</div>
+                <div class="text-lg font-extrabold text-scuro-red">IDR 200,000</div>
+              </div>
+              <div class="p-4 bg-white rounded-xl border space-y-1">
+                <div class="font-bold text-gray-900">1x Maintenance Visit</div>
+                <div class="text-lg font-extrabold text-scuro-red">IDR 600,000 (1gr) / IDR 800,000 (2gr)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- BERITA ACARA (BA) FORM GENERATOR -->
+        <div v-if="activeSubpage === 'ba'" class="glass-panel p-6 space-y-6">
+          <div class="flex justify-between items-center border-b pb-3">
+            <h2 class="text-base font-bold text-gray-900">Berita Acara (BA) Generator [SG-FORM-BA-001]</h2>
+            <button @click="printBA" class="bg-scuro-red text-white text-xs font-bold px-4 py-2 rounded-xl flex items-center space-x-1">
+              <i data-lucide="printer" class="w-3.5 h-3.5"></i>
+              <span>Print Official BA</span>
+            </button>
+          </div>
+
+          <div id="printable-ba" class="p-6 bg-white border rounded-2xl space-y-6 text-xs text-gray-900">
+            <div class="flex justify-between items-center border-b pb-4">
+              <div>
+                <h2 class="text-lg font-extrabold text-scuro-red">PT SCURO GROUP INDONESIA</h2>
+                <p class="text-[11px] text-gray-500">Official Operational Berita Acara Document</p>
+              </div>
+              <div class="text-right">
+                <div class="font-mono font-bold">No: SG-FORM-BA-001/2026/08</div>
+                <div class="text-gray-500">Date: 13 August 2026</div>
+              </div>
+            </div>
+
+            <div class="space-y-2">
+              <div class="font-bold">Subject: Berita Acara Pelepasan & Replacement Sparepart Unit</div>
+              <p class="leading-relaxed">Bahwa pada hari ini telah dilakukan penggantian dan perbaikan sparepart unit espresso machine milik customer dengan rincian berikut:</p>
+            </div>
+
+            <table class="w-full text-left border">
+              <thead class="bg-gray-100 border-b">
+                <tr>
+                  <th class="p-2 border">SKU</th>
+                  <th class="p-2 border">Nama Component</th>
+                  <th class="p-2 border">Qty</th>
+                  <th class="p-2 border">Keterangan</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="p-2 border font-mono">LCD-HM-001</td>
+                  <td class="p-2 border">Display LCD Screen Hambach Tank 2gr</td>
+                  <td class="p-2 border font-bold">1 Unit</td>
+                  <td class="p-2 border">Replacement due to corrupt display</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="grid grid-cols-2 gap-8 pt-8 text-center">
+              <div class="space-y-12">
+                <div>Diserahkan Oleh (Technician),</div>
+                <div class="font-bold underline">( Adi Wijaya )</div>
+              </div>
+              <div class="space-y-12">
+                <div>Disetujui Oleh (Customer / PIC),</div>
+                <div class="font-bold underline">( Andi Wijaya )</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- OTHER SUBPAGES -->
+      <div v-if="['warranty-db', 'settings-sync', 'knowledge'].includes(activeTab)" class="glass-panel p-6 space-y-6">
         <h2 class="text-base font-bold text-gray-900 capitalize">{{ currentSubpageLabel }}</h2>
         <p class="text-xs text-gray-500">Reference sheet: <span class="font-mono text-scuro-red font-bold">{{ currentSheetName }}</span>.</p>
       </div>
@@ -812,7 +1043,7 @@
       </div>
     </div>
 
-    <!-- COST CALCULATOR MODAL -->
+    <!-- COST & DISTANCE CALCULATOR MODAL -->
     <div v-if="showCostCalcModal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
       <div class="glass-panel w-full max-w-md p-6 space-y-4 bg-white/95">
         <div class="flex justify-between items-center border-b pb-3">
@@ -824,14 +1055,21 @@
             <label class="font-bold text-gray-700">Distance (km)</label>
             <input type="number" v-model="calcDistanceKm" class="w-full border p-2 rounded-lg mt-1 font-mono font-bold" placeholder="e.g. 25.5">
           </div>
+          <div>
+            <label class="font-bold text-gray-700 font-semibold">Special Client Discount</label>
+            <select v-model="calcClientType" class="w-full border p-2 rounded-lg mt-1 font-bold">
+              <option value="regular">Regular Client (Standard Rates)</option>
+              <option value="bbb">PT. Bumi Berkah Boga (Kopi Kenangan) - 25% OFF</option>
+            </select>
+          </div>
           <div class="p-3 bg-emerald-50 border border-emerald-200 rounded-xl space-y-1 text-emerald-900">
             <div class="flex justify-between">
-              <span>Transport Fee (IDR 5,000 / km):</span>
-              <span class="font-bold font-mono">IDR {{ formatCurrency(calcDistanceKm * 5000) }}</span>
+              <span>Transport Rate:</span>
+              <span class="font-bold font-mono">IDR {{ formatCurrency(calcTransportFee) }}</span>
             </div>
             <div class="flex justify-between border-t pt-1 font-bold">
-              <span>Estimated Total:</span>
-              <span class="font-mono text-sm text-scuro-red">IDR {{ formatCurrency(calcDistanceKm * 5000 + 350000) }}</span>
+              <span>Estimated Total Fee:</span>
+              <span class="font-mono text-sm text-scuro-red">IDR {{ formatCurrency(calcTotalEstimatedFee) }}</span>
             </div>
           </div>
         </div>
@@ -845,8 +1083,9 @@
 
   <!-- VUE 3 APPLICATION ENGINE SCRIPT -->
   <script>
-    const SUPABASE_REST_URL = "https://fkzvfgugfyhmbaxljzcs.supabase.co/rest/v1/";
-    const SUPABASE_ANON_KEY = "sb_secret_2TzyIfSWEgIJ7jdytsyOWA_L3F-YIF9";
+    // UPDATED BLUEPRINT SUPABASE CREDENTIALS
+    const SUPABASE_REST_URL = "https://resbzezgvrnjgmenlqgk.supabase.co/rest/v1/";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJlc2J6ZXpndnJuamdtZW5scWdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxOTY1MzgsImV4cCI6MjA5NDc3MjUzOH0.p18ypHBMYGA2JSuP-AcQ6rLCi3hrwaLMHHL7sr6YN-U";
 
     const { createApp } = Vue;
 
@@ -856,14 +1095,17 @@
           currentRole: 'Super Admin',
           activeTab: 'dashboard',
           activeSubpage: 'overview',
+          activeGovTab: 'memo',
           globalSearchQuery: '',
           activeSlideOverTicket: null,
           newNoteText: '',
           showSyncMakeModal: false,
           showCostCalcModal: false,
+          showImportModal: false,
           showAlertPanel: false,
 
           calcDistanceKm: 25,
+          calcClientType: 'regular',
 
           alerts: [
             { id: 1, title: 'High Priority SLA Warning', message: 'Ticket ACT-2026-081 is exceeding bench limit', time: '10m ago', priority: 'high' }
@@ -873,7 +1115,7 @@
             { id: '1', author: 'Adi Wijaya (Tech)', timestamp: '2 hours ago', text: 'Inspected LCD display logic board.' }
           ],
 
-          // DRIBBBLE MEGA DROPDOWN MENU CONFIGURATION (MATCHING REFERENCE IMAGE)
+          // EXHAUSTIVE BLUEPRINT NAV CATEGORY MAPPING
           mainNavTabs: [
             {
               id: 'dashboard', label: 'Dashboard', icon: 'layout-dashboard',
@@ -892,14 +1134,13 @@
             {
               id: 'operations', label: 'Operations', icon: 'wrench',
               subpages: [
-                { id: 'service-center', label: 'Service Center Workshop', sheet: 'Service_Center', desc: 'Central workshop bench & repair SLA', icon: 'wrench', iconBg: 'bg-scuro-red' },
-                { id: 'visit-inhouse', label: 'On-Site Visit In-House', sheet: 'Visit_InHouse', desc: 'Field technician dispatches & fees', icon: 'map-pin', iconBg: 'bg-emerald-600' },
-                { id: 'scuro-bali', label: 'Scuro Bali Hub', sheet: 'Scuro_Bali', desc: 'Bali branch & Ignas escalation', icon: 'compass', iconBg: 'bg-amber-500' },
+                { id: 'service-center', label: 'Service Center Workshop', sheet: 'Service_Center', desc: 'Bench repair stages & SLA tracking', icon: 'wrench', iconBg: 'bg-scuro-red' },
+                { id: 'installation', label: 'Pre-Installation Readiness', sheet: 'Installation', desc: 'Ampere, voltage & water site QC', icon: 'plug', iconBg: 'bg-blue-500' },
                 { id: 'maintenance', label: 'Maintenance Packages', sheet: 'Maintenance', desc: '3x & 1x visit maintenance program', icon: 'calendar-check', iconBg: 'bg-teal-600' },
-                { id: 'installation', label: 'Pre-Installation Readiness', sheet: 'Installation', desc: 'Electrical ampere, voltage & water QC', icon: 'plug', iconBg: 'bg-blue-500' },
-                { id: 'denali-claims', label: 'Denali Defect Claims', sheet: 'Denali_Claim', desc: 'Syrup pump & defect part claims', icon: 'alert-circle', iconBg: 'bg-rose-600' },
-                { id: 'partner-network', label: 'Partner Tech Network', sheet: 'Partner_Technician', desc: 'External regional technician dispatch', icon: 'users', iconBg: 'bg-gray-800' },
-                { id: 'visit-schedule', label: 'Visit Calendar & Recap', sheet: 'Recap Visit', desc: 'Multi-team calendar & visit recap', icon: 'calendar', iconBg: 'bg-indigo-500' }
+                { id: 'partner-network', label: 'Partner Tech Network', sheet: 'Partner_Technician', desc: 'Regional technician dispatch & fees', icon: 'users', iconBg: 'bg-gray-800' },
+                { id: 'scuro-bali', label: 'Scuro Bali Operations', sheet: 'Scuro_Bali', desc: 'Bali branch & Ignas workload', icon: 'compass', iconBg: 'bg-amber-500' },
+                { id: 'denali-claims', label: 'Denali Defect Claims', sheet: 'Denali_Claim', desc: 'Syrup defect claims & review status', icon: 'alert-circle', iconBg: 'bg-rose-600' },
+                { id: 'recap-schedule', label: 'Recap Visit Schedule', sheet: 'Recap Visit', desc: 'Weekly timeline calendar dispatch', icon: 'calendar', iconBg: 'bg-indigo-500' }
               ]
             },
             {
@@ -907,49 +1148,36 @@
               subpages: [
                 { id: 'sp-master', label: 'Master Sparepart Catalog', sheet: 'SP_Master', desc: 'SKU list, prices & HPP cost ledger', icon: 'database', iconBg: 'bg-scuro-red' },
                 { id: 'sp-tracking', label: 'Sparepart Movement Tracking', sheet: 'SP_Tracking', desc: 'Loaned spareparts & tech bin tracking', icon: 'refresh-cw', iconBg: 'bg-amber-600' },
-                { id: 'sp-stock', label: 'Sparepart Stock Level', sheet: 'SP_Stock', desc: 'Multi-warehouse stock opname', icon: 'package', iconBg: 'bg-blue-600' },
-                { id: 'sp-purchasing', label: 'Request Purchasing & Orders', sheet: 'SP_Order', desc: 'Requisitions & purchase orders', icon: 'shopping-cart', iconBg: 'bg-emerald-600' }
+                { id: 'sp-purchasing', label: 'Purchasing Requisition Hub', sheet: 'SP_Order', desc: 'Auto-triggered stock = 0 PO approval', icon: 'shopping-cart', iconBg: 'bg-emerald-600' }
               ]
             },
             {
               id: 'inventory-mgmt', label: 'Inventory Management', icon: 'boxes',
               subpages: [
                 { id: 'inv-asset-stock', label: 'Inventory & Asset Stock', sheet: 'Inventory_Tools', desc: 'Multimeters, toolkits & equipment', icon: 'boxes', iconBg: 'bg-purple-600' },
-                { id: 'req-inventory', label: 'Request Inventory', sheet: 'Request Inventory', desc: 'Consumable supplies requisition', icon: 'file-plus', iconBg: 'bg-blue-500' },
-                { id: 'req-asset', label: 'Request Asset & HE', sheet: 'Heating_Element', desc: 'HE replacement & asset lifecycle', icon: 'bolt', iconBg: 'bg-rose-600' }
+                { id: 'req-inventory', label: 'Request Inventory', sheet: 'Request Inventory', desc: 'Consumable supplies requisition', icon: 'file-plus', iconBg: 'bg-blue-500' }
               ]
             },
             {
               id: 'performance', label: 'Performance', icon: 'bar-chart-3',
               subpages: [
-                { id: 'capacity', label: 'Technician Capacity & MTTR', sheet: 'Technician_Capacity', desc: 'Admin intake speed & FTF rate', icon: 'bar-chart-3', iconBg: 'bg-scuro-red' },
-                { id: 'qc', label: 'Pre-Delivery QC Checklist', sheet: 'QC', desc: 'New unit pre-delivery inspection', icon: 'check-circle-2', iconBg: 'bg-emerald-600' }
+                { id: 'capacity', label: 'Technician Capacity & Overlap', sheet: 'Technician_Capacity', desc: 'Overload math: 3+ tasks/day alert', icon: 'bar-chart-3', iconBg: 'bg-scuro-red' },
+                { id: 'qc', label: 'Pre-Delivery QC Audits', sheet: 'QC', desc: 'New unit pre-delivery inspection', icon: 'check-circle-2', iconBg: 'bg-emerald-600' }
               ]
             },
             {
-              id: 'knowledge', label: 'Knowledge', icon: 'book-open',
+              id: 'knowledge', label: 'Knowledge Base', icon: 'book-open',
               subpages: [
                 { id: 'troubleshooting', label: 'Auto Solution Guides', sheet: 'Knowledge_Base', desc: 'Technical manuals & video guides', icon: 'book-open', iconBg: 'bg-blue-600' },
-                { id: 'taxonomy', label: 'Reference Taxonomy Lists', sheet: '_Lists', desc: 'Trouble categories & brand lists', icon: 'list', iconBg: 'bg-amber-600' }
+                { id: 'taxonomy', label: 'Master Failure Taxonomy', sheet: '_Lists', desc: 'Trouble categories & brand lists', icon: 'list', iconBg: 'bg-amber-600' }
               ]
             },
             {
               id: 'governance', label: 'Governance & Rules', icon: 'scale',
               subpages: [
-                { id: 'home-resources', label: 'Home & Operating Rules', sheet: 'Home', desc: 'Internal Memo SG-FORM-IM-001', icon: 'scale', iconBg: 'bg-gray-800' },
-                { id: 'users', label: 'Users & Audit Logs', sheet: 'Audit_Log', desc: 'Provisioned accounts & system logs', icon: 'shield', iconBg: 'bg-rose-600' }
-              ]
-            },
-            {
-              id: 'warranty-db', label: 'Warranty Ledger', icon: 'shield-check',
-              subpages: [
-                { id: 'warranty-list', label: '17,000+ Serial No Warranty DB', sheet: 'Warranty_DB', desc: 'Serial number warranty master', icon: 'shield-check', iconBg: 'bg-emerald-600' }
-              ]
-            },
-            {
-              id: 'settings-sync', label: 'Settings Sync', icon: 'settings',
-              subpages: [
-                { id: 'supabase-config', label: 'Supabase & Make.com Sync', sheet: 'Settings', desc: 'REST credentials & 2-way webhooks', icon: 'settings', iconBg: 'bg-scuro-red' }
+                { id: 'home-resources', label: 'Policy & SOP Decision Tree', sheet: 'Home', desc: 'Internal Memo SG-FORM-IM-001 & Rules', icon: 'scale', iconBg: 'bg-gray-800' },
+                { id: 'ba', label: 'Berita Acara Generator', sheet: 'BA_Gen', desc: 'Generate formal SG-FORM-BA-001 PDF', icon: 'file-text', iconBg: 'bg-scuro-red' },
+                { id: 'warranty-db', label: '17,000+ Serial No Warranty DB', sheet: 'Warranty_DB', desc: 'Master serial number lookup', icon: 'shield-check', iconBg: 'bg-emerald-600' }
               ]
             }
           ],
@@ -982,8 +1210,22 @@
             { id: '1', ticket_id: 'ACT-2026-081', sn: 'DRB0013287', customer: 'Scuro Store', brand: 'Hambach', unit: 'Tank 2gr', stage: 'on_repair', teknisi: 'Adi', entry_date: '2026-08-10', sla_days: 2 }
           ],
 
-          visitInHouse: [
-            { id: '1', ticket_id: 'ACT-2026-082', visit_date: '2026-08-14', customer: 'Kopi Kenangan Plaza', location: 'Jakarta Selatan', unit: 'Maquinos E65T', teknisi: 'Bambang', transport_fee: 125000, status: 'Scheduled' }
+          installations: [
+            { id: 'INS-001', customer: 'Kopi Kenangan Central', unit: 'Hambach 2gr', stabilizer: 'PASS 10KVA', ampere: '18.2A OK', water: 'TDS 45ppm PASS', status: 'Terjadwal' }
+          ],
+
+          maintenancePkgs: [
+            { id: 'MNT-001', sn: 'SN-MQ-4412', customer: 'Kopi Kenangan Plaza', unit: 'Maquinos E65T', program: '3x Visit Package', m1: '2026-05-10', m2: '2026-08-10', m3: '2026-11-10', status: 'Active' }
+          ],
+
+          requisitions: [
+            { id: 'REQ-01', ticket_id: 'ACT-2026-081', sku: 'LCD-HM-001', item_name: 'Display LCD Screen Hambach Tank 2gr', qty: 1, status: 'Pending Approval' }
+          ],
+
+          techCapacities: [
+            { tech: 'Adi Wijaya', sc_tasks: 2, visit_tasks: 1, maint_tasks: 0, inst_tasks: 0, total_tasks: 3, status: 'OVERLOAD' },
+            { tech: 'Bambang S', sc_tasks: 1, visit_tasks: 1, maint_tasks: 0, inst_tasks: 0, total_tasks: 2, status: 'OK' },
+            { tech: 'Widi P', sc_tasks: 0, visit_tasks: 1, maint_tasks: 0, inst_tasks: 0, total_tasks: 1, status: 'OK' }
           ],
 
           inventoryTools: [
@@ -993,7 +1235,7 @@
 
           spareparts: [
             { id: '1', sku: 'GRD/MN/CF-101', item_name: 'Titan Coffee Grinder R750 (Black)', brand: 'Caferesso', category: 'Grinder', unit_price: 14500000, hpp_cost: 9200000, stock: 4, min_stock: 2 },
-            { id: '2', sku: 'EQM/CR/AT-101', item_name: 'Auto Tamping Machine AT10 (Black)', brand: 'Caferesso', category: 'Tools', unit_price: 8500000, hpp_cost: 5100000, stock: 1, min_stock: 3 }
+            { id: '2', sku: 'EQM/CR/AT-101', item_name: 'Auto Tamping Machine AT10 (Black)', brand: 'Caferesso', category: 'Tools', unit_price: 8500000, hpp_cost: 5100000, stock: 0, min_stock: 3 }
           ]
         }
       },
@@ -1027,6 +1269,13 @@
         },
         canViewFinancials() {
           return ['Super Admin', 'Ops Admin'].includes(this.currentRole);
+        },
+        calcTransportFee() {
+          const base = this.calcDistanceKm * 5000;
+          return this.calcClientType === 'bbb' ? base * 0.75 : base;
+        },
+        calcTotalEstimatedFee() {
+          return this.calcTransportFee + 350000;
         }
       },
 
@@ -1121,6 +1370,9 @@
           link.click();
           document.body.removeChild(link);
         },
+        printBA() {
+          window.print();
+        },
         renderCharts() {
           const ctx1 = document.getElementById('casesChart');
           if (ctx1) {
@@ -1129,8 +1381,8 @@
               data: {
                 labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
                 datasets: [
-                  { label: 'Service Cases', data: [120, 135, 140, 150, 160, 172, 180, 184], borderColor: '#BE2130', fill: false, tension: 0.4 },
-                  { label: 'Maintenance Visits', data: [45, 50, 52, 55, 60, 64, 70, 75], borderColor: '#10B981', fill: false, tension: 0.4 }
+                  { label: 'Service Inquiries', data: [120, 135, 140, 150, 160, 172, 180, 184], borderColor: '#BE2130', fill: false, tension: 0.4 },
+                  { label: 'SLA Compliance %', data: [91, 92, 93, 94, 94, 95, 95, 96], borderColor: '#10B981', fill: false, tension: 0.4 }
                 ]
               },
               options: { responsive: true, maintainAspectRatio: false }
@@ -1142,8 +1394,8 @@
             new Chart(ctx2, {
               type: 'bar',
               data: {
-                labels: ['Hambach', 'Maquinos', 'Caferesso', 'Eureka', 'La Nuova Era'],
-                datasets: [{ label: 'Failure Count', data: [58, 44, 28, 22, 14], backgroundColor: ['#BE2130', '#0EA5E9', '#F59E0B', '#6366F1', '#10B981'], borderRadius: 8 }]
+                labels: ['Hambach', 'Maquinos', 'Caferesso', 'Eureka', 'Denali'],
+                datasets: [{ label: 'Failure Frequency', data: [58, 44, 28, 22, 14], backgroundColor: ['#BE2130', '#0EA5E9', '#F59E0B', '#6366F1', '#10B981'], borderRadius: 8 }]
               },
               options: { responsive: true, maintainAspectRatio: false }
             });
